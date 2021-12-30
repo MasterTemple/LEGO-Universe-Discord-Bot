@@ -3,13 +3,15 @@ import { Database } from "sqlite3";
 import { CDClient } from "./cdclient";
 import { token, sqlite_path } from "./config.json";
 import { getSlashCommands, updateSlashCommands } from "./setup";
+
+const db = new Database(sqlite_path);
+const cdclient = new CDClient(db);
+
 const client = new Client({
   intents: []
 })
 
 var slashCommands:Map<string, Function> = getSlashCommands();
-const db = new Database(sqlite_path);
-const cdclient = new CDClient(db);
 
 client.once("ready", async () => {
   // updateSlashCommands(client);
