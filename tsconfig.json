@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "lib",
+    "declaration": true,
+    "declarationMap": true,
+    "watch": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src"]
+}
