@@ -1,13 +1,13 @@
 import { Database } from "sqlite3";
-import { ComponentsRegistry, DestructibleComponent, LootMatrix, LootTable, Objects } from "./cdclient_interfaces";
+import { ComponentsRegistry, DestructibleComponent, ItemComponent, LootMatrix, LootTable, Objects, RarityTable } from "./cdclient_interfaces";
 import { sqlite_path } from "./config.json";
-
 
 export class CDClient {
   db: Database;
   constructor(){
   }
-  async load(){
+
+  async load():Promise<void>{
     return new Promise<void>((resolve, reject) => {
       this.db = new Database(sqlite_path, (err) => {
 
@@ -81,4 +81,36 @@ export class CDClient {
       })
     })
   }
+  async getRarityTableFromIndex(rti:number){
+    return new Promise<RarityTable[]>((resolve, reject) => {
+      this.db.all(`SELECT randmax, rarity FROM RarityTable WHERE RarityTableIndex=${rti}`, function(_, rows:RarityTable[]){
+        resolve(rows)
+      })
+    })
+  }
+  async getPercentToDropRarity(rti:number, rarity:number){
+    return new Promise<number>((resolve, reject) => {
+      this.db.get(`SELECT randmax FROM RarityTable WHERE rarity=${rarity} AND RarityTableIndex=${rti}`, function(_, row:RarityTable){
+        resolve(row.randmax)
+      })
+    })
+  }
+  async addDestructibleComponentToLootMatrix(lmi:LootMatrix){
+    return new Promise<any>((resolve, reject) => {
+      this.db.all(`SELECT id FROM DestructibleComponent WHERE LootMatrixIndex=${lmi.LootMatrixIndex}`, function(_, rows:DestructibleComponent[]){
+        resolve({
+          ...lmi,
+          destructibleComponent: rows.map((e) => e.id)
+        })
+      })
+    })
+  }
+  async getItemRarity(item_component:number){
+    return new Promise<number>((resolve, reject) => {
+      this.db.get(`SELECT rarity FROM ItemComponent WHERE id=${item_component}`, function(_, row:ItemComponent){
+        resolve(row.rarity)
+      })
+    })
+  }
+
 }

@@ -1,10 +1,18 @@
 import { AutocompleteInteraction, Client, CommandInteraction, CommandInteractionOption, CommandInteractionOptionResolver, Interaction } from "discord.js"
 import { CDClient } from "./cdclient";
-import { token } from "./config.json";
+import { token, sqlite_path } from "./config.json";
 import { getSlashCommands, updateSlashCommands } from "./setup";
+import { Database } from "sqlite3";
 
+// const db = new Database(sqlite_path, (err) => {
+
+//   if (err) {
+//     console.error('Please provide a path to the cdclient.sqlite in config.json.')
+//   }else{
+//     console.log(`Connected to '${sqlite_path}' as 'cdclient.sqlite'.`)
+//   }
+// })
 const cdclient = new CDClient();
-
 const client = new Client({
   intents: []
 })
@@ -13,9 +21,11 @@ var slashCommands:Map<string, Function> = getSlashCommands();
 
 client.once("ready", async () => {
   console.log("\n------------------------------------\n");
+
+
   await cdclient.load()
   // updateSlashCommands(client);
-  await cdclient.getComponents(13569);
+  // cdclient.queries.run(13569);
   console.log("\n------------------------------------\n");
   console.log("LEGO Universe Discord Bot is online.");
   // process.exit(0)
