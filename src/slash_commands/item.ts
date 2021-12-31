@@ -1,17 +1,11 @@
-// import { Client } from "discord.js";
+import { CommandInteraction, CommandInteractionOption } from "discord.js";
+import { CDClient } from "../cdclient";
 
-// // async function run(client: Client, ): void{
-
-// // }
-
-// // export run
-// module.exports = async (client:Client) => {
-  
-// }
-// export default async function name(params:type) {
-
-// }
-export default function() {
+export default async function(interaction:CommandInteraction, options: readonly CommandInteractionOption[], cdclient: CDClient) {
   console.log("item");
 
+  interaction.reply({
+    content: "```json\n"+JSON.stringify(await cdclient.getComponents(parseInt(options[0].value.toString())),null,2)+"\n```",
+    ephemeral: true
+  })
 }
