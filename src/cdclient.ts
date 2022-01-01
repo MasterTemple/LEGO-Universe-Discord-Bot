@@ -76,6 +76,23 @@ export class CDClient {
       })
     })
   }
+  async getLocaleName(id:number){
+    return new Promise<string>((resolve, reject) => {
+      // this.db.get(`SELECT name FROM Objects WHERE id=${id}`, function(_, row:Objects){
+      //   resolve(row?.displayName || row?.name)
+      // })
+      this.db.get(`SELECT value FROM locale WHERE key="Objects_${id}_name"`, async(_, row:locale) => {
+        // console.log(`Objects_${id}_name: ${row.value}`);
+        resolve(row?.value)
+        // if(row){
+        //   resolve(row.value)
+        // }else{
+        //   let name = await this.getObjectNameFromDB(id)
+        //   resolve(name)
+        // }
+      })
+    })
+  }
   async getObjectElement(id:number):Promise<ObjectElement>{
     return new Promise<ObjectElement>((resolve, reject) => {
       this.db.get(`SELECT value FROM locale WHERE key="Objects_${id}_name"`, async(_, row:locale) => {

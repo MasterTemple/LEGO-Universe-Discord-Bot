@@ -3,6 +3,7 @@ import { CDClient } from "../cdclient";
 import { ComponentsRegistry } from "../cdclient_interfaces";
 import { ItemStats, Skill, ItemComponent, ItemDrop, ObjectElement, EquipLocation, ItemPrecondition } from "../lu_interfaces"
 import { RENDER_COMPONENT, DESTRUCTIBLE_COMPONENT, ITEM_COMPONENT, VENDOR_COMPONENT, PACKAGE_COMPONENT} from "../cdclient"
+import { explorer_domain } from "../config.json"
 
 export class Item extends CDClient{
   db:Database;
@@ -34,6 +35,9 @@ export class Item extends CDClient{
         resolve()
       })
   }
+  getURL():string{
+    return `${explorer_domain}/objects/${this.id}`
+  }
   async getRarityChance(drop:ItemDrop):Promise<number>{
     return new Promise<number>(async(resolve, reject) => {
       let thisRarity = await this.getPercentToDropRarity(drop.RarityTableIndex, this.item_component.rarity)
@@ -64,7 +68,7 @@ export class Item extends CDClient{
         // let arr:Promise<number>[] = drop.destructibleComponents
         drop.rarityChance = await this.getRarityChance(drop)
         drop.destructibleIds = this.removeUndefined(await Promise.all(drop.destructibleComponents.map(comp => this.getIdFromDestructibleComponent(comp))))
-        drop.destructibleNames = await Promise.all(drop.destructibleIds.map(id => this.getObjectName(id)))
+        drop.destructibleNames = (await Promise.all(drop.destructibleIds.map(id => this.getLocaleName(id)))).filter(name => name !== undefined)
         drop.itemsInLootTable = await this.getItemsInLootTableOfRarity(drop.LootTableIndex, this.item_component.rarity)
         if(drop.itemsInLootTable === 0 || drop.rarityChance === 0){
           drop.totalChance = 0
@@ -75,6 +79,7 @@ export class Item extends CDClient{
         // console.log({drop});
 
       }
+      this.drop = this.drop.sort((a, b) => b.totalChance-a.totalChance)
       resolve()
 
     })
