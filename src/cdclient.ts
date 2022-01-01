@@ -1,6 +1,12 @@
 import { Database } from "sqlite3";
-import { ComponentsRegistry, DestructibleComponent, ItemComponent, LootMatrix, LootTable, Objects, RarityTable } from "./cdclient_interfaces";
+import { ComponentsRegistry, DestructibleComponent, ItemComponent, LootMatrix, LootTable, Objects, PackageComponent, RarityTable } from "./cdclient_interfaces";
 import { sqlite_path } from "./config.json";
+import { locale } from "./lu_interfaces";
+export const RENDER_COMPONENT = 2
+export const DESTRUCTIBLE_COMPONENT = 7
+export const ITEM_COMPONENT = 11
+export const VENDOR_COMPONENT = 16
+export const PACKAGE_COMPONENT = 53
 
 export class CDClient {
   db: Database;
@@ -14,7 +20,7 @@ export class CDClient {
         if (err) {
           console.error('Please provide a path to the cdclient.sqlite in config.json.')
         }else{
-          console.log(`Connected to '${sqlite_path}' as 'cdclient.sqlite'.`)
+          // console.log(`Connected to '${sqlite_path}' as 'cdclient.sqlite'.`)
           resolve()
         }
 
@@ -40,7 +46,15 @@ export class CDClient {
   }
   async getIdFromDestructibleComponent(comp_id:number){
     return new Promise<number>((resolve, reject) => {
-      this.db.get(`SELECT id FROM ComponentsRegistry WHERE component_type=7 AND component_id=${comp_id}`, function(_, row:ComponentsRegistry){
+      this.db.get(`SELECT id FROM ComponentsRegistry WHERE component_type=${DESTRUCTIBLE_COMPONENT} AND component_id=${comp_id}`, function(_, row:ComponentsRegistry){
+        // if(!row) resolve()
+        resolve(row?.id)
+      })
+    })
+  }
+  async getIdFromPackageComponent(comp_id:number){
+    return new Promise<number>((resolve, reject) => {
+      this.db.get(`SELECT id FROM ComponentsRegistry WHERE component_type=${PACKAGE_COMPONENT} AND component_id=${comp_id}`, function(_, row:ComponentsRegistry){
         // if(!row) resolve()
         resolve(row?.id)
       })
@@ -48,8 +62,11 @@ export class CDClient {
   }
   async getObjectName(id:number){
     return new Promise<string>((resolve, reject) => {
-      this.db.get(`SELECT name FROM Objects WHERE id=${id}`, function(_, row:Objects){
-        resolve(row?.displayName || row?.name)
+      // this.db.get(`SELECT name FROM Objects WHERE id=${id}`, function(_, row:Objects){
+      //   resolve(row?.displayName || row?.name)
+      // })
+      this.db.get(`SELECT key FROM locale WHERE key="Objects_${id}_name"`, function(_, row:locale){
+        resolve(row.value)
       })
     })
   }
@@ -77,6 +94,13 @@ export class CDClient {
   async getDestructibleComponentsFromLootMatrix(lmi:number){
     return new Promise<number[]>((resolve, reject) => {
       this.db.all(`SELECT id FROM DestructibleComponent WHERE LootMatrixIndex=${lmi}`, function(_, rows:DestructibleComponent[]){
+        resolve(rows.map((e) => e.id))
+      })
+    })
+  }
+  async getPackageComponentsFromLootMatrix(lmi:number){
+    return new Promise<number[]>((resolve, reject) => {
+      this.db.all(`SELECT id FROM PackageComponent WHERE LootMatrixIndex=${lmi}`, function(_, rows:PackageComponent[]){
         resolve(rows.map((e) => e.id))
       })
     })
@@ -112,5 +136,11 @@ export class CDClient {
       })
     })
   }
-
+  async getItemComponent(item_component:number):Promise<ItemComponent>{
+    return new Promise<ItemComponent>((resolve, reject) => {
+      this.db.get(`SELECT * FROM ItemComponent WHERE id=${item_component}`, function(_, row:ItemComponent){
+        resolve(row)
+      })
+    })
+  }
 }

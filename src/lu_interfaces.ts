@@ -1,3 +1,8 @@
+export interface locale {
+  key:string;
+  value:string;
+}
+
 export interface ItemStats {
   armor:number;
   health:number;
@@ -26,12 +31,12 @@ export interface ItemPrecondition {
   description:string;
 }
 
-type EquipLocation = "Head" | "Chest" | "Legs" | "Right Hand" | "Left Hand" | "Armor" | "Consumable"
+export type EquipLocation = "Head" | "Chest" | "Legs" | "Right Hand" | "Left Hand" | "Armor" | "Consumable" | "Unknown"
 
 export interface ItemComponent {
   proxy_items:ObjectElement[];
   equip_locations:EquipLocation[];
-  sell_price:number;
+  buy_price:number;
   rarity:number;
   stack_size:number;
   color:number;
@@ -42,9 +47,23 @@ export interface ItemComponent {
   alternate_currency_name: string;
   commendation_currency_id:number;
   commendation_currency_cost:number;
-  commendation_currencynamet:string;
+  commendation_currencyname:string;
   is_weapon:boolean;
   level_requirement:number;
+}
+
+export interface ItemDrop {
+  LootMatrixIndex:number;
+  RarityTableIndex:number;
+  percent:number;
+  minToDrop:number;
+  maxToDrop:number;
+  destructibleComponents:number[];
+  destructibleIds:number[];
+  destructibleNames:string[];
+  packageComponents:number[];
+  packageIds:number[];
+  packageNames:string[];
 }
 
 export interface MissionReward {

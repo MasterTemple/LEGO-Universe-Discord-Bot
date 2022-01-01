@@ -3,6 +3,7 @@ import { CDClient } from "./cdclient";
 import { token, sqlite_path } from "./config.json";
 import { getSlashCommands, updateSlashCommands } from "./setup";
 import { Database } from "sqlite3";
+import { LocaleXML } from "./locale";
 
 // const db = new Database(sqlite_path, (err) => {
 
@@ -22,7 +23,8 @@ var slashCommands:Map<string, Function> = getSlashCommands();
 client.once("ready", async () => {
   console.log("\n------------------------------------\n");
 
-
+  let locale = new LocaleXML()
+  await locale.updateIfChanged()
   await cdclient.load()
   // updateSlashCommands(client);
   // cdclient.queries.run(13569);
