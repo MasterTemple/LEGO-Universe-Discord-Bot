@@ -1,7 +1,7 @@
 import { Database } from "sqlite3";
 import { ComponentsRegistry, DestructibleComponent, ItemComponent, LootMatrix, LootTable, Objects, PackageComponent, RarityTable } from "./cdclient_interfaces";
 import { sqlite_path } from "./config.json";
-import { locale } from "./lu_interfaces";
+import { locale, ObjectElement } from "./lu_interfaces";
 export const RENDER_COMPONENT = 2
 export const DESTRUCTIBLE_COMPONENT = 7
 export const ITEM_COMPONENT = 11
@@ -27,26 +27,16 @@ export class CDClient {
       })
     })
   }
-  async test(){
-    return new Promise<void>((resolve, reject) => {
-
-      this.db.get("SELECT * FROM Objects WHERE id=7415", function (_, row:Objects){
-        console.log(row);
-        resolve()
-      })
-
-    })
-  }
   async getComponents(id:number){
     return new Promise<ComponentsRegistry[]>((resolve, reject) => {
-      this.db.all(`SELECT component_type, component_id FROM ComponentsRegistry WHERE id=${id}`, function(_, rows:ComponentsRegistry[]){
+      this.db.all(`SELECT component_type, component_id FROM ComponentsRegistry WHERE id=${id}`, (_,   rows:ComponentsRegistry[])=>{
         resolve(rows)
       })
     })
   }
   async getIdFromDestructibleComponent(comp_id:number){
     return new Promise<number>((resolve, reject) => {
-      this.db.get(`SELECT id FROM ComponentsRegistry WHERE component_type=${DESTRUCTIBLE_COMPONENT} AND component_id=${comp_id}`, function(_, row:ComponentsRegistry){
+      this.db.get(`SELECT id FROM ComponentsRegistry WHERE component_type=${DESTRUCTIBLE_COMPONENT} AND component_id=${comp_id}`, (_, row:ComponentsRegistry) => {
         // if(!row) resolve()
         resolve(row?.id)
       })
@@ -54,9 +44,16 @@ export class CDClient {
   }
   async getIdFromPackageComponent(comp_id:number){
     return new Promise<number>((resolve, reject) => {
-      this.db.get(`SELECT id FROM ComponentsRegistry WHERE component_type=${PACKAGE_COMPONENT} AND component_id=${comp_id}`, function(_, row:ComponentsRegistry){
+      this.db.get(`SELECT id FROM ComponentsRegistry WHERE component_type=${PACKAGE_COMPONENT} AND component_id=${comp_id}`, (_, row:ComponentsRegistry) => {
         // if(!row) resolve()
         resolve(row?.id)
+      })
+    })
+  }
+  async getObjectNameFromDB(id:number){
+    return new Promise<string>((resolve, reject) => {
+      this.db.get(`SELECT name FROM Objects WHERE id=${id}`, (_, row:Objects) => {
+        resolve(row?.displayName || row?.name)
       })
     })
   }
@@ -65,8 +62,28 @@ export class CDClient {
       // this.db.get(`SELECT name FROM Objects WHERE id=${id}`, function(_, row:Objects){
       //   resolve(row?.displayName || row?.name)
       // })
-      this.db.get(`SELECT key FROM locale WHERE key="Objects_${id}_name"`, function(_, row:locale){
-        resolve(row.value)
+      this.db.get(`SELECT value FROM locale WHERE key="Objects_${id}_name"`, async(_, row:locale) => {
+        // console.log(`Objects_${id}_name: ${row.value}`);
+        if(row){
+          resolve(row.value)
+        }else{
+          let name = await this.getObjectNameFromDB(id)
+          resolve(name)
+        }
+      })
+    })
+  }
+  async getObjectElement(id:number):Promise<ObjectElement>{
+    return new Promise<ObjectElement>((resolve, reject) => {
+      this.db.get(`SELECT value FROM locale WHERE key="Objects_${id}_name"`, async(_, row:locale) => {
+        let name = row?.value
+        if(!name){
+          name = await this.getObjectNameFromDB(id)
+        }
+        resolve({
+          id:id,
+          name: name
+        })
       })
     })
   }
@@ -133,6 +150,13 @@ export class CDClient {
     return new Promise<number>((resolve, reject) => {
       this.db.get(`SELECT rarity FROM ItemComponent WHERE id=${item_component}`, function(_, row:ItemComponent){
         resolve(row.rarity)
+      })
+    })
+  }
+  async getEquipLocationFromCompId(item_component:number):Promise<string>{
+    return new Promise<string>((resolve, reject) => {
+      this.db.get(`SELECT equipLocation FROM ItemComponent WHERE id=${item_component}`, function(_, row:ItemComponent){
+        resolve(row.equipLocation)
       })
     })
   }

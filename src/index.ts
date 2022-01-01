@@ -26,8 +26,7 @@ client.once("ready", async () => {
   let locale = new LocaleXML()
   await locale.updateIfChanged()
   await cdclient.load()
-  // updateSlashCommands(client);
-  // cdclient.queries.run(13569);
+  // updateSlashCommands(client)
   console.log("\n------------------------------------\n");
   console.log("LEGO Universe Discord Bot is online.");
   // process.exit(0)

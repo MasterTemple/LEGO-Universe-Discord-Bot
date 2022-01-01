@@ -47,7 +47,7 @@ export interface ItemComponent {
   alternate_currency_name: string;
   commendation_currency_id:number;
   commendation_currency_cost:number;
-  commendation_currencyname:string;
+  commendation_currency_name:string;
   is_weapon:boolean;
   level_requirement:number;
 }

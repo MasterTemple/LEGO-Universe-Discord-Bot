@@ -64,13 +64,17 @@ export class LocaleXML {
       // console.log({date_modified, locale_last_updated});
       if(date_modified === locale_last_updated){
         resolve()
-        console.log("No updates required.");
+        console.log("No updates required for 'locale.xml'.");
 
       }else{
         console.log("Updating cdclient.sqlite from 'locale.xml'.");
 
         await this.load()
-
+        // locale_last_updated = date_modified
+        let config = require('./config.json')
+        config.locale_last_updated = date_modified
+        writeFile("./src/config.json", JSON.stringify(config, null, 2))
+        writeFile("./bin/config.json", JSON.stringify(config, null, 2))
         resolve()
       }
     })
