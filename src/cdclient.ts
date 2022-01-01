@@ -1,7 +1,7 @@
 import { Database } from "sqlite3";
 import { ComponentsRegistry, DestructibleComponent, ItemComponent, LootMatrix, LootTable, Objects, PackageComponent, RarityTable } from "./cdclient_interfaces";
 import { sqlite_path } from "./config.json";
-import { locale, ObjectElement } from "./lu_interfaces";
+import { ItemDrop, locale, ObjectElement } from "./lu_interfaces";
 export const RENDER_COMPONENT = 2
 export const DESTRUCTIBLE_COMPONENT = 7
 export const ITEM_COMPONENT = 11
@@ -12,7 +12,9 @@ export class CDClient {
   db: Database;
   constructor(){
   }
-
+  removeUndefined(array:any[]){
+    return array.filter((element) => element !== undefined)
+  }
   async load():Promise<void>{
     return new Promise<void>((resolve, reject) => {
       this.db = new Database(sqlite_path, (err) => {
@@ -34,6 +36,7 @@ export class CDClient {
       })
     })
   }
+
   async getIdFromDestructibleComponent(comp_id:number){
     return new Promise<number>((resolve, reject) => {
       this.db.get(`SELECT id FROM ComponentsRegistry WHERE component_type=${DESTRUCTIBLE_COMPONENT} AND component_id=${comp_id}`, (_, row:ComponentsRegistry) => {
@@ -103,7 +106,7 @@ export class CDClient {
   }
   async getLootMatricesFromLootTables(ltis:number[]){
     return new Promise<LootMatrix[]>((resolve, reject) => {
-      this.db.all(`SELECT LootMatrixIndex, RarityTableIndex, percent, minToDrop, maxToDrop FROM LootMatrix WHERE LootTableIndex in (${ltis.join(",")})`, function(_, rows:LootMatrix[]){
+      this.db.all(`SELECT LootMatrixIndex, LootTableIndex, RarityTableIndex, percent, minToDrop, maxToDrop FROM LootMatrix WHERE LootTableIndex in (${ltis.join(",")})`, function(_, rows:LootMatrix[]){
         resolve(rows)
       })
     })
@@ -124,7 +127,7 @@ export class CDClient {
   }
   async getRarityTableFromIndex(rti:number){
     return new Promise<RarityTable[]>((resolve, reject) => {
-      this.db.all(`SELECT randmax, rarity FROM RarityTable WHERE RarityTableIndex=${rti}`, function(_, rows:RarityTable[]){
+      this.db.all(`SELECT randmax, rarity FROM RarityTable WHERE RarityTableIndex=${rti} ORDER BY rarity ASC`, function(_, rows:RarityTable[]){
         resolve(rows)
       })
     })
@@ -132,17 +135,31 @@ export class CDClient {
   async getPercentToDropRarity(rti:number, rarity:number){
     return new Promise<number>((resolve, reject) => {
       this.db.get(`SELECT randmax FROM RarityTable WHERE rarity=${rarity} AND RarityTableIndex=${rti}`, function(_, row:RarityTable){
-        resolve(row.randmax)
+        resolve(row?.randmax || 0)
       })
     })
   }
-  async addDestructibleComponentToLootMatrix(lmi:LootMatrix){
-    return new Promise<any>((resolve, reject) => {
+  async addDestructibleComponentToLootMatrix(lmi:LootMatrix):Promise<ItemDrop>{
+    return new Promise<ItemDrop>((resolve, reject) => {
       this.db.all(`SELECT id FROM DestructibleComponent WHERE LootMatrixIndex=${lmi.LootMatrixIndex}`, function(_, rows:DestructibleComponent[]){
-        resolve({
+        // resolve({
+        //   ...lmi,
+        //   destructibleComponent: rows.map((e) => e.id)
+        // })
+        let item_drop:ItemDrop = {
           ...lmi,
-          destructibleComponent: rows.map((e) => e.id)
-        })
+          rarityChance: 0,
+          itemsInLootTable: 0,
+          destructibleComponents: rows.map((e) => e.id),
+          destructibleIds: [],
+          destructibleNames: [],
+          packageComponents: [],
+          packageIds: [],
+          packageNames: [],
+          totalChance:0
+        }
+
+        resolve(item_drop)
       })
     })
   }
@@ -167,4 +184,19 @@ export class CDClient {
       })
     })
   }
+  async getItemsInLootTable(loot_table:number):Promise<number[]>{
+    return new Promise<number[]>((resolve, reject) => {
+      this.db.all(`SELECT itemid FROM LootTable WHERE LootTableIndex=${loot_table}`, (_,   rows:LootTable[])=>{
+        resolve(rows.map(e => e.itemid))
+      })
+    })
+  }
+  async getItemComponentId(id:number):Promise<number>{
+    return new Promise<number>((resolve, reject) => {
+      this.db.get(`SELECT component_id FROM ComponentsRegistry WHERE component_type=${ITEM_COMPONENT} AND id=${id}`, (_,   row:ComponentsRegistry)=>{
+        resolve(row.component_id)
+      })
+    })
+  }
 }
+

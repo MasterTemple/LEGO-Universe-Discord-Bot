@@ -1,3 +1,5 @@
+import { RarityTable } from "./cdclient_interfaces";
+
 export interface locale {
   key:string;
   value:string;
@@ -53,8 +55,11 @@ export interface ItemComponent {
 }
 
 export interface ItemDrop {
+  LootTableIndex:number;
   LootMatrixIndex:number;
   RarityTableIndex:number;
+  rarityChance:number;
+  itemsInLootTable:number;
   percent:number;
   minToDrop:number;
   maxToDrop:number;
@@ -64,6 +69,7 @@ export interface ItemDrop {
   packageComponents:number[];
   packageIds:number[];
   packageNames:string[];
+  totalChance:number;
 }
 
 export interface MissionReward {

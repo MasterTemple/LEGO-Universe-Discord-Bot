@@ -1,4 +1,4 @@
-import { CommandInteraction, CommandInteractionOption } from "discord.js";
+import { CommandInteraction, CommandInteractionOption, MessageEmbed } from "discord.js";
 import { CDClient } from "../cdclient";
 import { Item } from "../classes/item";
 // interface ItemDrop {
@@ -9,6 +9,7 @@ export default async function(interaction:CommandInteraction, options: readonly 
   console.log("drop");
   let item = new Item(cdclient.db, parseInt(options[0].value.toString()))
   await item.create()
+  // console.log({item});
 
   // let id = parseInt(options[0].value.toString());
   // let components = await cdclient.getComponents(id)
@@ -71,9 +72,14 @@ export default async function(interaction:CommandInteraction, options: readonly 
   // let names = await Promise.all(smashableIds.map((id) => cdclient.getObjectName(id)))
   // console.log("🚀 ~ file: drop.ts ~ line 26 ~ function ~ names", names)
 
+  // let embed:MessageEmbed = new MessageEmbed()
+  // embed.setDescription("```json\n"+JSON.stringify(item,null,2)+"\n```")
+  // console.log(item);
 
   interaction.reply({
-    content: "```json\n"+JSON.stringify(item,null,2)+"\n```",
+    content: `${item.name} [[${item.id}]](https://explorer.lu-dev.net/objects/${item.id})`,
+    // content: "```json\n"+JSON.stringify(item,null,2)+"\n```",
+    // embeds: [embed],
     ephemeral: true
   })
 }
