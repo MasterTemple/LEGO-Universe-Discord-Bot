@@ -1,7 +1,7 @@
 import { locale_path } from "./config.json"
 import { existsSync } from "fs"
 import { readFile } from "fs/promises"
-import { DOMParserImpl as dom } from 'xmldom-ts';
+import { DOMParser as dom } from 'xmldom';
 import * as xpath from 'xpath-ts';
 
   export class LocaleXML {
