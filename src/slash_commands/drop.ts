@@ -6,7 +6,7 @@ import { Item } from "../classes/item";
 // }
 
 export default async function(interaction:CommandInteraction, options: readonly CommandInteractionOption[], cdclient: CDClient) {
-  console.log("drop");
+  console.log("/drop");
   let item = new Item(cdclient.db, parseInt(options[0].value.toString()))
   await item.create()
   console.log({item});
@@ -15,7 +15,7 @@ export default async function(interaction:CommandInteraction, options: readonly 
   embed.setURL(item.getURL())
   let c = 1
   item.drop.forEach((each_drop) => {
-    if(each_drop.destructibleNames.length > 0){
+    if(each_drop.enemies.length > 0){
       // embed.addField(`${c}. ${each_drop.destructibleNames.join(", ")}`, `1/${Math.round(1/each_drop.totalChance)}`)
       let range:string;
       if(each_drop.minToDrop === each_drop.maxToDrop){
@@ -23,7 +23,7 @@ export default async function(interaction:CommandInteraction, options: readonly 
       }else{
         range = `${each_drop.minToDrop}-${each_drop.maxToDrop}`
       }
-      embed.addField(`${c++}. 1/${Math.round(1/each_drop.totalChance)} for ${range} ${item.name}`, `From ${each_drop.destructibleNames.join(", ")}`)
+      embed.addField(`${c++}. 1/${Math.round(1/each_drop.totalChance)} for ${range} ${item.name}`, `From ${each_drop.enemies.map(({name, id}) => `${name} [${id}]`).join(", ")}`)
 
     }
   })

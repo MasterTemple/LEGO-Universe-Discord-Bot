@@ -13,6 +13,7 @@ export class CDClient {
   db: Database;
   locale: LocaleXML;
   constructor(){
+    this.locale = new LocaleXML();
   }
   removeUndefined(array:any[]){
     return array.filter((element) => element !== undefined);
@@ -30,10 +31,15 @@ export class CDClient {
     })
   }
   async load():Promise<void>{
-    await this.connectToDB();
-    this.locale = new LocaleXML();
-    await this.locale.load()
+    return new Promise<void>(async(resolve, reject) => {
+      await this.connectToDB();
+      // let locale = new LocaleXML()
+      // await locale.load()
+      // this.locale = locale
+      await this.locale.load()
 
+      resolve()
+    })
   }
   async getComponents(id:number){
     return new Promise<ComponentsRegistry[]>((resolve, reject) => {
@@ -81,6 +87,7 @@ export class CDClient {
 
     })
   }
+
   async getItemLootTables(id:number){
     return new Promise<number[]>((resolve, reject) => {
       this.db.all(`SELECT LootTableIndex FROM LootTable WHERE itemid=${id}`, function(_, rows:LootTable[]){
@@ -142,11 +149,9 @@ export class CDClient {
           rarityChance: 0,
           itemsInLootTable: 0,
           destructibleComponents: rows.map((e) => e.id),
-          destructibleIds: [],
-          destructibleNames: [],
+          enemies: [],
           packageComponents: [],
-          packageIds: [],
-          packageNames: [],
+          packages: [],
           totalChance:0
         }
 

@@ -64,11 +64,9 @@ export interface ItemDrop {
   minToDrop:number;
   maxToDrop:number;
   destructibleComponents:number[];
-  destructibleIds:number[];
-  destructibleNames:string[];
+  enemies:ObjectElement[];
   packageComponents:number[];
-  packageIds:number[];
-  packageNames:string[];
+  packages:ObjectElement[];
   totalChance:number;
 }
 
