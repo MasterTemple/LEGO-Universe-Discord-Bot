@@ -1,11 +1,9 @@
 import { AutocompleteInteraction, Client, CommandInteraction, CommandInteractionOption, CommandInteractionOptionResolver, Interaction } from "discord.js"
 import { CDClient } from "./cdclient";
-import { token, sqlite_path } from "./config.json";
+import { token } from "./config.json";
 import { getSlashCommands, updateSlashCommands } from "./setup";
-import { LocaleXML } from "./locale";
 
 const cdclient = new CDClient();
-const locale = new LocaleXML()
 
 const client = new Client({
   intents: []
@@ -15,7 +13,6 @@ var slashCommands:Map<string, Function> = getSlashCommands();
 
 client.once("ready", async () => {
   console.log("\n------------------------------------\n");
-  await locale.load()
   await cdclient.load()
   // updateSlashCommands(client)
   console.log("\n------------------------------------\n");

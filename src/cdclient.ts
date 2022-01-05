@@ -1,6 +1,7 @@
 import { Database } from "sqlite3";
 import { ComponentsRegistry, DestructibleComponent, ItemComponent, LootMatrix, LootTable, Objects, PackageComponent, RarityTable } from "./cdclient_interfaces";
 import { sqlite_path } from "./config.json";
+import { LocaleXML } from "./locale";
 import { ItemDrop, locale, ObjectElement } from "./lu_interfaces";
 export const RENDER_COMPONENT = 2
 export const DESTRUCTIBLE_COMPONENT = 7
@@ -10,24 +11,29 @@ export const PACKAGE_COMPONENT = 53
 
 export class CDClient {
   db: Database;
+  locale: LocaleXML;
   constructor(){
   }
   removeUndefined(array:any[]){
-    return array.filter((element) => element !== undefined)
+    return array.filter((element) => element !== undefined);
   }
-  async load():Promise<void>{
+  async connectToDB():Promise<void>{
     return new Promise<void>((resolve, reject) => {
       this.db = new Database(sqlite_path, (err) => {
-
         if (err) {
           console.error('Please provide a path to the cdclient.sqlite in config.json.')
+          process.exit(1);
         }else{
-          // console.log(`Connected to '${sqlite_path}' as 'cdclient.sqlite'.`)
           resolve()
         }
-
       })
     })
+  }
+  async load():Promise<void>{
+    await this.connectToDB();
+    this.locale = new LocaleXML();
+    await this.locale.load()
+
   }
   async getComponents(id:number){
     return new Promise<ComponentsRegistry[]>((resolve, reject) => {
@@ -53,58 +59,26 @@ export class CDClient {
       })
     })
   }
-  async getObjectNameFromDB(id:number){
+  private async getObjectNameFromDB(id:number){
     return new Promise<string>((resolve, reject) => {
       this.db.get(`SELECT name FROM Objects WHERE id=${id}`, (_, row:Objects) => {
         resolve(row?.displayName || row?.name)
       })
     })
   }
-  async getObjectName(id:number){
-    return new Promise<string>((resolve, reject) => {
-      // this.db.get(`SELECT name FROM Objects WHERE id=${id}`, function(_, row:Objects){
-      //   resolve(row?.displayName || row?.name)
-      // })
-      this.db.get(`SELECT value FROM locale WHERE key="Objects_${id}_name"`, async(_, row:locale) => {
-        // console.log(`Objects_${id}_name: ${row.value}`);
-        if(row){
-          resolve(row.value)
-        }else{
-          let name = await this.getObjectNameFromDB(id)
-          resolve(name)
-        }
+  async getObjectName(id:number):Promise<ObjectElement>{
+    return new Promise<ObjectElement>(async(resolve, reject) => {
+
+      let name:string;
+      name = await this.locale.getObjectName(id);
+      if(!name){
+        name = await this.getObjectNameFromDB(id)
+      }
+      resolve({
+        id: id,
+        name: name
       })
-    })
-  }
-  async getLocaleName(id:number){
-    return new Promise<string>((resolve, reject) => {
-      // this.db.get(`SELECT name FROM Objects WHERE id=${id}`, function(_, row:Objects){
-      //   resolve(row?.displayName || row?.name)
-      // })
-      this.db.get(`SELECT value FROM locale WHERE key="Objects_${id}_name"`, async(_, row:locale) => {
-        // console.log(`Objects_${id}_name: ${row.value}`);
-        resolve(row?.value)
-        // if(row){
-        //   resolve(row.value)
-        // }else{
-        //   let name = await this.getObjectNameFromDB(id)
-        //   resolve(name)
-        // }
-      })
-    })
-  }
-  async getObjectElement(id:number):Promise<ObjectElement>{
-    return new Promise<ObjectElement>((resolve, reject) => {
-      this.db.get(`SELECT value FROM locale WHERE key="Objects_${id}_name"`, async(_, row:locale) => {
-        let name = row?.value
-        if(!name){
-          name = await this.getObjectNameFromDB(id)
-        }
-        resolve({
-          id:id,
-          name: name
-        })
-      })
+
     })
   }
   async getItemLootTables(id:number){

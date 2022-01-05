@@ -1,4 +1,5 @@
 import { locale_path } from "./config.json"
+import { existsSync } from "fs"
 import { readFile } from "fs/promises"
 import { DOMParserImpl as dom } from 'xmldom-ts';
 import * as xpath from 'xpath-ts';
@@ -8,6 +9,10 @@ export class LocaleXML {
   constructor(){}
   async load():Promise<void>{
     return new Promise<void>(async(resolve, reject) => {
+      if(!existsSync(locale_path)){
+        console.error('Please provide a path to the locale.xml in config.json.');
+        process.exit(1);
+      }
       const xml = (await readFile(locale_path)).toString();
       this.doc = new dom().parseFromString(xml);
     })
