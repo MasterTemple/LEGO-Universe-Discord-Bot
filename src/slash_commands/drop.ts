@@ -11,10 +11,11 @@ export default {
   description: 'Find out what drops this item',
   options: [
     {
-      name: 'id',
-      description: 'The id of the item',
-      type: 'NUMBER',
+      name: 'item',
+      description: 'An item in LEGO Universe.',
+      type: 'STRING',
       required: true,
+      autocomplete: true
     }],
   run: async function(
       interaction:CommandInteraction,

@@ -1,5 +1,6 @@
 import {CommandInteraction, CommandInteractionOption} from 'discord.js';
 import {CDClient} from '../cdclient';
+import { Item } from '../types/Item';
 import {SlashCommand} from '../types/SlashCommand';
 
 export default {
@@ -16,7 +17,9 @@ export default {
       interaction: CommandInteraction,
       options: readonly CommandInteractionOption[],
       cdclient: CDClient) {
-    console.log('item');
+    console.log('/item');
+    const itemId = parseInt(options.find((option) => option.name === 'id').value.toString())
+    const item = new Item(cdclient, itemId);
 
     interaction.reply({
       content: '```json\n' +

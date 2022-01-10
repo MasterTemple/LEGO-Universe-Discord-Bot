@@ -25,6 +25,10 @@ export interface ObjectElement {
   id:number;
   name:string;
 }
+export interface NameValuePair {
+  name: string;
+  value: string;
+}
 
 export interface ItemPrecondition {
   id:number;

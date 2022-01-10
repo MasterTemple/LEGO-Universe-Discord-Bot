@@ -1,3 +1,4 @@
+import { ApplicationCommandAutocompleteOption } from 'discord.js';
 import {Database} from 'sqlite3';
 import {
   ComponentsRegistry,
@@ -10,7 +11,7 @@ import {
   RarityTable} from './cdclientInterfaces';
 import {sqlitePath} from './config.json';
 import {LocaleXML} from './locale';
-import {ItemDrop, ObjectElement} from './luInterfaces';
+import {ItemDrop, NameValuePair, ObjectElement} from './luInterfaces';
 export const RENDER_COMPONENT = 2;
 export const DESTRUCTIBLE_COMPONENT = 7;
 export const ITEM_COMPONENT = 11;
@@ -252,4 +253,20 @@ export class CDClient {
           });
     });
   }
+  async searchObject(query:string):Promise<NameValuePair[]> {
+    return new Promise<NameValuePair[]>((resolve, reject) => {
+      this.db.all(
+          `SELECT id, name, displayName FROM Objects WHERE displayName LIKE '%${query.replace(/\s/g, "%")}%' OR name LIKE '%${query.replace(/\s/g, "%")}%' LIMIT 15`,
+          (_, rows:Objects[]) => {
+            let pairs:NameValuePair[] = rows.map((row:Objects) => {
+              return {
+                name: `${row.displayName || row.name} [${row.id}]`,
+                value: row.id.toString()
+              }
+            })
+            resolve(pairs)
+          });
+    });
+  }
+
 }
