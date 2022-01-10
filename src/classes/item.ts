@@ -43,16 +43,11 @@ export class Item extends CDClient {
   }
 
   async getItemsInLootTableOfRarity (lootTable:number, rarity:number):Promise<number> {
-    return new Promise<number>((resolve, reject) => {
-      this.getItemsInLootTable(lootTable).then((itemIds) => {
-        Promise.all(itemIds.map((id) => this.getItemComponentId(id))).then((itemCompIds) => {
-          Promise.all(itemCompIds.map((compId) => this.getItemRarity(compId))).then((rarities) => {
-            rarities = rarities.filter((r) => r === rarity)
-            resolve(rarities.length)
-          })
-        })
-      })
-    })
+    const itemIds = await this.getItemsInLootTable(lootTable)
+    const itemCompIds = await Promise.all(itemIds.map((id) => this.getItemComponentId(id)))
+    let rarities = await Promise.all(itemCompIds.map((compId) => this.getItemRarity(compId)))
+    rarities = rarities.filter((r) => r === rarity)
+    return rarities.length
   }
 
   async addDrops ():Promise<void> {
@@ -75,15 +70,12 @@ export class Item extends CDClient {
   }
 
   async getProxyItemsFromSubItems (subItems:string):Promise<ObjectElement[]> {
-    return new Promise<ObjectElement[]>((resolve, reject) => {
-      if (subItems === null) resolve([])
-      else {
-        const ids:number[] = subItems.match(/\d+/g).map((num:string) => parseInt(num))
-        Promise.all(ids.map((id:number) => this.getObjectName(id))).then((proxies) => {
-          resolve(proxies)
-        })
-      }
-    })
+    if (subItems === null) return []
+    else {
+      const ids:number[] = subItems.match(/\d+/g).map((num:string) => parseInt(num))
+      const proxies:ObjectElement[] = await Promise.all(ids.map((id:number) => this.getObjectName(id)))
+      return proxies
+    }
   }
 
   getEquipLocations (rawLocations:string[]):EquipLocation[] {
@@ -138,36 +130,26 @@ export class Item extends CDClient {
   }
 
   async getPreconditions (preconditionsString:string):Promise<ItemPrecondition[]> {
-    return new Promise<ItemPrecondition[]>((resolve, reject) => {
-      if (preconditionsString === null) resolve([])
-      else {
-        const preconditionIds = preconditionsString.match(/\d+/g).map(n => parseInt(n))
+    if (preconditionsString === null) return []
+    else {
+      const preconditionIds = preconditionsString.match(/\d+/g).map(n => parseInt(n))
 
-        Promise.all(preconditionIds.map((id) => this.addPreconditionDescription(id))).then((preconditions) => {
-          resolve(preconditions)
-        })
-      }
-    })
+      const preconditions = await Promise.all(preconditionIds.map((id) => this.addPreconditionDescription(id)))
+      return preconditions
+    }
   }
 
   async getLevelRequirementFromPreconditions (preconditionsString:string):Promise<number> {
-    return new Promise<number>((resolve, reject) => {
-      const preconditionIds = preconditionsString.split(',').map(p => parseInt(p))
-      this.locale.getLevelRequirement(preconditionIds).then((levelRequirement) => {
-        resolve(levelRequirement)
-      })
-    })
+    const preconditionIds = preconditionsString.split(',').map(p => parseInt(p))
+    const levelRequirement = await this.locale.getLevelRequirement(preconditionIds)
+    return levelRequirement
   }
 
   async getAllEquipLocations (ids:number[]):Promise<string[]> {
-    return new Promise<string[]>((resolve, reject) => {
-      Promise.all(ids.map((id) => this.getComponents(id))).then((components) => {
-        const itemComponents = components.map((comp) => comp.find(c => c.componentType === ITEM_COMPONENT).componentId)
-        Promise.all(itemComponents.map(comp => this.getEquipLocationFromCompId(comp))).then((equipLocations) => {
-          resolve(equipLocations)
-        })
-      })
-    })
+    const components = await Promise.all(ids.map((id) => this.getComponents(id)))
+    const itemComponents = components.map((comp) => comp.find(c => c.componentType === ITEM_COMPONENT).componentId)
+    const equipLocations = await Promise.all(itemComponents.map(comp => this.getEquipLocationFromCompId(comp)))
+    return equipLocations
   }
 
   async addItemComponent ():Promise<void> {
