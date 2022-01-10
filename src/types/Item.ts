@@ -22,10 +22,11 @@ export class Item extends CDClient {
   drop:ItemDrop[];
   // earn
   // buy
-  constructor(db:Database, id:number) {
+  constructor(cdclient:CDClient, id:number) {
     super();
-    this.db = db;
+    this.db = cdclient.db;
     this.id = id;
+    this.locale = cdclient.locale;
   }
 
   async create(): Promise<void> {
@@ -35,8 +36,8 @@ export class Item extends CDClient {
     await this.addDrops();
   }
 
-  getURL():string {
-    return `${explorerDomain}/objects/${this.id}`;
+  getURL(id:number = this.id):string {
+    return `${explorerDomain}/objects/${id}`;
   }
 
   async getRarityChance(drop:ItemDrop):Promise<number> {

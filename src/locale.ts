@@ -16,7 +16,6 @@ export class LocaleXML {
       readFile(localePath).then((fileData) => {
         const xml = fileData.toString();
         this.doc = new DOMParser().parseFromString(xml);
-        console.log(`load(): this.doc="${typeof this.doc}"`);
         resolve();
       });
     });
@@ -25,16 +24,16 @@ export class LocaleXML {
   async getNodeData(phrase:string):Promise<string> {
     return new Promise<string>((resolve, reject) => {
       console.log(`Getting Node Data for phrase: "${phrase}"`);
-      console.log(`getNodeData(): this.doc="${typeof this.doc}"`);
-
       const nodes = xpath.select(`//localization//phrase[@id='${phrase}']//translation[@locale='en_US']`, this.doc);
-      const name = nodes?.[0].firstChild.data;
-      resolve(name || phrase);
+      const name = nodes?.[0]?.firstChild?.data;
+      resolve(name)
+      // resolve(name || phrase);
     });
   }
 
   async getObjectName(id:number):Promise<string> {
     return new Promise<string>((resolve, reject) => {
+      // resolve(undefined)
       this.getNodeData(`Objects_${id}_name`).then((name) => {
         resolve(name);
       });
