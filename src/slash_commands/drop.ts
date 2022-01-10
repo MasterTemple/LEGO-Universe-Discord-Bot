@@ -1,30 +1,29 @@
-import { CommandInteraction, CommandInteractionOption, MessageEmbed } from "discord.js";
-import { CDClient } from "../cdclient";
-import { Item } from "../classes/item";
+import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js'
+import { CDClient } from '../cdclient'
+import { Item } from '../classes/item'
 // interface ItemDrop {
 
 // }
 
-export default async function(interaction:CommandInteraction, options: readonly CommandInteractionOption[], cdclient: CDClient) {
-  console.log("/drop");
-  let item = new Item(cdclient.db, parseInt(options[0].value.toString()))
+export default async function (interaction:CommandInteraction, options: readonly CommandInteractionOption[], cdclient: CDClient) {
+  console.log('/drop')
+  const item = new Item(cdclient.db, parseInt(options[0].value.toString()))
   await item.create()
-  console.log({item});
-  let embed = new MessageEmbed()
+  console.log({ item })
+  const embed = new MessageEmbed()
   embed.setTitle(`${item.name} [${item.id}]`)
   embed.setURL(item.getURL())
   let c = 1
-  item.drop.forEach((each_drop) => {
-    if(each_drop.enemies.length > 0){
-      // embed.addField(`${c}. ${each_drop.destructibleNames.join(", ")}`, `1/${Math.round(1/each_drop.totalChance)}`)
-      let range:string;
-      if(each_drop.minToDrop === each_drop.maxToDrop){
-        range = each_drop.minToDrop.toString()
-      }else{
-        range = `${each_drop.minToDrop}-${each_drop.maxToDrop}`
+  item.drop.forEach((eachDrop) => {
+    if (eachDrop.enemies.length > 0) {
+      // embed.addField(`${c}. ${eachDrop.destructibleNames.join(", ")}`, `1/${Math.round(1/eachDrop.totalChance)}`)
+      let range:string
+      if (eachDrop.minToDrop === eachDrop.maxToDrop) {
+        range = eachDrop.minToDrop.toString()
+      } else {
+        range = `${eachDrop.minToDrop}-${eachDrop.maxToDrop}`
       }
-      embed.addField(`${c++}. 1/${Math.round(1/each_drop.totalChance)} for ${range} ${item.name}`, `From ${each_drop.enemies.map(({name, id}) => `${name} [${id}]`).join(", ")}`)
-
+      embed.addField(`${c++}. 1/${Math.round(1 / eachDrop.totalChance)} for ${range} ${item.name}`, `From ${eachDrop.enemies.map(({ name, id }) => `${name} [${id}]`).join(', ')}`)
     }
   })
 

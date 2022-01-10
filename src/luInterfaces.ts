@@ -1,5 +1,3 @@
-import { RarityTable } from "./cdclient_interfaces";
-
 export interface locale {
   key:string;
   value:string;
@@ -13,14 +11,14 @@ export interface ItemStats {
 
 export interface Skill {
   id:number;
-  behavior_id:number;
-  on_equip:boolean;
-  imagination_cost:number;
-  cooldown_group:number;
-  cooldown_time:number;
-  armor_bonus:number;
-  health_bonus:number;
-  imagination_bonus:number;
+  behaviorId:number;
+  onEquip:boolean;
+  imaginationCost:number;
+  cooldownGroup:number;
+  cooldownTime:number;
+  armorBonus:number;
+  healthBonus:number;
+  imaginationBonus:number;
 }
 
 export interface ObjectElement {
@@ -33,25 +31,25 @@ export interface ItemPrecondition {
   description:string;
 }
 
-export type EquipLocation = "Head" | "Chest" | "Legs" | "Right Hand" | "Left Hand" | "Armor" | "Consumable" | "Unknown"
+export type EquipLocation = 'Head' | 'Chest' | 'Legs' | 'Right Hand' | 'Left Hand' | 'Armor' | 'Consumable' | 'Unknown'
 
 export interface ItemComponent {
-  proxy_items:ObjectElement[];
-  equip_locations:EquipLocation[];
-  buy_price:number;
+  proxyItems:ObjectElement[];
+  equipLocations:EquipLocation[];
+  buyPrice:number;
   rarity:number;
-  stack_size:number;
+  stackSize:number;
   color:number;
   preconditions:ItemPrecondition[];
-  two_handed:boolean;
-  alternate_currency_id:number;
-  alternate_currency_cost: number;
-  alternate_currency_name: string;
-  commendation_currency_id:number;
-  commendation_currency_cost:number;
-  commendation_currency_name:string;
-  is_weapon:boolean;
-  level_requirement:number;
+  twoHanded:boolean;
+  alternateCurrencyId:number;
+  alternateCurrencyCost: number;
+  alternateCurrencyName: string;
+  commendationCurrencyId:number;
+  commendationCurrencyCost:number;
+  commendationCurrencyName:string;
+  isWeapon:boolean;
+  levelRequirement:number;
 }
 
 export interface ItemDrop {

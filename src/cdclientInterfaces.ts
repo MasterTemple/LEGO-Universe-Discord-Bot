@@ -10,12 +10,12 @@ export interface AICombatRoles {
 export interface AccessoryDefaultLoc {
   GroupID: number;
   Description: string;
-  Pos_X: number;
-  Pos_Y: number;
-  Pos_Z: number;
-  Rot_X: number;
-  Rot_Y: number;
-  Rot_Z: number;
+  PosX: number;
+  PosY: number;
+  PosZ: number;
+  RotX: number;
+  RotY: number;
+  RotZ: number;
 }
 
 export interface Activities {
@@ -35,7 +35,7 @@ export interface Activities {
   optionalCostCount: number;
   showUIRewards: boolean;
   CommunityActivityFlagID: number;
-  gate_version: string;
+  gateVersion: string;
   noTeamLootOnDeath: boolean;
   optionalPercentage: number;
 }
@@ -55,7 +55,7 @@ export interface ActivityText {
   type: string;
   localize: boolean;
   locStatus: number;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface AnimationIndex {
@@ -66,16 +66,16 @@ export interface AnimationIndex {
 
 export interface Animations {
   animationGroupID: number;
-  animation_type: string;
-  animation_name: string;
-  chance_to_play: number;
-  min_loops: number;
-  max_loops: number;
-  animation_length: number;
+  animationType: string;
+  animationName: string;
+  chanceToPlay: number;
+  minLoops: number;
+  maxLoops: number;
+  animationLength: number;
   hideEquip: boolean;
   ignoreUpperBody: boolean;
   restartable: boolean;
-  face_animation_name: string;
+  faceAnimationName: string;
   priority: number;
   blendTime: number;
 }
@@ -203,66 +203,66 @@ export interface BuffParameters {
 }
 
 export interface Camera {
-  camera_name: string;
-  pitch_angle_tolerance: number;
-  starting_zoom: number;
-  zoom_return_modifier: number;
-  pitch_return_modifier: number;
-  tether_out_return_modifier: number;
-  tether_in_return_multiplier: number;
-  verticle_movement_dampening_modifier: number;
-  return_from_incline_modifier: number;
-  horizontal_return_modifier: number;
-  yaw_behavior_speed_multiplier: number;
-  camera_collision_padding: number;
-  glide_speed: number;
-  fade_player_min_range: number;
-  min_movement_delta_tolerance: number;
-  min_glide_distance_tolerance: number;
-  look_forward_offset: number;
-  look_up_offset: number;
-  minimum_vertical_dampening_distance: number;
-  maximum_vertical_dampening_distance: number;
-  minimum_ignore_jump_distance: number;
-  maximum_ignore_jump_distance: number;
-  maximum_auto_glide_angle: number;
-  minimum_tether_glide_distance: number;
-  yaw_sign_correction: number;
-  set_1_look_forward_offset: number;
-  set_1_look_up_offset: number;
-  set_2_look_forward_offset: number;
-  set_2_look_up_offset: number;
-  set_0_speed_influence_on_dir: number;
-  set_1_speed_influence_on_dir: number;
-  set_2_speed_influence_on_dir: number;
-  set_0_angular_relaxation: number;
-  set_1_angular_relaxation: number;
-  set_2_angular_relaxation: number;
-  set_0_position_up_offset: number;
-  set_1_position_up_offset: number;
-  set_2_position_up_offset: number;
-  set_0_position_forward_offset: number;
-  set_1_position_forward_offset: number;
-  set_2_position_forward_offset: number;
-  set_0_FOV: number;
-  set_1_FOV: number;
-  set_2_FOV: number;
-  set_0_max_yaw_angle: number;
-  set_1_max_yaw_angle: number;
-  set_2_max_yaw_angle: number;
-  set_1_fade_in_camera_set_change: number;
-  set_1_fade_out_camera_set_change: number;
-  set_2_fade_in_camera_set_change: number;
-  set_2_fade_out_camera_set_change: number;
-  input_movement_scalar: number;
-  input_rotation_scalar: number;
-  input_zoom_scalar: number;
-  minimum_pitch_desired: number;
-  maximum_pitch_desired: number;
-  minimum_zoom: number;
-  maximum_zoom: number;
-  horizontal_rotate_tolerance: number;
-  horizontal_rotate_modifier: number;
+  cameraName: string;
+  pitchAngleTolerance: number;
+  startingZoom: number;
+  zoomReturnModifier: number;
+  pitchReturnModifier: number;
+  tetherOutReturnModifier: number;
+  tetherInReturnMultiplier: number;
+  verticleMovementDampeningModifier: number;
+  returnFromInclineModifier: number;
+  horizontalReturnModifier: number;
+  yawBehaviorSpeedMultiplier: number;
+  cameraCollisionPadding: number;
+  glideSpeed: number;
+  fadePlayerMinRange: number;
+  minMovementDeltaTolerance: number;
+  minGlideDistanceTolerance: number;
+  lookForwardOffset: number;
+  lookUpOffset: number;
+  minimumVerticalDampeningDistance: number;
+  maximumVerticalDampeningDistance: number;
+  minimumIgnoreJumpDistance: number;
+  maximumIgnoreJumpDistance: number;
+  maximumAutoGlideAngle: number;
+  minimumTetherGlideDistance: number;
+  yawSignCorrection: number;
+  set1LookForwardOffset: number;
+  set1LookUpOffset: number;
+  set2LookForwardOffset: number;
+  set2LookUpOffset: number;
+  set0SpeedInfluenceOnDir: number;
+  set1SpeedInfluenceOnDir: number;
+  set2SpeedInfluenceOnDir: number;
+  set0AngularRelaxation: number;
+  set1AngularRelaxation: number;
+  set2AngularRelaxation: number;
+  set0PositionUpOffset: number;
+  set1PositionUpOffset: number;
+  set2PositionUpOffset: number;
+  set0PositionForwardOffset: number;
+  set1PositionForwardOffset: number;
+  set2PositionForwardOffset: number;
+  set0FOV: number;
+  set1FOV: number;
+  set2FOV: number;
+  set0MaxYawAngle: number;
+  set1MaxYawAngle: number;
+  set2MaxYawAngle: number;
+  set1FadeInCameraSetChange: number;
+  set1FadeOutCameraSetChange: number;
+  set2FadeInCameraSetChange: number;
+  set2FadeOutCameraSetChange: number;
+  inputMovementScalar: number;
+  inputRotationScalar: number;
+  inputZoomScalar: number;
+  minimumPitchDesired: number;
+  maximumPitchDesired: number;
+  minimumZoom: number;
+  maximumZoom: number;
+  horizontalRotateTolerance: number;
+  horizontalRotateModifier: number;
 }
 
 export interface CelebrationParameters {
@@ -306,41 +306,41 @@ export interface ChoiceBuildComponent {
 
 export interface CollectibleComponent {
   id: number;
-  requirement_mission: number;
+  requirementMission: number;
 }
 
 export interface ComponentsRegistry {
   id: number;
-  component_type: number;
-  component_id: number;
+  componentType: number;
+  componentId: number;
 }
 
 export interface ControlSchemes {
-  control_scheme: number;
-  scheme_name: string;
-  rotation_speed: number;
-  walk_forward_speed: number;
-  walk_backward_speed: number;
-  walk_strafe_speed: number;
-  walk_strafe_forward_speed: number;
-  walk_strafe_backward_speed: number;
-  run_backward_speed: number;
-  run_strafe_speed: number;
-  run_strafe_forward_speed: number;
-  run_strafe_backward_speed: number;
-  keyboard_zoom_sensitivity: number;
-  keyboard_pitch_sensitivity: number;
-  keyboard_yaw_sensitivity: number;
-  mouse_zoom_wheel_sensitivity: number;
-  x_mouse_move_sensitivity_modifier: number;
-  y_mouse_move_sensitivity_modifier: number;
-  freecam_speed_modifier: number;
-  freecam_slow_speed_multiplier: number;
-  freecam_fast_speed_multiplier: number;
-  freecam_mouse_modifier: number;
-  gamepad_pitch_rot_sensitivity: number;
-  gamepad_yaw_rot_sensitivity: number;
-  gamepad_trigger_sensitivity: number;
+  controlScheme: number;
+  schemeName: string;
+  rotationSpeed: number;
+  walkForwardSpeed: number;
+  walkBackwardSpeed: number;
+  walkStrafeSpeed: number;
+  walkStrafeForwardSpeed: number;
+  walkStrafeBackwardSpeed: number;
+  runBackwardSpeed: number;
+  runStrafeSpeed: number;
+  runStrafeForwardSpeed: number;
+  runStrafeBackwardSpeed: number;
+  keyboardZoomSensitivity: number;
+  keyboardPitchSensitivity: number;
+  keyboardYawSensitivity: number;
+  mouseZoomWheelSensitivity: number;
+  xMouseMoveSensitivityModifier: number;
+  yMouseMoveSensitivityModifier: number;
+  freecamSpeedModifier: number;
+  freecamSlowSpeedMultiplier: number;
+  freecamFastSpeedMultiplier: number;
+  freecamMouseModifier: number;
+  gamepadPitchRotSensitivity: number;
+  gamepadYawRotSensitivity: number;
+  gamepadTriggerSensitivity: number;
 }
 
 export interface CurrencyDenominations {
@@ -368,7 +368,7 @@ export interface DeletionRestrictions {
   checkType: number;
   localize: boolean;
   locStatus: number;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface DestructibleComponent {
@@ -381,9 +381,9 @@ export interface DestructibleComponent {
   CurrencyIndex: number;
   level: number;
   armor: number;
-  death_behavior: number;
+  deathBehavior: number;
   isnpc: boolean;
-  attack_priority: number;
+  attackPriority: number;
   isSmashable: boolean;
   difficultyLevel: number;
 }
@@ -402,13 +402,13 @@ export interface Emotes {
   locked: boolean;
   localize: boolean;
   locStatus: number;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface EventGating {
   eventName: string;
-  date_start: number;
-  date_end: number;
+  dateStart: number;
+  dateEnd: number;
 }
 
 export interface ExhibitComponent {
@@ -504,19 +504,19 @@ export interface ItemComponent {
 
 export interface ItemEggData {
   id: number;
-  chassie_type_id: number;
+  chassieTypeId: number;
 }
 
 export interface ItemFoodData {
   id: number;
-  element_1: number;
-  element_1_amount: number;
-  element_2: number;
-  element_2_amount: number;
-  element_3: number;
-  element_3_amount: number;
-  element_4: number;
-  element_4_amount: number;
+  element1: number;
+  element1Amount: number;
+  element2: number;
+  element2Amount: number;
+  element3: number;
+  element3Amount: number;
+  element4: number;
+  element4Amount: number;
 }
 
 export interface ItemSetSkills {
@@ -538,7 +538,7 @@ export interface ItemSets {
   skillSetWith5: number;
   skillSetWith6: number;
   localize: boolean;
-  gate_version: string;
+  gateVersion: string;
   kitID: number;
   priority: number;
 }
@@ -595,7 +595,7 @@ export interface LootMatrix {
   maxToDrop: number;
   id: number;
   flagID: number;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface LootMatrixIndex {
@@ -631,41 +631,41 @@ export interface MinifigComponent {
   mouthstyle: number;
 }
 
-export interface MinifigDecals_Eyebrows {
+export interface MinifigDecalsEyebrows {
   ID: number;
-  High_path: string;
-  Low_path: string;
+  HighPath: string;
+  LowPath: string;
   CharacterCreateValid: boolean;
   male: boolean;
   female: boolean;
 }
 
-export interface MinifigDecals_Eyes {
+export interface MinifigDecalsEyes {
   ID: number;
-  High_path: string;
-  Low_path: string;
+  HighPath: string;
+  LowPath: string;
   CharacterCreateValid: boolean;
   male: boolean;
   female: boolean;
 }
 
-export interface MinifigDecals_Legs {
+export interface MinifigDecalsLegs {
   ID: number;
-  High_path: string;
+  HighPath: string;
 }
 
-export interface MinifigDecals_Mouths {
+export interface MinifigDecalsMouths {
   ID: number;
-  High_path: string;
-  Low_path: string;
+  HighPath: string;
+  LowPath: string;
   CharacterCreateValid: boolean;
   male: boolean;
   female: boolean;
 }
 
-export interface MinifigDecals_Torsos {
+export interface MinifigDecalsTorsos {
   ID: number;
-  High_path: string;
+  HighPath: string;
   CharacterCreateValid: boolean;
   male: boolean;
   female: boolean;
@@ -679,7 +679,7 @@ export interface MissionEmail {
   attachmentLOT: number;
   localize: boolean;
   locStatus: number;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface MissionNPCComponent {
@@ -687,7 +687,7 @@ export interface MissionNPCComponent {
   missionID: number;
   offersMission: boolean;
   acceptsMission: boolean;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface MissionTasks {
@@ -703,22 +703,22 @@ export interface MissionTasks {
   uid: number;
   largeTaskIconID: number;
   localize: boolean;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface MissionText {
   id: number;
-  story_icon: string;
+  storyIcon: string;
   missionIcon: string;
   offerNPCIcon: string;
   IconID: number;
-  state_1_anim: string;
-  state_2_anim: string;
-  state_3_anim: string;
-  state_4_anim: string;
-  state_3_turnin_anim: string;
-  state_4_turnin_anim: string;
-  onclick_anim: string;
+  state1Anim: string;
+  state2Anim: string;
+  state3Anim: string;
+  state4Anim: string;
+  state3TurninAnim: string;
+  state4TurninAnim: string;
+  onclickAnim: string;
   CinematicAccepted: string;
   CinematicAcceptedLeadin: number;
   CinematicCompleted: string;
@@ -727,61 +727,61 @@ export interface MissionText {
   CinematicRepeatableLeadin: number;
   CinematicRepeatableCompleted: string;
   CinematicRepeatableCompletedLeadin: number;
-  AudioEventGUID_Interact: string;
-  AudioEventGUID_OfferAccept: string;
-  AudioEventGUID_OfferDeny: string;
-  AudioEventGUID_Completed: string;
-  AudioEventGUID_TurnIn: string;
-  AudioEventGUID_Failed: string;
-  AudioEventGUID_Progress: string;
-  AudioMusicCue_OfferAccept: string;
-  AudioMusicCue_TurnIn: string;
+  AudioEventGUIDInteract: string;
+  AudioEventGUIDOfferAccept: string;
+  AudioEventGUIDOfferDeny: string;
+  AudioEventGUIDCompleted: string;
+  AudioEventGUIDTurnIn: string;
+  AudioEventGUIDFailed: string;
+  AudioEventGUIDProgress: string;
+  AudioMusicCueOfferAccept: string;
+  AudioMusicCueTurnIn: string;
   turnInIconID: number;
   localize: boolean;
   locStatus: number;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface Missions {
   id: number;
-  defined_type: string;
-  defined_subtype: string;
+  definedType: string;
+  definedSubtype: string;
   UISortOrder: number;
-  offer_objectID: number;
-  target_objectID: number;
-  reward_currency: number;
+  offerObjectID: number;
+  targetObjectID: number;
+  rewardCurrency: number;
   LegoScore: number;
-  reward_reputation: number;
+  rewardReputation: number;
   isChoiceReward: boolean;
-  reward_item1: number;
-  reward_item1_count: number;
-  reward_item2: number;
-  reward_item2_count: number;
-  reward_item3: number;
-  reward_item3_count: number;
-  reward_item4: number;
-  reward_item4_count: number;
-  reward_emote: number;
-  reward_emote2: number;
-  reward_emote3: number;
-  reward_emote4: number;
-  reward_maximagination: number;
-  reward_maxhealth: number;
-  reward_maxinventory: number;
-  reward_maxmodel: number;
-  reward_maxwidget: number;
-  reward_maxwallet: number;
+  rewardItem1: number;
+  rewardItem1Count: number;
+  rewardItem2: number;
+  rewardItem2Count: number;
+  rewardItem3: number;
+  rewardItem3Count: number;
+  rewardItem4: number;
+  rewardItem4Count: number;
+  rewardEmote: number;
+  rewardEmote2: number;
+  rewardEmote3: number;
+  rewardEmote4: number;
+  rewardMaximagination: number;
+  rewardMaxhealth: number;
+  rewardMaxinventory: number;
+  rewardMaxmodel: number;
+  rewardMaxwidget: number;
+  rewardMaxwallet: number;
   repeatable: boolean;
-  reward_currency_repeatable: number;
-  reward_item1_repeatable: number;
-  reward_item1_repeat_count: number;
-  reward_item2_repeatable: number;
-  reward_item2_repeat_count: number;
-  reward_item3_repeatable: number;
-  reward_item3_repeat_count: number;
-  reward_item4_repeatable: number;
-  reward_item4_repeat_count: number;
-  time_limit: number;
+  rewardCurrencyRepeatable: number;
+  rewardItem1Repeatable: number;
+  rewardItem1RepeatCount: number;
+  rewardItem2Repeatable: number;
+  rewardItem2RepeatCount: number;
+  rewardItem3Repeatable: number;
+  rewardItem3RepeatCount: number;
+  rewardItem4Repeatable: number;
+  rewardItem4RepeatCount: number;
+  timeLimit: number;
   isMission: boolean;
   missionIconID: number;
   prereqMissionID: string;
@@ -791,10 +791,10 @@ export interface Missions {
   isRandom: boolean;
   randomPool: string;
   UIPrereqID: number;
-  gate_version: string;
+  gateVersion: string;
   HUDStates: string;
   locStatus: number;
-  reward_bankinventory: number;
+  rewardBankinventory: number;
 }
 
 export interface ModelBehavior {
@@ -808,9 +808,9 @@ export interface ModularBuildComponent {
   xml: string;
   createdLOT: number;
   createdPhysicsID: number;
-  AudioEventGUID_Snap: string;
-  AudioEventGUID_Complete: string;
-  AudioEventGUID_Present: string;
+  AudioEventGUIDSnap: string;
+  AudioEventGUIDComplete: string;
+  AudioEventGUIDPresent: string;
 }
 
 export interface ModuleComponent {
@@ -908,10 +908,10 @@ export interface Objects {
   displayName: string;
   interactionDistance: number;
   nametag: boolean;
-  _internalNotes: string;
+  InternalNotes: string;
   locStatus: number;
-  gate_version: string;
-  HQ_valid: boolean;
+  gateVersion: string;
+  HQValid: boolean;
 }
 
 export interface PackageComponent {
@@ -953,7 +953,7 @@ export interface PetNestComponent {
 export interface PhysicsComponent {
   id: number;
   static: number;
-  physics_asset: string;
+  physicsAsset: string;
   jump: number;
   doublejump: number;
   speed: number;
@@ -980,7 +980,7 @@ export interface PlayerStatistics {
   statID: number;
   sortOrder: number;
   locStatus: number;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface PossessableComponent {
@@ -1011,7 +1011,7 @@ export interface Preconditions {
   localize: boolean;
   validContexts: number;
   locStatus: number;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface PropertyEntranceComponent {
@@ -1042,7 +1042,7 @@ export interface PropertyTemplate {
   localize: boolean;
   reputationPerMinute: number;
   locStatus: number;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface ProximityMonitorComponent {
@@ -1104,44 +1104,44 @@ export interface RarityTableIndex {
 
 export interface RebuildComponent {
   id: number;
-  reset_time: number;
-  complete_time: number;
-  take_imagination: number;
+  resetTime: number;
+  completeTime: number;
+  takeImagination: number;
   interruptible: boolean;
-  self_activator: boolean;
-  custom_modules: string;
+  selfActivator: boolean;
+  customModules: string;
   activityID: number;
-  post_imagination_cost: number;
-  time_before_smash: number;
+  postImaginationCost: number;
+  timeBeforeSmash: number;
 }
 
 export interface RebuildSections {
   id: number;
   rebuildID: number;
   objectID: number;
-  offset_x: number;
-  offset_y: number;
-  offset_z: number;
-  fall_angle_x: number;
-  fall_angle_y: number;
-  fall_angle_z: number;
-  fall_height: number;
-  requires_list: string;
+  offsetX: number;
+  offsetY: number;
+  offsetZ: number;
+  fallAngleX: number;
+  fallAngleY: number;
+  fallAngleZ: number;
+  fallHeight: number;
+  requiresList: string;
   size: number;
   bPlaced: boolean;
 }
 
-export interface Release_Version {
+export interface ReleaseVersion {
   ReleaseVersion: string;
   ReleaseDate: number;
 }
 
 export interface RenderComponent {
   id: number;
-  render_asset: string;
-  icon_asset: string;
+  renderAsset: string;
+  iconAsset: string;
   IconID: number;
-  shader_id: number;
+  shaderId: number;
   effect1: number;
   effect2: number;
   effect3: number;
@@ -1174,7 +1174,7 @@ export interface RenderComponentFlash {
   nodeName: string;
   flashPath: string;
   elementName: string;
-  _uid: number;
+  Uid: number;
 }
 
 export interface RenderComponentWrapper {
@@ -1184,8 +1184,8 @@ export interface RenderComponentWrapper {
 
 export interface RenderIconAssets {
   id: number;
-  icon_asset: string;
-  blank_column: string;
+  iconAsset: string;
+  blankColumn: string;
 }
 
 export interface ReputationRewards {
@@ -1199,7 +1199,7 @@ export interface RewardCodes {
   code: string;
   attachmentLOT: number;
   locStatus: number;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface Rewards {
@@ -1234,8 +1234,8 @@ export interface SceneTable {
 
 export interface ScriptComponent {
   id: number;
-  script_name: string;
-  client_script_name: string;
+  scriptName: string;
+  clientScriptName: string;
 }
 
 export interface SkillBehavior {
@@ -1256,7 +1256,7 @@ export interface SkillBehavior {
   damageUI: number;
   hideIcon: boolean;
   localize: boolean;
-  gate_version: string;
+  gateVersion: string;
   cancelType: number;
 }
 
@@ -1296,7 +1296,7 @@ export interface SpeedchatMenu {
   imageName: string;
   localize: boolean;
   locStatus: number;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface SubscriptionPricing {
@@ -1349,7 +1349,7 @@ export interface TrailEffects {
   colorlifetime: number;
   minTailFade: number;
   tailFade: number;
-  max_particles: number;
+  maxParticles: number;
   birthDelay: number;
   deathDelay: number;
   bone1: string;
@@ -1375,7 +1375,7 @@ export interface UGBehaviorSounds {
   guid: string;
   localize: boolean;
   locStatus: number;
-  gate_version: string;
+  gateVersion: string;
 }
 
 export interface VehiclePhysics {
@@ -1503,7 +1503,7 @@ export interface WhatsCoolItemSpotlight {
   id: number;
   itemID: number;
   localize: boolean;
-  gate_version: string;
+  gateVersion: string;
   locStatus: number;
 }
 
@@ -1512,7 +1512,7 @@ export interface WhatsCoolNewsAndTips {
   iconID: number;
   type: number;
   localize: boolean;
-  gate_version: string;
+  gateVersion: string;
   locStatus: number;
 }
 
@@ -1521,39 +1521,39 @@ export interface WorldConfig {
   pegravityvalue: number;
   pebroadphaseworldsize: number;
   pegameobjscalefactor: number;
-  character_rotation_speed: number;
-  character_walk_forward_speed: number;
-  character_walk_backward_speed: number;
-  character_walk_strafe_speed: number;
-  character_walk_strafe_forward_speed: number;
-  character_walk_strafe_backward_speed: number;
-  character_run_backward_speed: number;
-  character_run_strafe_speed: number;
-  character_run_strafe_forward_speed: number;
-  character_run_strafe_backward_speed: number;
-  global_cooldown: number;
+  characterRotationSpeed: number;
+  characterWalkForwardSpeed: number;
+  characterWalkBackwardSpeed: number;
+  characterWalkStrafeSpeed: number;
+  characterWalkStrafeForwardSpeed: number;
+  characterWalkStrafeBackwardSpeed: number;
+  characterRunBackwardSpeed: number;
+  characterRunStrafeSpeed: number;
+  characterRunStrafeForwardSpeed: number;
+  characterRunStrafeBackwardSpeed: number;
+  globalCooldown: number;
   characterGroundedTime: number;
   characterGroundedSpeed: number;
   globalImmunityTime: number;
-  character_max_slope: number;
+  characterMaxSlope: number;
   defaultrespawntime: number;
-  mission_tooltip_timeout: number;
-  vendor_buy_multiplier: number;
-  pet_follow_radius: number;
-  character_eye_height: number;
-  flight_vertical_velocity: number;
-  flight_airspeed: number;
-  flight_fuel_ratio: number;
-  flight_max_airspeed: number;
+  missionTooltipTimeout: number;
+  vendorBuyMultiplier: number;
+  petFollowRadius: number;
+  characterEyeHeight: number;
+  flightVerticalVelocity: number;
+  flightAirspeed: number;
+  flightFuelRatio: number;
+  flightMaxAirspeed: number;
   fReputationPerVote: number;
   nPropertyCloneLimit: number;
   defaultHomespaceTemplate: number;
-  coins_lost_on_death_percent: number;
-  coins_lost_on_death_min: number;
-  coins_lost_on_death_max: number;
-  character_votes_per_day: number;
-  property_moderation_request_approval_cost: number;
-  property_moderation_request_review_cost: number;
+  coinsLostOnDeathPercent: number;
+  coinsLostOnDeathMin: number;
+  coinsLostOnDeathMax: number;
+  characterVotesPerDay: number;
+  propertyModerationRequestApprovalCost: number;
+  propertyModerationRequestReviewCost: number;
   propertyModRequestsAllowedSpike: number;
   propertyModRequestsAllowedInterval: number;
   propertyModRequestsAllowedTotal: number;
@@ -1565,10 +1565,10 @@ export interface WorldConfig {
   reputationPerVoteReceived: number;
   showcaseTopModelConsiderationBattles: number;
   reputationPerBattlePromotion: number;
-  coins_lost_on_death_min_timeout: number;
-  coins_lost_on_death_max_timeout: number;
-  mail_base_fee: number;
-  mail_percent_attachment_fee: number;
+  coinsLostOnDeathMinTimeout: number;
+  coinsLostOnDeathMaxTimeout: number;
+  mailBaseFee: number;
+  mailPercentAttachmentFee: number;
   propertyReputationDelay: number;
   LevelCap: number;
   LevelUpBehaviorEffect: string;
@@ -1581,7 +1581,7 @@ export interface ZoneLoadingTips {
   zoneid: number;
   imagelocation: string;
   localize: boolean;
-  gate_version: string;
+  gateVersion: string;
   locStatus: number;
   weight: number;
   targetVersion: string;
@@ -1591,7 +1591,7 @@ export interface ZoneSummary {
   zoneID: number;
   type: number;
   value: number;
-  _uniqueID: number;
+  UniqueID: number;
 }
 
 export interface ZoneTable {
@@ -1599,10 +1599,10 @@ export interface ZoneTable {
   locStatus: number;
   zoneName: string;
   scriptID: number;
-  ghostdistance_min: number;
+  ghostdistanceMin: number;
   ghostdistance: number;
-  population_soft_cap: number;
-  population_hard_cap: number;
+  populationSoftCap: number;
+  populationHardCap: number;
   DisplayDescription: string;
   mapFolder: string;
   smashableMinDistance: number;
@@ -1620,14 +1620,14 @@ export interface ZoneTable {
   PlayerLoseCoinsOnDeath: boolean;
   disableSaveLoc: boolean;
   teamRadius: number;
-  gate_version: string;
+  gateVersion: string;
   mountsAllowed: boolean;
 }
 
 export interface brickAttributes {
   ID: number;
-  icon_asset: string;
-  display_order: number;
+  iconAsset: string;
+  displayOrder: number;
   locStatus: number;
 }
 
@@ -1685,7 +1685,7 @@ export interface mapTextureResource {
   SurfaceType: number;
 }
 
-export interface map_BlueprintCategory {
+export interface mapBlueprintCategory {
   id: number;
   description: string;
   enabled: boolean;
@@ -1693,9 +1693,8 @@ export interface map_BlueprintCategory {
 
 export interface sysdiagrams {
   name: string;
-  principal_id: number;
-  diagram_id: number;
+  principalId: number;
+  diagramId: number;
   version: number;
   definition: string;
 }
-

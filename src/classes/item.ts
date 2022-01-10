@@ -1,232 +1,210 @@
-import { Database } from "sqlite3";
-import { CDClient } from "../cdclient";
-import { ComponentsRegistry } from "../cdclient_interfaces";
-import { ItemStats, Skill, ItemComponent, ItemDrop, ObjectElement, EquipLocation, ItemPrecondition } from "../lu_interfaces"
-import { RENDER_COMPONENT, DESTRUCTIBLE_COMPONENT, ITEM_COMPONENT, VENDOR_COMPONENT, PACKAGE_COMPONENT} from "../cdclient"
-import { explorer_domain } from "../config.json"
+import { Database } from 'sqlite3'
+import { CDClient, ITEM_COMPONENT } from '../cdclient'
+import { ComponentsRegistry } from '../cdclientInterfaces'
+import { ItemStats, Skill, ItemComponent, ItemDrop, ObjectElement, EquipLocation, ItemPrecondition } from '../luInterfaces'
+import { explorerDomain } from '../config.json'
 
-export class Item extends CDClient{
+export class Item extends CDClient {
   db:Database;
   id:number;
   name:string;
   components:ComponentsRegistry[];
   stats:ItemStats;
   skills:Skill[];
-  item_component:ItemComponent;
+  itemComponent:ItemComponent;
   drop:ItemDrop[];
-  //earn
-  //buy
-  constructor(db:Database, id:number){
-    super();
-    this.db = db;
-    this.id = id;
+  // earn
+  // buy
+  constructor (db:Database, id:number) {
+    super()
+    this.db = db
+    this.id = id
   }
-  async create(): Promise<void> {
-      return new Promise<void>(async(resolve, reject) => {
-        this.components = await this.getComponents(this.id);
-        this.name = (await this.getObjectName(this.id)).name;
 
-        // this.stats = await this.getItemStats()
-        // this.item_component = await this.addItemComponent()
-        // this.drop = await this.getDrops()
-        await this.addItemComponent()
-        await this.addDrops()
+  async create (): Promise<void> {
+    this.components = await this.getComponents(this.id)
+    this.name = (await this.getObjectName(this.id)).name
+    await this.addItemComponent()
+    await this.addDrops()
+  }
 
-        resolve()
+  getURL ():string {
+    return `${explorerDomain}/objects/${this.id}`
+  }
+
+  async getRarityChance (drop:ItemDrop):Promise<number> {
+    const thisRarity = await this.getPercentToDropRarity(drop.RarityTableIndex, this.itemComponent.rarity)
+    if (this.itemComponent.rarity - 1 === 0) {
+      return thisRarity
+    } else {
+      const lowerRarity = await this.getPercentToDropRarity(drop.RarityTableIndex, this.itemComponent.rarity - 1)
+      return thisRarity - lowerRarity
+    }
+  }
+
+  async getItemsInLootTableOfRarity (lootTable:number, rarity:number):Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      this.getItemsInLootTable(lootTable).then((itemIds) => {
+        Promise.all(itemIds.map((id) => this.getItemComponentId(id))).then((itemCompIds) => {
+          Promise.all(itemCompIds.map((compId) => this.getItemRarity(compId))).then((rarities) => {
+            rarities = rarities.filter((r) => r === rarity)
+            resolve(rarities.length)
+          })
+        })
       })
+    })
   }
-  getURL():string{
-    return `${explorer_domain}/objects/${this.id}`
-  }
-  async getRarityChance(drop:ItemDrop):Promise<number>{
-    return new Promise<number>(async(resolve, reject) => {
-      let thisRarity = await this.getPercentToDropRarity(drop.RarityTableIndex, this.item_component.rarity)
 
-      if(this.item_component.rarity - 1 === 0){
-        resolve(thisRarity)
-      }else{
-        let lowerRarity = await this.getPercentToDropRarity(drop.RarityTableIndex, this.item_component.rarity-1)
-        resolve(thisRarity-lowerRarity)
+  async addDrops ():Promise<void> {
+    const ltis = await this.getItemLootTables(this.id)
+    const lmis = await this.getLootMatricesFromLootTables(ltis)
+    this.drop = await Promise.all(lmis.map((lmi) => this.addDestructibleComponentToLootMatrix(lmi)))
+    for (const drop of this.drop) {
+      drop.rarityChance = await this.getRarityChance(drop)
+      const destructibleIds = this.removeUndefined(await Promise.all(drop.destructibleComponents.map(comp => this.getIdFromDestructibleComponent(comp))))
+      drop.enemies = await Promise.all(destructibleIds.map(id => this.getObjectName(id)))
+
+      drop.itemsInLootTable = await this.getItemsInLootTableOfRarity(drop.LootTableIndex, this.itemComponent.rarity)
+      if (drop.itemsInLootTable === 0 || drop.rarityChance === 0) {
+        drop.totalChance = 0
+      } else {
+        drop.totalChance = (drop.percent) * (drop.rarityChance) * (1 / drop.itemsInLootTable)
       }
-    })
+    }
+    this.drop = this.drop.sort((a, b) => b.totalChance - a.totalChance)
   }
-  async getItemsInLootTableOfRarity(loot_table:number,  rarity:number):Promise<number>{
-    return new Promise<number>(async(resolve, reject) => {
-      let item_ids = await this.getItemsInLootTable(loot_table)
-      let item_comp_ids = await Promise.all(item_ids.map((id) => this.getItemComponentId(id)))
-      let rarities = await Promise.all(item_comp_ids.map((comp_id) => this.getItemRarity(comp_id)))
-      rarities = rarities.filter((r) => r === rarity)
-      resolve(rarities.length)
-    })
-  }
-  async addDrops():Promise<void>{
-    return new Promise<void>(async(resolve, reject) => {
-      let ltis = await this.getItemLootTables(this.id)
-      let lmis = await this.getLootMatricesFromLootTables(ltis)
-      this.drop = await Promise.all(lmis.map((lmi) => this.addDestructibleComponentToLootMatrix(lmi)))
-      for(let drop of this.drop){
-        // let arr:Promise<number>[] = drop.destructibleComponents
-        drop.rarityChance = await this.getRarityChance(drop)
-        let destructibleIds = this.removeUndefined(await Promise.all(drop.destructibleComponents.map(comp => this.getIdFromDestructibleComponent(comp))))
-        // let destructibleNames = (await Promise.all(destructibleIds.map(id => this.getLocaleName(id)))).filter(name => name !== undefined)
-        drop.enemies = await Promise.all(destructibleIds.map(id => this.getObjectName(id)))
 
-        drop.itemsInLootTable = await this.getItemsInLootTableOfRarity(drop.LootTableIndex, this.item_component.rarity)
-        if(drop.itemsInLootTable === 0 || drop.rarityChance === 0){
-          drop.totalChance = 0
-        }
-        else{
-          drop.totalChance = (drop.percent) * (drop.rarityChance) * (1/drop.itemsInLootTable)
-        }
-        // console.log({drop});
-
-      }
-      this.drop = this.drop.sort((a, b) => b.totalChance-a.totalChance)
-      resolve()
-
-    })
-  }
-  async getProxyItemsFromSubItems(subItems:string):Promise<ObjectElement[]> {
-    return new Promise<ObjectElement[]>(async(resolve, reject) => {
-      if(subItems === null) resolve([]);
-      else{
-        let ids:number[] = subItems.match(/\d+/g).map( (num:string) => parseInt(num))
-        let proxies:ObjectElement[] = await Promise.all(ids.map((id:number) => this.getObjectName(id)))
-        resolve(proxies)
+  async getProxyItemsFromSubItems (subItems:string):Promise<ObjectElement[]> {
+    return new Promise<ObjectElement[]>((resolve, reject) => {
+      if (subItems === null) resolve([])
+      else {
+        const ids:number[] = subItems.match(/\d+/g).map((num:string) => parseInt(num))
+        Promise.all(ids.map((id:number) => this.getObjectName(id))).then((proxies) => {
+          resolve(proxies)
+        })
       }
     })
   }
 
-  getEquipLocations(raw_locations:string[]):EquipLocation[]{
-    let locations:EquipLocation[] = []
-    for(let loc of raw_locations){
-      if(loc === "clavicle"){
-        locations.push("Armor")
-      }
-      else if(loc === "hair"){
-        locations.push("Head")
-      }
-      else if(loc === "legs"){
-        locations.push("Legs")
-      }
-      else if(loc === "chest"){
-        locations.push("Chest")
-      }
-      else if(loc === "special_r"){
-        locations.push("Right Hand")
-      }
-      else if(loc === "special_l"){
-        locations.push("Left Hand")
-      }
-      else if(loc === null){
-        locations.push("Consumable")
+  getEquipLocations (rawLocations:string[]):EquipLocation[] {
+    const locations:EquipLocation[] = []
+    for (const loc of rawLocations) {
+      if (loc === 'clavicle') {
+        locations.push('Armor')
+      } else if (loc === 'hair') {
+        locations.push('Head')
+      } else if (loc === 'legs') {
+        locations.push('Legs')
+      } else if (loc === 'chest') {
+        locations.push('Chest')
+      } else if (loc === 'special_r') {
+        locations.push('Right Hand')
+      } else if (loc === 'special_l') {
+        locations.push('Left Hand')
+      } else if (loc === null) {
+        locations.push('Consumable')
       }
     }
     return locations
   }
-  getEquipLocation(raw_location:string):EquipLocation{
-      if(raw_location === "clavicle"){
-        return "Armor"
-      }
-      else if(raw_location === "hair"){
-        return "Head"
-      }
-      else if(raw_location === "legs"){
-        return "Legs"
-      }
-      else if(raw_location === "chest"){
-        return "Chest"
-      }
-      else if(raw_location === "special_r"){
-        return "Right Hand"
-      }
-      else if(raw_location === "special_l"){
-        return "Left Hand"
-      }
-      else if(raw_location === null){
-        return "Consumable"
-      }
-      else {
-        return "Unknown"
-      }
-  }
-  async addPreconditionDescription(id:number):Promise<ItemPrecondition>{
-    return new Promise<ItemPrecondition>((resolve, reject) => {
 
+  getEquipLocation (rawLocation:string):EquipLocation {
+    if (rawLocation === 'clavicle') {
+      return 'Armor'
+    } else if (rawLocation === 'hair') {
+      return 'Head'
+    } else if (rawLocation === 'legs') {
+      return 'Legs'
+    } else if (rawLocation === 'chest') {
+      return 'Chest'
+    } else if (rawLocation === 'special_r') {
+      return 'Right Hand'
+    } else if (rawLocation === 'special_l') {
+      return 'Left Hand'
+    } else if (rawLocation === null) {
+      return 'Consumable'
+    } else {
+      return 'Unknown'
+    }
+  }
+
+  async addPreconditionDescription (id:number):Promise<ItemPrecondition> {
+    return new Promise<ItemPrecondition>((resolve, reject) => {
       resolve({
         id: id,
         description: 'description'
       })
     })
   }
-  async getPreconditions(preconditions_string:string):Promise<ItemPrecondition[]>{
-    return new Promise<ItemPrecondition[]>(async(resolve, reject) => {
-      if(preconditions_string === null) resolve([])
-      else{
-        let precondition_ids = preconditions_string.match(/\d+/g).map(n => parseInt(n))
 
-        let preconditions:ItemPrecondition[] = await Promise.all(precondition_ids.map((id) => this.addPreconditionDescription(id)))
-        resolve(preconditions)
+  async getPreconditions (preconditionsString:string):Promise<ItemPrecondition[]> {
+    return new Promise<ItemPrecondition[]>((resolve, reject) => {
+      if (preconditionsString === null) resolve([])
+      else {
+        const preconditionIds = preconditionsString.match(/\d+/g).map(n => parseInt(n))
+
+        Promise.all(preconditionIds.map((id) => this.addPreconditionDescription(id))).then((preconditions) => {
+          resolve(preconditions)
+        })
       }
     })
   }
-  async getLevelRequirementFromPreconditions(preconditions_string:string):Promise<number> {
-    return new Promise<number>(async(resolve, reject) => {
-      let precondition_ids = preconditions_string.split(",").map(p => parseInt(p))
-      let level_requirement = await this.locale.getLevelRequirement(precondition_ids)
-      resolve(level_requirement)
+
+  async getLevelRequirementFromPreconditions (preconditionsString:string):Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      const preconditionIds = preconditionsString.split(',').map(p => parseInt(p))
+      this.locale.getLevelRequirement(preconditionIds).then((levelRequirement) => {
+        resolve(levelRequirement)
+      })
     })
   }
 
-  async getAllEquipLocations(ids:number[]):Promise<string[]>{
-    return new Promise<string[]>(async(resolve, reject) => {
-      let components = await Promise.all(ids.map((id)=> this.getComponents(id)))
-      let item_components = components.map((comp) => comp.find(c => c.component_type === ITEM_COMPONENT).component_id)
-      let equip_locations = await Promise.all(item_components.map(comp => this.getEquipLocationFromCompId(comp)))
-
-      resolve(equip_locations)
+  async getAllEquipLocations (ids:number[]):Promise<string[]> {
+    return new Promise<string[]>((resolve, reject) => {
+      Promise.all(ids.map((id) => this.getComponents(id))).then((components) => {
+        const itemComponents = components.map((comp) => comp.find(c => c.componentType === ITEM_COMPONENT).componentId)
+        Promise.all(itemComponents.map(comp => this.getEquipLocationFromCompId(comp))).then((equipLocations) => {
+          resolve(equipLocations)
+        })
+      })
     })
   }
 
-  async addItemComponent():Promise<void>{
-    return new Promise<void>(async (resolve, reject) => {
+  async addItemComponent ():Promise<void> {
+    const rawItemComponent = await this.getItemComponent(this.components.find(f => f.componentType === ITEM_COMPONENT).componentId)
+    const proxyItems:ObjectElement[] = await this.getProxyItemsFromSubItems(rawItemComponent.subItems)
 
-      let raw_item_component = await this.getItemComponent(this.components.find(f=>f.component_type===ITEM_COMPONENT).component_id)
-      let proxy_items:ObjectElement[] = await this.getProxyItemsFromSubItems(raw_item_component.subItems)
+    const allItemIds = [this.id, ...proxyItems.map((item) => item.id)]
 
-      let all_item_ids = [this.id, ...proxy_items.map((item) => item.id)]
+    const equipLocations:string[] = await this.getAllEquipLocations(allItemIds)
 
-      let equip_locations:string[] = await this.getAllEquipLocations(all_item_ids)
-
-      let equip_location_names:EquipLocation[] = this.getEquipLocations(equip_locations)
-      let alternate_currency_name:string = null;
-      if(raw_item_component.currencyLOT){
-        alternate_currency_name = (await this.getObjectName(raw_item_component.currencyLOT)).name
-      }
-      let commendation_currency_name:string = null;
-      if(raw_item_component.commendationLOT){
-        commendation_currency_name = (await this.getObjectName(raw_item_component.commendationLOT)).name
-      }
-      this.item_component = {
-        proxy_items: proxy_items,
-        equip_locations: equip_location_names,
-        buy_price: raw_item_component.baseValue,
-        rarity: raw_item_component.rarity,
-        stack_size: raw_item_component.stackSize,
-        color: raw_item_component.color1,
-        preconditions: await this.getPreconditions(raw_item_component.reqPrecondition),
-        two_handed: equip_location_names.includes("Right Hand") && equip_location_names.includes("Left Hand"),
-        alternate_currency_id: raw_item_component.currencyLOT,
-        alternate_currency_cost: raw_item_component.altCurrencyCost,
-        alternate_currency_name: alternate_currency_name,
-        commendation_currency_id: raw_item_component.commendationLOT,
-        commendation_currency_cost: raw_item_component.commendationCost,
-        commendation_currency_name: commendation_currency_name,
-        is_weapon: equip_location_names.includes("Right Hand"),//raw_item_component.,
-        level_requirement: await this.getLevelRequirementFromPreconditions(raw_item_component.reqPrecondition)//raw_item_component.,
-      }
-      resolve()
-    })
+    const equipLocationNames:EquipLocation[] = this.getEquipLocations(equipLocations)
+    let alternateCurrencyName:string = null
+    if (rawItemComponent.currencyLOT) {
+      alternateCurrencyName = (await this.getObjectName(rawItemComponent.currencyLOT)).name
+    }
+    let commendationCurrencyName:string = null
+    if (rawItemComponent.commendationLOT) {
+      commendationCurrencyName = (await this.getObjectName(rawItemComponent.commendationLOT)).name
+    }
+    this.itemComponent = {
+      proxyItems: proxyItems,
+      equipLocations: equipLocationNames,
+      buyPrice: rawItemComponent.baseValue,
+      rarity: rawItemComponent.rarity,
+      stackSize: rawItemComponent.stackSize,
+      color: rawItemComponent.color1,
+      preconditions: await this.getPreconditions(rawItemComponent.reqPrecondition),
+      twoHanded: equipLocationNames.includes('Right Hand') && equipLocationNames.includes('Left Hand'),
+      alternateCurrencyId: rawItemComponent.currencyLOT,
+      alternateCurrencyCost: rawItemComponent.altCurrencyCost,
+      alternateCurrencyName: alternateCurrencyName,
+      commendationCurrencyId: rawItemComponent.commendationLOT,
+      commendationCurrencyCost: rawItemComponent.commendationCost,
+      commendationCurrencyName: commendationCurrencyName,
+      isWeapon: equipLocationNames.includes('Right Hand'), // rawItemComponent.,
+      levelRequirement: await this.getLevelRequirementFromPreconditions(rawItemComponent.reqPrecondition)// rawItemComponent.,
+    }
   }
   // async getItemStats():ItemStats{
   //   return new Promise<ItemStats>(async(resolve, reject) => {
@@ -241,5 +219,4 @@ export class Item extends CDClient{
 
   //   })
   // }
-
 }
