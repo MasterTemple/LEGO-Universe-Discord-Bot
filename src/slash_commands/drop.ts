@@ -21,7 +21,7 @@ export default {
       options: readonly CommandInteractionOption[],
       cdclient: CDClient) {
     console.log('/drop');
-    const item = new Item(cdclient.db, parseInt(options[0].value.toString()));
+    const item = new Item(cdclient, parseInt(options[0].value.toString()));
     await item.create();
     console.log({item});
     const embed = new MessageEmbed();
@@ -39,7 +39,7 @@ export default {
         }
         embed.addField(
             `${c++}. 1/${Math.round(1 / eachDrop.totalChance)} for ${range} ${item.name}`,
-            `From ${eachDrop.enemies.map(({name, id}) => `${name} [${id}]`).join(', ')}`,
+            `From ${eachDrop.enemies.map(({name, id}) => `${name} [[${id}]](${item.getURL(id)})`).join(', ')}`,
         );
       }
     });
