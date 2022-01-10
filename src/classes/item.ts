@@ -1,7 +1,14 @@
 import {Database} from 'sqlite3';
 import {CDClient, ITEM_COMPONENT} from '../cdclient';
 import {ComponentsRegistry} from '../cdclientInterfaces';
-import {ItemStats, Skill, ItemComponent, ItemDrop, ObjectElement, EquipLocation, ItemPrecondition} from '../luInterfaces';
+import {
+  ItemStats,
+  Skill,
+  ItemComponent,
+  ItemDrop,
+  ObjectElement,
+  EquipLocation,
+  ItemPrecondition} from '../luInterfaces';
 import {explorerDomain} from '../config.json';
 
 export class Item extends CDClient {
@@ -56,7 +63,9 @@ export class Item extends CDClient {
     this.drop = await Promise.all(lmis.map((lmi) => this.addDestructibleComponentToLootMatrix(lmi)));
     for (const drop of this.drop) {
       drop.rarityChance = await this.getRarityChance(drop);
-      const destructibleIds = this.removeUndefined(await Promise.all(drop.destructibleComponents.map((comp) => this.getIdFromDestructibleComponent(comp))));
+      const destructibleIds = this.removeUndefined(
+          await Promise.all(drop.destructibleComponents.map((comp) => this.getIdFromDestructibleComponent(comp))),
+      );
       drop.enemies = await Promise.all(destructibleIds.map((id) => this.getObjectName(id)));
 
       drop.itemsInLootTable = await this.getItemsInLootTableOfRarity(drop.LootTableIndex, this.itemComponent.rarity);
@@ -153,7 +162,9 @@ export class Item extends CDClient {
   }
 
   async addItemComponent():Promise<void> {
-    const rawItemComponent = await this.getItemComponent(this.components.find((f) => f.componentType === ITEM_COMPONENT).componentId);
+    const rawItemComponent = await this.getItemComponent(
+        this.components.find((f) => f.componentType === ITEM_COMPONENT).componentId,
+    );
     const proxyItems:ObjectElement[] = await this.getProxyItemsFromSubItems(rawItemComponent.subItems);
 
     const allItemIds = [this.id, ...proxyItems.map((item) => item.id)];
@@ -185,12 +196,15 @@ export class Item extends CDClient {
       commendationCurrencyCost: rawItemComponent.commendationCost,
       commendationCurrencyName: commendationCurrencyName,
       isWeapon: equipLocationNames.includes('Right Hand'), // rawItemComponent.,
-      levelRequirement: await this.getLevelRequirementFromPreconditions(rawItemComponent.reqPrecondition), // rawItemComponent.,
+      levelRequirement: await this.getLevelRequirementFromPreconditions(
+          rawItemComponent.reqPrecondition), // rawItemComponent.,
     };
   }
   // async getItemStats():ItemStats{
   //   return new Promise<ItemStats>(async(resolve, reject) => {
-  //     let item_component: = await this.getItemComponent(this.components.find(f=>f.component_type===ITEM_COMPONENT).component_id)
+  //     let item_component: = await this.getItemComponent(
+  //       this.components.find(f=>f.component_type===ITEM_COMPONENT).component_id
+  //     )
   //     console.log(item_component);
 
   //     return {

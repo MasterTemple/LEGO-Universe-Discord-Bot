@@ -1,10 +1,12 @@
 import {localePath} from './config.json';
 import {existsSync} from 'fs';
 import {readFile} from 'fs/promises';
-import {DOMParser as Dom} from 'xmldom';
+import {DOMParser} from 'xmldom';
 import * as xpath from 'xpath-ts';
 
 export class LocaleXML {
+  // (I don't know why eslint complains about this)
+  // eslint-disable-next-line no-undef
   doc: Document;
   async load():Promise<void> {
     return new Promise<void>((resolve, reject) => {
@@ -13,7 +15,7 @@ export class LocaleXML {
       }
       readFile(localePath).then((fileData) => {
         const xml = fileData.toString();
-        this.doc = new Dom().parseFromString(xml);
+        this.doc = new DOMParser().parseFromString(xml);
         console.log(`load(): this.doc="${typeof this.doc}"`);
         resolve();
       });

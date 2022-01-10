@@ -1,5 +1,13 @@
 import {Database} from 'sqlite3';
-import {ComponentsRegistry, DestructibleComponent, ItemComponent, LootMatrix, LootTable, Objects, PackageComponent, RarityTable} from './cdclientInterfaces';
+import {
+  ComponentsRegistry,
+  DestructibleComponent,
+  ItemComponent,
+  LootMatrix,
+  LootTable,
+  Objects,
+  PackageComponent,
+  RarityTable} from './cdclientInterfaces';
 import {sqlitePath} from './config.json';
 import {LocaleXML} from './locale';
 import {ItemDrop, ObjectElement} from './luInterfaces';
@@ -45,27 +53,33 @@ export class CDClient {
 
   async getComponents(id:number) {
     return new Promise<ComponentsRegistry[]>((resolve, reject) => {
-      this.db.all(`SELECT component_type as componentType, component_id as componentId FROM ComponentsRegistry WHERE id=${id}`, (_, rows:ComponentsRegistry[]) => {
-        resolve(rows);
-      });
+      this.db.all(
+          `SELECT component_type as componentType, component_id as componentId FROM ComponentsRegistry WHERE id=${id}`,
+          (_, rows:ComponentsRegistry[]) => {
+            resolve(rows);
+          });
     });
   }
 
   async getIdFromDestructibleComponent(compId:number) {
     return new Promise<number>((resolve, reject) => {
-      this.db.get(`SELECT id FROM ComponentsRegistry WHERE component_type=${DESTRUCTIBLE_COMPONENT} AND component_id=${compId}`, (_, row:ComponentsRegistry) => {
-        // if(!row) resolve()
-        resolve(row?.id);
-      });
+      this.db.get(
+          `SELECT id FROM ComponentsRegistry WHERE component_type=${DESTRUCTIBLE_COMPONENT} AND component_id=${compId}`,
+          (_, row:ComponentsRegistry) => {
+            // if(!row) resolve()
+            resolve(row?.id);
+          });
     });
   }
 
   async getIdFromPackageComponent(compId:number) {
     return new Promise<number>((resolve, reject) => {
-      this.db.get(`SELECT id FROM ComponentsRegistry WHERE component_type=${PACKAGE_COMPONENT} AND component_id=${compId}`, (_, row:ComponentsRegistry) => {
-        // if(!row) resolve()
-        resolve(row?.id);
-      });
+      this.db.get(
+          `SELECT id FROM ComponentsRegistry WHERE component_type=${PACKAGE_COMPONENT} AND component_id=${compId}`,
+          (_, row:ComponentsRegistry) => {
+            // if(!row) resolve()
+            resolve(row?.id);
+          });
     });
   }
 
@@ -98,120 +112,144 @@ export class CDClient {
 
   async getItemLootTables(id:number) {
     return new Promise<number[]>((resolve, reject) => {
-      this.db.all(`SELECT LootTableIndex FROM LootTable WHERE itemid=${id}`, function(_, rows:LootTable[]) {
-        resolve(rows.map((e) => e.LootTableIndex));
-      });
+      this.db.all(
+          `SELECT LootTableIndex FROM LootTable WHERE itemid=${id}`,
+          function(_, rows:LootTable[]) {
+            resolve(rows.map((e) => e.LootTableIndex));
+          });
     });
   }
 
   async getLootMatricesFromLootTable(lti:number) {
     return new Promise<number[]>((resolve, reject) => {
-      this.db.all(`SELECT LootTableIndex FROM LootMatrix WHERE LootTableIndex=${lti}`, function(_, rows:LootMatrix[]) {
-        resolve(rows.map((e) => e.LootTableIndex));
-      });
+      this.db.all(
+          `SELECT LootTableIndex FROM LootMatrix WHERE LootTableIndex=${lti}`,
+          function(_, rows:LootMatrix[]) {
+            resolve(rows.map((e) => e.LootTableIndex));
+          });
     });
   }
 
   async getLootMatricesFromLootTables(ltis:number[]) {
     return new Promise<LootMatrix[]>((resolve, reject) => {
-      this.db.all(`SELECT LootMatrixIndex, LootTableIndex, RarityTableIndex, percent, minToDrop, maxToDrop FROM LootMatrix WHERE LootTableIndex in (${ltis.join(',')})`, function(_, rows:LootMatrix[]) {
-        resolve(rows);
-      });
+      this.db.all(
+          `SELECT LootMatrixIndex, LootTableIndex, RarityTableIndex, percent, minToDrop, maxToDrop 
+           FROM LootMatrix WHERE LootTableIndex in (${ltis.join(',')})`,
+          function(_, rows:LootMatrix[]) {
+            resolve(rows);
+          });
     });
   }
 
   async getDestructibleComponentsFromLootMatrix(lmi:number) {
     return new Promise<number[]>((resolve, reject) => {
-      this.db.all(`SELECT id FROM DestructibleComponent WHERE LootMatrixIndex=${lmi}`, function(_, rows:DestructibleComponent[]) {
-        resolve(rows.map((e) => e.id));
-      });
+      this.db.all(
+          `SELECT id FROM DestructibleComponent WHERE LootMatrixIndex=${lmi}`,
+          function(_, rows:DestructibleComponent[]) {
+            resolve(rows.map((e) => e.id));
+          });
     });
   }
 
   async getPackageComponentsFromLootMatrix(lmi:number) {
     return new Promise<number[]>((resolve, reject) => {
-      this.db.all(`SELECT id FROM PackageComponent WHERE LootMatrixIndex=${lmi}`, function(_, rows:PackageComponent[]) {
-        resolve(rows.map((e) => e.id));
-      });
+      this.db.all(
+          `SELECT id FROM PackageComponent WHERE LootMatrixIndex=${lmi}`,
+          function(_, rows:PackageComponent[]) {
+            resolve(rows.map((e) => e.id));
+          });
     });
   }
 
   async getRarityTableFromIndex(rti:number) {
     return new Promise<RarityTable[]>((resolve, reject) => {
-      this.db.all(`SELECT randmax, rarity FROM RarityTable WHERE RarityTableIndex=${rti} ORDER BY rarity ASC`, function(_, rows:RarityTable[]) {
-        resolve(rows);
-      });
+      this.db.all(
+          `SELECT randmax, rarity FROM RarityTable WHERE RarityTableIndex=${rti} ORDER BY rarity ASC`,
+          function(_, rows:RarityTable[]) {
+            resolve(rows);
+          });
     });
   }
 
   async getPercentToDropRarity(rti:number, rarity:number) {
     return new Promise<number>((resolve, reject) => {
-      this.db.get(`SELECT randmax FROM RarityTable WHERE rarity=${rarity} AND RarityTableIndex=${rti}`, function(_, row:RarityTable) {
-        resolve(row?.randmax || 0);
-      });
+      this.db.get(`SELECT randmax FROM RarityTable WHERE rarity=${rarity} AND RarityTableIndex=${rti}`,
+          function(_, row:RarityTable) {
+            resolve(row?.randmax || 0);
+          });
     });
   }
 
   async addDestructibleComponentToLootMatrix(lmi:LootMatrix):Promise<ItemDrop> {
     return new Promise<ItemDrop>((resolve, reject) => {
-      this.db.all(`SELECT id FROM DestructibleComponent WHERE LootMatrixIndex=${lmi.LootMatrixIndex}`, function(_, rows:DestructibleComponent[]) {
-        // resolve({
-        //   ...lmi,
-        //   destructibleComponent: rows.map((e) => e.id)
-        // })
-        const itemDrop:ItemDrop = {
-          ...lmi,
-          rarityChance: 0,
-          itemsInLootTable: 0,
-          destructibleComponents: rows.map((e) => e.id),
-          enemies: [],
-          packageComponents: [],
-          packages: [],
-          totalChance: 0,
-        };
+      this.db.all(
+          `SELECT id FROM DestructibleComponent WHERE LootMatrixIndex=${lmi.LootMatrixIndex}`,
+          function(_, rows:DestructibleComponent[]) {
+            // resolve({
+            //   ...lmi,
+            //   destructibleComponent: rows.map((e) => e.id)
+            // })
+            const itemDrop:ItemDrop = {
+              ...lmi,
+              rarityChance: 0,
+              itemsInLootTable: 0,
+              destructibleComponents: rows.map((e) => e.id),
+              enemies: [],
+              packageComponents: [],
+              packages: [],
+              totalChance: 0,
+            };
 
-        resolve(itemDrop);
-      });
+            resolve(itemDrop);
+          });
     });
   }
 
   async getItemRarity(itemComponent:number) {
     return new Promise<number>((resolve, reject) => {
-      this.db.get(`SELECT rarity FROM ItemComponent WHERE id=${itemComponent}`, function(_, row:ItemComponent) {
-        resolve(row.rarity);
-      });
+      this.db.get(`SELECT rarity FROM ItemComponent WHERE id=${itemComponent}`,
+          function(_, row:ItemComponent) {
+            resolve(row.rarity);
+          });
     });
   }
 
   async getEquipLocationFromCompId(itemComponent:number):Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      this.db.get(`SELECT equipLocation FROM ItemComponent WHERE id=${itemComponent}`, function(_, row:ItemComponent) {
-        resolve(row.equipLocation);
-      });
+      this.db.get(`SELECT equipLocation FROM ItemComponent WHERE id=${itemComponent}`,
+          function(_, row:ItemComponent) {
+            resolve(row.equipLocation);
+          });
     });
   }
 
   async getItemComponent(itemComponent:number):Promise<ItemComponent> {
     return new Promise<ItemComponent>((resolve, reject) => {
-      this.db.get(`SELECT * FROM ItemComponent WHERE id=${itemComponent}`, function(_, row:ItemComponent) {
-        resolve(row);
-      });
+      this.db.get(`SELECT * FROM ItemComponent WHERE id=${itemComponent}`,
+          function(_, row:ItemComponent) {
+            resolve(row);
+          });
     });
   }
 
   async getItemsInLootTable(lootTable:number):Promise<number[]> {
     return new Promise<number[]>((resolve, reject) => {
-      this.db.all(`SELECT itemid FROM LootTable WHERE LootTableIndex=${lootTable}`, (_, rows:LootTable[]) => {
-        resolve(rows.map((e) => e.itemid));
-      });
+      this.db.all(
+          `SELECT itemid FROM LootTable WHERE LootTableIndex=${lootTable}`,
+          (_, rows:LootTable[]) => {
+            resolve(rows.map((e) => e.itemid));
+          });
     });
   }
 
   async getItemComponentId(id:number):Promise<number> {
     return new Promise<number>((resolve, reject) => {
-      this.db.get(`SELECT component_id as componentId FROM ComponentsRegistry WHERE component_type=${ITEM_COMPONENT} AND id=${id}`, (_, row:ComponentsRegistry) => {
-        resolve(row.componentId);
-      });
+      this.db.get(
+          `SELECT component_id as componentId FROM ComponentsRegistry 
+           WHERE component_type=${ITEM_COMPONENT} AND id=${id}`,
+          (_, row:ComponentsRegistry) => {
+            resolve(row.componentId);
+          });
     });
   }
 }
