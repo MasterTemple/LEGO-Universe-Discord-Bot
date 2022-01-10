@@ -2,7 +2,7 @@ import {Client, CommandInteraction, CommandInteractionOption} from 'discord.js';
 import {CDClient} from './cdclient';
 import {token} from './config.json';
 import {getSlashCommands, updateSlashCommands} from './setup';
-import {SlashCommand} from './types/SlashCommand';
+import {SlashCommandMap} from './types/SlashCommand';
 
 const cdclient = new CDClient();
 
@@ -10,12 +10,12 @@ const client = new Client({
   intents: [],
 });
 
-const slashCommands: Map<string, SlashCommand> = getSlashCommands();
+const slashCommands: SlashCommandMap = getSlashCommands();
 
 client.once('ready', async () => {
   console.log('\n------------------------------------\n');
   await cdclient.load();
-  updateSlashCommands(client);
+  updateSlashCommands(client, slashCommands);
   console.log('\n------------------------------------\n');
   console.log('LEGO Universe Discord Bot is online.');
   // process.exit(0)

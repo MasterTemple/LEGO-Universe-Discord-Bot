@@ -9,3 +9,5 @@ export interface SlashCommand {
     options: readonly CommandInteractionOption[],
     cdclient: CDClient): Promise<void>;
 }
+
+export type SlashCommandMap = Map<string, SlashCommand>;
