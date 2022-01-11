@@ -307,5 +307,29 @@ export class CDClient {
           });
     });
   }
-
+  async getItemsSoldByVendor(id:number):Promise<ObjectElement[]> {
+    return new Promise<ObjectElement[]>((resolve, reject) => {
+      this.db.all(
+        `SELECT id, name, displayName FROM Objects WHERE id in (
+          SELECT itemid FROM LootTable WHERE LootTableIndex in (
+            SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=(
+                SELECT LootMatrixIndex FROM VendorComponent WHERE id=(
+                  SELECT component_id FROM ComponentsRegistry WHERE component_type=16 and id=${id}
+                )
+              )
+            )
+          )`,
+          (_, rows:Objects[]) => {
+            resolve(
+              rows.map(({name, displayName, id}) => {
+                return {
+                  name: displayName || name,
+                  id: id
+                }
+              })
+            )
+          }
+      )
+    })
+  }
 }
