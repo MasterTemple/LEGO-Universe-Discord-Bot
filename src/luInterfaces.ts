@@ -9,6 +9,14 @@ export interface ItemStats {
   imagination:number;
 }
 
+export enum queryType {
+  destroyable = 7,
+  skill = 9,
+  vendor = 16,
+  item = 11,
+  package = 53
+}
+
 export interface Skill {
   id:number;
   behaviorId:number;
@@ -24,6 +32,10 @@ export interface Skill {
 export interface ObjectElement {
   id:number;
   name:string;
+}
+export interface NameValuePair {
+  name: string;
+  value: string;
 }
 
 export interface ItemPrecondition {
