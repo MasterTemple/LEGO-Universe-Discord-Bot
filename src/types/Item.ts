@@ -1,6 +1,6 @@
 import {Database} from 'sqlite3';
 import {CDClient, ITEM_COMPONENT} from '../cdclient';
-import {ComponentsRegistry} from '../cdclientInterfaces';
+import {ComponentsRegistry, ObjectSkills, SkillBehavior} from '../cdclientInterfaces';
 import {
   ItemStats,
   Skill,
@@ -32,8 +32,10 @@ export class Item extends CDClient {
   async create(): Promise<void> {
     this.components = await this.getComponents(this.id);
     this.name = (await this.getObjectName(this.id)).name;
+
     await this.addItemComponent();
     await this.addDrops();
+    await this.addItemStats();
   }
 
   getURL(id:number = this.id):string {
@@ -201,19 +203,31 @@ export class Item extends CDClient {
           rawItemComponent.reqPrecondition), // rawItemComponent.,
     };
   }
-  // async getItemStats():ItemStats{
-  //   return new Promise<ItemStats>(async(resolve, reject) => {
-  //     let item_component: = await this.getItemComponent(
-  //       this.components.find(f=>f.component_type===ITEM_COMPONENT).component_id
-  //     )
-  //     console.log(item_component);
+  async getSkill(objectSkill:ObjectSkills):Promise<Skill>{
+    let skill = await this.getSkillBehavior(objectSkill.skillID)
 
-  //     return {
-  //       armor: item_component.find(c => c);
-  //       health: item_component.find(c => c);
-  //       imagination: item_component.find(c => c);
-  //     }
+    return {
+      id: objectSkill.skillID,
+      behaviorId: skill.behaviorID,
+      onEquip: !objectSkill.AICombatWeight,
+      imaginationCost: skill.imaginationcost,
+      cooldownGroup: skill.cooldowngroup,
+      cooldownTime: skill.cooldown,
+      armorBonus: skill.armorBonusUI,
+      healthBonus: skill.lifeBonusUI,
+      imaginationBonus: skill.imBonusUI,
+    }
+  }
+  async addItemStats():Promise<void>{
+      let objectSkills = await this.getObjectSkills(this.id)
+      this.skills = await Promise.all(objectSkills.map((skill) => this.getSkill(skill)))
+      console.log(this.skills);
 
-  //   })
-  // }
+      this.stats = {
+        armor: this.skills.find(({armorBonus}) => armorBonus !== null)?.armorBonus || 0,
+        health: this.skills.find(({healthBonus}) => healthBonus !== null)?.healthBonus || 0,
+        imagination: this.skills.find(({imaginationBonus}) => imaginationBonus !== null)?.imaginationBonus || 0,
+      }
+
+  }
 }

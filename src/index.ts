@@ -1,6 +1,7 @@
 import {AutocompleteInteraction, Client, CommandInteraction, CommandInteractionOption, Interaction} from 'discord.js';
 import {CDClient} from './cdclient';
 import {token} from './config.json';
+import { NameValuePair } from './luInterfaces';
 import {getSlashCommands, updateSlashCommands} from './setup';
 import {SlashCommandMap} from './types/SlashCommand';
 
@@ -31,7 +32,18 @@ client.on('interactionCreate', async (interaction: Interaction) => {
 
       const options: readonly CommandInteractionOption[] = interaction.options?.data || [];
       // this is currently a general search for ALL objects in the 'Objects' table
-      let autocompleteOptions = await cdclient.searchObject(options.find((f) => f.focused).value.toString())
+      let {name, value} = options.find((f) => f.focused)
+      value = value.toString()
+
+      let autocompleteOptions:NameValuePair[]
+      if(parseInt(value)){
+        autocompleteOptions = [{
+          name: `${(await cdclient.getObjectName(parseInt(value))).name} [${value}]`,
+          value: value
+        }]
+      }else{
+        autocompleteOptions = await cdclient.searchObject(value)
+      }
       interaction.respond(autocompleteOptions)
   }
 

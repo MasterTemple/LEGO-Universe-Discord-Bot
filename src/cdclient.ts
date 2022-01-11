@@ -7,11 +7,13 @@ import {
   LootMatrix,
   LootTable,
   Objects,
+  ObjectSkills,
   PackageComponent,
-  RarityTable} from './cdclientInterfaces';
+  RarityTable,
+  SkillBehavior} from './cdclientInterfaces';
 import {sqlitePath} from './config.json';
 import {LocaleXML} from './locale';
-import {ItemDrop, NameValuePair, ObjectElement} from './luInterfaces';
+import {ItemDrop, NameValuePair, ObjectElement, queryType, Skill} from './luInterfaces';
 export const RENDER_COMPONENT = 2;
 export const DESTRUCTIBLE_COMPONENT = 7;
 export const ITEM_COMPONENT = 11;
@@ -253,10 +255,47 @@ export class CDClient {
           });
     });
   }
+
+  async getObjectSkills(id:number):Promise<ObjectSkills[]> {
+    return new Promise<ObjectSkills[]>((resolve, reject) => {
+      this.db.all(
+          `SELECT * FROM ObjectSkills
+           WHERE objectTemplate=${id}`,
+          (_, rows:ObjectSkills[]) => {
+            resolve(rows);
+          });
+    });
+  }
+  async getSkillBehavior(skillId:number):Promise<SkillBehavior> {
+    return new Promise<SkillBehavior>((resolve, reject) => {
+      this.db.get(
+          `SELECT * FROM SkillBehavior
+           WHERE skillID=${skillId}`,
+          (_, row:SkillBehavior) => {
+            resolve(row);
+          });
+    });
+  }
+
   async searchObject(query:string):Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       this.db.all(
-          `SELECT id, name, displayName FROM Objects WHERE displayName LIKE '%${query.replace(/\s/g, "%")}%' OR name LIKE '%${query.replace(/\s/g, "%")}%' LIMIT 15`,
+          `SELECT id, name, displayName FROM Objects WHERE displayName LIKE '%${query.replace(/\s/g, "%")}%' OR name LIKE '%${query.replace(/\s/g, "%")}%' ORDER BY id ASC LIMIT 15`,
+          (_, rows:Objects[]) => {
+            let pairs:NameValuePair[] = rows.map((row:Objects) => {
+              return {
+                name: `${row.displayName || row.name} [${row.id}]`,
+                value: row.id.toString()
+              }
+            })
+            resolve(pairs)
+          });
+    });
+  }
+  async searchObjectByType(query:string, componentType:queryType):Promise<NameValuePair[]>{
+    return new Promise<NameValuePair[]>((resolve, reject) => {
+      this.db.all(
+          `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '%${query.replace(/\s/g, "%")}%' OR name LIKE '%${query.replace(/\s/g, "%")}%') AND id IN (SELECT id FROM ComponentsRegistry WHERE component_type=${componentType}) ORDER BY id ASC LIMIT 15`,
           (_, rows:Objects[]) => {
             let pairs:NameValuePair[] = rows.map((row:Objects) => {
               return {

@@ -33,10 +33,11 @@ export class LocaleXML {
 
   async getObjectName(id:number):Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      // resolve(undefined)
-      this.getNodeData(`Objects_${id}_name`).then((name) => {
-        resolve(name);
-      });
+      // this will make it read from db - it's a temp fix cause reading from locale is too slow
+      resolve(undefined)
+      // this.getNodeData(`Objects_${id}_name`).then((name) => {
+      //   resolve(name);
+      // });
     });
   }
 
