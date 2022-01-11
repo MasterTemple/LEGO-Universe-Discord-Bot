@@ -38,6 +38,7 @@ export class LocaleXML {
       // this.getNodeData(`Objects_${id}_name`).then((name) => {
       //   resolve(name);
       // });
+
     });
   }
 
