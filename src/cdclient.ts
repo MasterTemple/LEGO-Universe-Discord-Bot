@@ -13,7 +13,7 @@ import {
   SkillBehavior} from './cdclientInterfaces';
 import {sqlitePath} from './config.json';
 import {LocaleXML} from './locale';
-import {ItemDrop, NameValuePair, ObjectElement, queryType, Skill} from './luInterfaces';
+import {EnemyDrop, ItemDrop, NameValuePair, ObjectElement, queryType, Skill} from './luInterfaces';
 export const RENDER_COMPONENT = 2;
 export const DESTRUCTIBLE_COMPONENT = 7;
 export const ITEM_COMPONENT = 11;
@@ -328,6 +328,23 @@ export class CDClient {
                 }
               })
             )
+          }
+      )
+    })
+  }
+  async getEnemyDrops(id:number):Promise<EnemyDrop[]> {
+    return new Promise<EnemyDrop[]>((resolve, reject) => {
+      this.db.all(
+        `SELECT LootMatrix.LootTableIndex, LootMatrix.RarityTableIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.rarity, RarityTable.randmax,
+        (SELECT COUNT(*) FROM LootTable WHERE LootMatrix.LootTableIndex=LootTable.LootTableIndex) AS ItemCount FROM LootMatrix
+        JOIN RarityTable ON LootMatrix.RarityTableIndex=RarityTable.RarityTableIndex AND LootMatrixIndex=(
+          SELECT LootMatrixIndex FROM DestructibleComponent WHERE id=(
+            SELECT component_id FROM ComponentsRegistry WHERE component_type=7 and id=${id}
+          )
+        )
+        `,
+          (_, rows:EnemyDrop[]) => {
+            resolve(rows)
           }
       )
     })

@@ -16,7 +16,16 @@ export enum queryType {
   item = 11,
   package = 53
 }
-
+export interface EnemyDrop {
+  LootTableIndex: number;
+  RarityTableIndex: number;
+  percent: number;
+  minToDrop: number;
+  maxToDrop: number;
+  rarity: number;
+  randmax: number;
+  ItemCount: number;
+}
 export interface Skill {
   id:number;
   behaviorId:number;
