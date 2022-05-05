@@ -4,7 +4,8 @@
     "declaration": true,
     "declarationMap": true,
     "watch": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "downlevelIteration": true
   },
   "include": ["src"]
 }
