@@ -18,8 +18,9 @@ export default {
       interaction: CommandInteraction,
       options: readonly CommandInteractionOption[],
       cdclient: CDClient) {
-    console.log('/item');
-    const itemId = parseInt(options.find((option) => option.name === 'item').value.toString())
+    // console.log('/item');
+    let query = options.find((option) => option.name === 'item').value.toString()
+    const itemId = parseInt(query) || await cdclient.getObjectId(query)
     const item = new Item(cdclient, itemId);
     await item.create()
     // console.log(item);

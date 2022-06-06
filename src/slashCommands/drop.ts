@@ -21,16 +21,18 @@ export default {
       interaction:CommandInteraction,
       options: readonly CommandInteractionOption[],
       cdclient: CDClient) {
-    console.log('/drop');
-    const item = new Item(cdclient, parseInt(options[0].value.toString()));
+    let query = options.find((option) => option.name === 'item').value.toString()
+    const itemId = parseInt(query) || await cdclient.getObjectId(query)
+    const item = new Item(cdclient, itemId);
     await item.create();
-    console.log({item});
+    // console.log({item});
+    // console.log(JSON.stringify(item, null, 2))
     const embed = new MessageEmbed();
     embed.setTitle(`${item.name} [${item.id}]`);
     embed.setURL(item.getURL());
     let c = 1;
-    item.drop.forEach((eachDrop) => {
-      if (eachDrop.enemies.length > 0) {
+    item.drop.forEach((eachDrop, index) => {
+      if (eachDrop.smashables.length > 0 && embed.fields.length < 25) {
         // embed.addField(`${c}. ${eachDrop.destructibleNames.join(", ")}`, `1/${Math.round(1/eachDrop.totalChance)}`)
         let range:string;
         if (eachDrop.minToDrop === eachDrop.maxToDrop) {
@@ -39,8 +41,8 @@ export default {
           range = `${eachDrop.minToDrop}-${eachDrop.maxToDrop}`;
         }
         embed.addField(
-            `${c++}. 1/${Math.round(1 / eachDrop.totalChance)} for ${range} ${item.name}`,
-            `From ${eachDrop.enemies.map(({name, id}) => `${name} [[${id}]](${item.getURL(id)})`).join(', ')}`,
+            `${c++}. 1/${Math.round(1 / eachDrop.chance)} for ${range} ${item.name}`,
+            `From ${eachDrop.smashables.map(({name, id}) => `${name} [[${id}]](${item.getURL(id)})`).join(', ')}`.slice(0,1023),
         );
       }
     });

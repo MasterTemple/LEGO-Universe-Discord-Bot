@@ -56,21 +56,26 @@ export class LocaleXML {
             this.locale.get(name).set(num, content);
           }
         }
+        // console.log(this.locale)
         resolve();
       });
     });
   }
 
-  async getObjectName(id:number):Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      resolve(this.locale.get("Objects_ID_name").get(id.toString()))
-    });
+  getObjectName(id:number):string {
+    return this.locale.get("Objects_ID_name").get(id.toString());
   }
+
+  // async getObjectName(id:number):Promise<string> {
+  //   return new Promise<string>((resolve, reject) => {
+  //     resolve(this.locale.get("Objects_ID_name").get(id.toString()))
+  //   });
+  // }
 
   async getLevelRequirement(preconditionIds:number[]):Promise<number> {
     return new Promise<number>((resolve, reject) => {
       for (const preconditionId of preconditionIds) {
-          const match = this.locale.get("Preconditions_ID_FailureReason").get(preconditionId.toString()).match(/(?<=You must be Level )\d+/);
+          const match = this.locale.get("Preconditions_ID_FailureReason").get(preconditionId.toString())?.match(/(?<=You must be Level )\d+/);
           if (match) {
             const level = parseInt(match[0]);
             resolve(level);

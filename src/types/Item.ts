@@ -8,8 +8,10 @@ import {
   ItemDrop,
   ObjectElement,
   EquipLocation,
-  ItemPrecondition} from '../luInterfaces';
+  ItemPrecondition,
+  LootDrop} from '../luInterfaces';
 import {explorerDomain} from '../config.json';
+import {writeFile} from 'fs/promises'
 
 export class Item extends CDClient {
   db:Database;
@@ -19,7 +21,7 @@ export class Item extends CDClient {
   stats:ItemStats;
   skills:Skill[];
   itemComponent:ItemComponent;
-  drop:ItemDrop[];
+  drop:LootDrop[];
   // earn
   // buy
   constructor(cdclient:CDClient, id:number) {
@@ -31,7 +33,7 @@ export class Item extends CDClient {
 
   async create(): Promise<void> {
     this.components = await this.getComponents(this.id);
-    this.name = (await this.getObjectName(this.id)).name;
+    this.name = (await this.getObjectName(this.id));
 
     await this.addItemComponent();
     await this.addDrops();
@@ -52,40 +54,52 @@ export class Item extends CDClient {
     }
   }
 
-  async getItemsInLootTableOfRarity(lootTable:number, rarity:number):Promise<number> {
-    const itemIds = await this.getItemsInLootTable(lootTable);
-    const itemCompIds = await Promise.all(itemIds.map((id) => this.getItemComponentId(id)));
-    let rarities = await Promise.all(itemCompIds.map((compId) => this.getItemRarity(compId)));
-    rarities = rarities.filter((r) => r === rarity);
-    return rarities.length;
-  }
-
   async addDrops():Promise<void> {
-    const ltis = await this.getItemLootTables(this.id);
-    const lmis = await this.getLootMatricesFromLootTables(ltis);
-    this.drop = await Promise.all(lmis.map((lmi) => this.addDestructibleComponentToLootMatrix(lmi)));
-    for (const drop of this.drop) {
-      drop.rarityChance = await this.getRarityChance(drop);
-      const destructibleIds = this.removeUndefined(
-          await Promise.all(drop.destructibleComponents.map((comp) => this.getIdFromDestructibleComponent(comp))),
-      );
-      drop.enemies = await Promise.all(destructibleIds.map((id) => this.getObjectName(id)));
+    let rawLootDrops = await this.dropItem(this.id, this.itemComponent.rarity);
+    let enemyToLMIMap = await this.getEnemiesAndLootMatrixForLoot(this.id);
+    rawLootDrops = rawLootDrops.filter((v) => enemyToLMIMap.get(v.enemyId) === v.lootMatrixIndex)
+    this.drop = [];
+    let lootTableRaritySizes = new Map<number, number>()
+    await writeFile("./test.json", JSON.stringify(rawLootDrops, null, 2))
+    for(let value of rawLootDrops){
+      let element = this.drop?.find(f => f.chanceForDrop == value.percent && f.minToDrop == value.minToDrop && f.maxToDrop == value.maxToDrop && f.chanceForRarity == value.randmax)
 
-      drop.itemsInLootTable = await this.getItemsInLootTableOfRarity(drop.LootTableIndex, this.itemComponent.rarity);
-      if (drop.itemsInLootTable === 0 || drop.rarityChance === 0) {
-        drop.totalChance = 0;
+      // if name is not in locale, then it is unused
+      let name = this.locale.getObjectName(value.enemyId)
+      if(!name) continue
+
+      if(!element) {
+        let ltiSize = lootTableRaritySizes?.get(value.lootTableIndex);
+        if(!ltiSize) {
+          ltiSize = await this.getItemsInLootTableOfRarity(value.lootTableIndex, value.rarity)
+          lootTableRaritySizes.set(value.lootTableIndex, ltiSize)
+        }
+        this.drop.push({
+          smashables: [{
+            id: value.enemyId,
+            name: name
+          }],
+          chanceForDrop: value.percent,
+          minToDrop: value.minToDrop,
+          maxToDrop: value.maxToDrop,
+          chanceForRarity: value.randmax,
+          chanceForItemInLootTable: ltiSize,
+          chance: value.percent * value.randmax * (1/ltiSize),
+        })
       } else {
-        drop.totalChance = (drop.percent) * (drop.rarityChance) * (1 / drop.itemsInLootTable);
+        element.smashables.push({
+          id: value.enemyId,
+          name: name
+        })
       }
     }
-    this.drop = this.drop.sort((a, b) => b.totalChance - a.totalChance);
   }
 
   async getProxyItemsFromSubItems(subItems:string):Promise<ObjectElement[]> {
     if (subItems === null) return [];
     else {
       const ids:number[] = subItems.match(/\d+/g).map((num:string) => parseInt(num));
-      const proxies:ObjectElement[] = await Promise.all(ids.map((id:number) => this.getObjectName(id)));
+      const proxies:ObjectElement[] = await Promise.all(ids.map((id:number) => this.getObjectElement(id)));
       return proxies;
     }
   }
@@ -144,7 +158,7 @@ export class Item extends CDClient {
   async getPreconditions(preconditionsString:string):Promise<ItemPrecondition[]> {
     if (preconditionsString === null) return [];
     else {
-      const preconditionIds = preconditionsString.match(/\d+/g).map((n) => parseInt(n));
+      const preconditionIds = preconditionsString.match(/\d+/g)?.map((n) => parseInt(n)) || [];
 
       const preconditions = await Promise.all(preconditionIds.map((id) => this.addPreconditionDescription(id)));
       return preconditions;
@@ -152,7 +166,7 @@ export class Item extends CDClient {
   }
 
   async getLevelRequirementFromPreconditions(preconditionsString:string):Promise<number> {
-    const preconditionIds = preconditionsString.split(',').map((p) => parseInt(p));
+    const preconditionIds = preconditionsString?.split(',')?.map((p) => parseInt(p)) || [];
     const levelRequirement = await this.locale.getLevelRequirement(preconditionIds);
     return levelRequirement;
   }
@@ -177,11 +191,11 @@ export class Item extends CDClient {
     const equipLocationNames:EquipLocation[] = this.getEquipLocations(equipLocations);
     let alternateCurrencyName:string = null;
     if (rawItemComponent.currencyLOT) {
-      alternateCurrencyName = (await this.getObjectName(rawItemComponent.currencyLOT)).name;
+      alternateCurrencyName = (await this.getObjectName(rawItemComponent.currencyLOT));
     }
     let commendationCurrencyName:string = null;
     if (rawItemComponent.commendationLOT) {
-      commendationCurrencyName = (await this.getObjectName(rawItemComponent.commendationLOT)).name;
+      commendationCurrencyName = (await this.getObjectName(rawItemComponent.commendationLOT));
     }
     this.itemComponent = {
       proxyItems: proxyItems,
@@ -221,7 +235,7 @@ export class Item extends CDClient {
   async addItemStats():Promise<void>{
       let objectSkills = await this.getObjectSkills(this.id)
       this.skills = await Promise.all(objectSkills.map((skill) => this.getSkill(skill)))
-      console.log(this.skills);
+      // console.log(this.skills);
 
       this.stats = {
         armor: this.skills.find(({armorBonus}) => armorBonus !== null)?.armorBonus || 0,
