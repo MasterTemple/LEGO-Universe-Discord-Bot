@@ -1,10 +1,10 @@
-import {AutocompleteInteraction, Client, CommandInteraction, CommandInteractionOption, Interaction} from 'discord.js';
-import {CDClient} from './cdclient';
-import {token} from './config.json';
+import { AutocompleteInteraction, Client, CommandInteraction, CommandInteractionOption, Interaction } from 'discord.js';
+import { CDClient } from './cdclient';
+import { token } from './config.json';
 import { LocaleXML } from './locale';
 import { LootDrop, NameValuePair } from './luInterfaces';
-import {getSlashCommands, updateSlashCommands} from './setup';
-import {SlashCommandMap} from './types/SlashCommand';
+import { getSlashCommands, updateSlashCommands } from './setup';
+import { SlashCommandMap } from './types/SlashCommand';
 
 const cdclient = new CDClient();
 
@@ -59,31 +59,32 @@ client.once('ready', async () => {
 });
 
 client.on('interactionCreate', async (interaction: Interaction) => {
-  if(interaction.isApplicationCommand()){
-    const options: readonly CommandInteractionOption[] = interaction.options?.data || [];
-    slashCommands.get(interaction.commandName).run(interaction, options, cdclient);
-  }
+  try {
+    if (interaction.isApplicationCommand()) {
+      const options: readonly CommandInteractionOption[] = interaction.options?.data || [];
+      slashCommands.get(interaction.commandName).run(interaction, options, cdclient);
+    }
 
-  if (interaction.isAutocomplete()) {
-
+    if (interaction.isAutocomplete()) {
       const options: readonly CommandInteractionOption[] = interaction.options?.data || [];
       // this is currently a general search for ALL objects in the 'Objects' table
-      let {name, value} = options.find((f) => f.focused)
-      value = value.toString()
+      let { name, value } = options.find((f) => f.focused);
+      value = value.toString();
 
-      let autocompleteOptions:NameValuePair[]
-      if(parseInt(value)){
+      let autocompleteOptions: NameValuePair[];
+      if (parseInt(value)) {
         autocompleteOptions = [{
           name: `${(await cdclient.getObjectName(parseInt(value)))} [${value}]`,
-          value: value
-        }]
-      }else{
-        autocompleteOptions = await cdclient.searchObject(value)
+          value: value,
+        }];
+      } else {
+        autocompleteOptions = await cdclient.searchObject(value);
       }
-      interaction.respond(autocompleteOptions)
+      interaction.respond(autocompleteOptions);
+    }
+  } catch (e) {
+    console.log(e);
   }
-
-
 });
 
 client.login(token);

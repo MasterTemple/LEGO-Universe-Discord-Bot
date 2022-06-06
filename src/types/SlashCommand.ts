@@ -1,5 +1,5 @@
-import {ApplicationCommandOptionData, BaseCommandInteraction, CommandInteraction, CommandInteractionOption} from 'discord.js';
-import {CDClient} from '../cdclient';
+import { ApplicationCommandOptionData, BaseCommandInteraction, CommandInteraction, CommandInteractionOption } from 'discord.js';
+import { CDClient } from '../cdclient';
 
 export interface SlashCommand {
   name: string;

@@ -1,7 +1,7 @@
-import {localePath} from './config.json';
-import {existsSync} from 'fs';
-import {readFile} from 'fs/promises';
-import {DOMParser} from 'xmldom';
+import { localePath } from './config.json';
+import { existsSync } from 'fs';
+import { readFile } from 'fs/promises';
+import { DOMParser } from 'xmldom';
 import * as xpath from 'xpath-ts';
 import { localeXMLType } from './luInterfaces';
 
@@ -36,7 +36,7 @@ export class LocaleXML {
   ];
   locale: Map<localeXMLType, Map<string, string>> = new Map<localeXMLType, Map<string, string>>();
 
-  async load():Promise<void> {
+  async load(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!existsSync(localePath)) {
         console.error('Please provide a path to the locale.xml in config.json.');
@@ -62,7 +62,7 @@ export class LocaleXML {
     });
   }
 
-  getObjectName(id:number):string {
+  getObjectName(id: number): string {
     return this.locale.get("Objects_ID_name").get(id.toString());
   }
 
@@ -72,15 +72,15 @@ export class LocaleXML {
   //   });
   // }
 
-  async getLevelRequirement(preconditionIds:number[]):Promise<number> {
+  async getLevelRequirement(preconditionIds: number[]): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       for (const preconditionId of preconditionIds) {
-          const match = this.locale.get("Preconditions_ID_FailureReason").get(preconditionId.toString())?.match(/(?<=You must be Level )\d+/);
-          if (match) {
-            const level = parseInt(match[0]);
-            resolve(level);
-          }
+        const match = this.locale.get("Preconditions_ID_FailureReason").get(preconditionId.toString())?.match(/(?<=You must be Level )\d+/);
+        if (match) {
+          const level = parseInt(match[0]);
+          resolve(level);
         }
+      }
       resolve(0);
     });
   }

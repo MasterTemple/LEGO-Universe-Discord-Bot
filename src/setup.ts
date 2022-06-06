@@ -1,6 +1,6 @@
-import {Client} from 'discord.js';
-import {readdirSync} from 'fs';
-import {SlashCommandMap} from './types/SlashCommand';
+import { Client } from 'discord.js';
+import { readdirSync } from 'fs';
+import { SlashCommandMap } from './types/SlashCommand';
 
 export async function updateSlashCommands(client: Client, commands: SlashCommandMap) {
   client.application.commands.set(Array.from(commands.values()));

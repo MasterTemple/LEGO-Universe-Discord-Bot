@@ -1,6 +1,6 @@
-import {Database} from 'sqlite3';
-import {CDClient, ITEM_COMPONENT} from '../cdclient';
-import {ComponentsRegistry, ObjectSkills, SkillBehavior} from '../cdclientInterfaces';
+import { Database } from 'sqlite3';
+import { CDClient, ITEM_COMPONENT } from '../cdclient';
+import { ComponentsRegistry, ObjectSkills, SkillBehavior } from '../cdclientInterfaces';
 import {
   ItemStats,
   Skill,
@@ -9,22 +9,22 @@ import {
   ObjectElement,
   EquipLocation,
   ItemPrecondition,
-  LootDrop} from '../luInterfaces';
-import {explorerDomain} from '../config.json';
-import {writeFile} from 'fs/promises'
+  LootDrop,
+} from '../luInterfaces';
+import { explorerDomain } from '../config.json';
 
 export class Item extends CDClient {
-  db:Database;
-  id:number;
-  name:string;
-  components:ComponentsRegistry[];
-  stats:ItemStats;
-  skills:Skill[];
-  itemComponent:ItemComponent;
-  drop:LootDrop[];
+  db: Database;
+  id: number;
+  name: string;
+  components: ComponentsRegistry[];
+  stats: ItemStats;
+  skills: Skill[];
+  itemComponent: ItemComponent;
+  drop: LootDrop[];
   // earn
   // buy
-  constructor(cdclient:CDClient, id:number) {
+  constructor(cdclient: CDClient, id: number) {
     super();
     this.db = cdclient.db;
     this.id = id;
@@ -40,11 +40,11 @@ export class Item extends CDClient {
     await this.addItemStats();
   }
 
-  getURL(id:number = this.id):string {
+  getURL(id: number = this.id): string {
     return `${explorerDomain}/objects/${id}`;
   }
 
-  async getRarityChance(drop:ItemDrop):Promise<number> {
+  async getRarityChance(drop: ItemDrop): Promise<number> {
     const thisRarity = await this.getPercentToDropRarity(drop.RarityTableIndex, this.itemComponent.rarity);
     if (this.itemComponent.rarity - 1 === 0) {
       return thisRarity;
@@ -54,58 +54,57 @@ export class Item extends CDClient {
     }
   }
 
-  async addDrops():Promise<void> {
+  async addDrops(): Promise<void> {
     let rawLootDrops = await this.dropItem(this.id, this.itemComponent.rarity);
-    let enemyToLMIMap = await this.getEnemiesAndLootMatrixForLoot(this.id);
-    rawLootDrops = rawLootDrops.filter((v) => enemyToLMIMap.get(v.enemyId) === v.lootMatrixIndex)
+    const enemyToLMIMap = await this.getEnemiesAndLootMatrixForLoot(this.id);
+    rawLootDrops = rawLootDrops.filter((v) => enemyToLMIMap.get(v.enemyId) === v.lootMatrixIndex);
     this.drop = [];
-    let lootTableRaritySizes = new Map<number, number>()
-    await writeFile("./test.json", JSON.stringify(rawLootDrops, null, 2))
-    for(let value of rawLootDrops){
-      let element = this.drop?.find(f => f.chanceForDrop == value.percent && f.minToDrop == value.minToDrop && f.maxToDrop == value.maxToDrop && f.chanceForRarity == value.randmax)
+    const lootTableRaritySizes = new Map<number, number>();
+    for (const value of rawLootDrops) {
+      const element = this.drop?.find((f) => f.chanceForDrop == value.percent && f.minToDrop == value.minToDrop && f.maxToDrop == value.maxToDrop && f.chanceForRarity == value.randmax);
 
       // if name is not in locale, then it is unused
-      let name = this.locale.getObjectName(value.enemyId)
-      if(!name) continue
+      const name = this.locale.getObjectName(value.enemyId);
+      if (!name) continue;
 
-      if(!element) {
+      if (!element) {
         let ltiSize = lootTableRaritySizes?.get(value.lootTableIndex);
-        if(!ltiSize) {
-          ltiSize = await this.getItemsInLootTableOfRarity(value.lootTableIndex, value.rarity)
-          lootTableRaritySizes.set(value.lootTableIndex, ltiSize)
+        if (!ltiSize) {
+          ltiSize = await this.getItemsInLootTableOfRarity(value.lootTableIndex, value.rarity);
+          lootTableRaritySizes.set(value.lootTableIndex, ltiSize);
         }
         this.drop.push({
           smashables: [{
             id: value.enemyId,
-            name: name
+            name: name,
           }],
           chanceForDrop: value.percent,
           minToDrop: value.minToDrop,
           maxToDrop: value.maxToDrop,
           chanceForRarity: value.randmax,
           chanceForItemInLootTable: ltiSize,
-          chance: value.percent * value.randmax * (1/ltiSize),
-        })
+          chance: value.percent * value.randmax * (1 / ltiSize),
+        });
       } else {
         element.smashables.push({
           id: value.enemyId,
-          name: name
-        })
+          name: name,
+        });
       }
     }
   }
 
-  async getProxyItemsFromSubItems(subItems:string):Promise<ObjectElement[]> {
+  async getProxyItemsFromSubItems(subItems: string): Promise<ObjectElement[]> {
     if (subItems === null) return [];
     else {
-      const ids:number[] = subItems.match(/\d+/g).map((num:string) => parseInt(num));
-      const proxies:ObjectElement[] = await Promise.all(ids.map((id:number) => this.getObjectElement(id)));
+      const ids: number[] = subItems.match(/\d+/g).map((num: string) => parseInt(num));
+      const proxies: ObjectElement[] = await Promise.all(ids.map((id: number) => this.getObjectElement(id)));
       return proxies;
     }
   }
 
-  getEquipLocations(rawLocations:string[]):EquipLocation[] {
-    const locations:EquipLocation[] = [];
+  getEquipLocations(rawLocations: string[]): EquipLocation[] {
+    const locations: EquipLocation[] = [];
     for (const loc of rawLocations) {
       if (loc === 'clavicle') {
         locations.push('Armor');
@@ -126,7 +125,7 @@ export class Item extends CDClient {
     return locations;
   }
 
-  getEquipLocation(rawLocation:string):EquipLocation {
+  getEquipLocation(rawLocation: string): EquipLocation {
     if (rawLocation === 'clavicle') {
       return 'Armor';
     } else if (rawLocation === 'hair') {
@@ -146,7 +145,7 @@ export class Item extends CDClient {
     }
   }
 
-  async addPreconditionDescription(id:number):Promise<ItemPrecondition> {
+  async addPreconditionDescription(id: number): Promise<ItemPrecondition> {
     return new Promise<ItemPrecondition>((resolve, reject) => {
       resolve({
         id: id,
@@ -155,7 +154,7 @@ export class Item extends CDClient {
     });
   }
 
-  async getPreconditions(preconditionsString:string):Promise<ItemPrecondition[]> {
+  async getPreconditions(preconditionsString: string): Promise<ItemPrecondition[]> {
     if (preconditionsString === null) return [];
     else {
       const preconditionIds = preconditionsString.match(/\d+/g)?.map((n) => parseInt(n)) || [];
@@ -165,35 +164,35 @@ export class Item extends CDClient {
     }
   }
 
-  async getLevelRequirementFromPreconditions(preconditionsString:string):Promise<number> {
+  async getLevelRequirementFromPreconditions(preconditionsString: string): Promise<number> {
     const preconditionIds = preconditionsString?.split(',')?.map((p) => parseInt(p)) || [];
     const levelRequirement = await this.locale.getLevelRequirement(preconditionIds);
     return levelRequirement;
   }
 
-  async getAllEquipLocations(ids:number[]):Promise<string[]> {
+  async getAllEquipLocations(ids: number[]): Promise<string[]> {
     const components = await Promise.all(ids.map((id) => this.getComponents(id)));
     const itemComponents = components.map((comp) => comp.find((c) => c.componentType === ITEM_COMPONENT).componentId);
     const equipLocations = await Promise.all(itemComponents.map((comp) => this.getEquipLocationFromCompId(comp)));
     return equipLocations;
   }
 
-  async addItemComponent():Promise<void> {
+  async addItemComponent(): Promise<void> {
     const rawItemComponent = await this.getItemComponent(
-        this.components.find((f) => f.componentType === ITEM_COMPONENT).componentId,
+      this.components.find((f) => f.componentType === ITEM_COMPONENT).componentId,
     );
-    const proxyItems:ObjectElement[] = await this.getProxyItemsFromSubItems(rawItemComponent.subItems);
+    const proxyItems: ObjectElement[] = await this.getProxyItemsFromSubItems(rawItemComponent.subItems);
 
     const allItemIds = [this.id, ...proxyItems.map((item) => item.id)];
 
-    const equipLocations:string[] = await this.getAllEquipLocations(allItemIds);
+    const equipLocations: string[] = await this.getAllEquipLocations(allItemIds);
 
-    const equipLocationNames:EquipLocation[] = this.getEquipLocations(equipLocations);
-    let alternateCurrencyName:string = null;
+    const equipLocationNames: EquipLocation[] = this.getEquipLocations(equipLocations);
+    let alternateCurrencyName: string = null;
     if (rawItemComponent.currencyLOT) {
       alternateCurrencyName = (await this.getObjectName(rawItemComponent.currencyLOT));
     }
-    let commendationCurrencyName:string = null;
+    let commendationCurrencyName: string = null;
     if (rawItemComponent.commendationLOT) {
       commendationCurrencyName = (await this.getObjectName(rawItemComponent.commendationLOT));
     }
@@ -214,11 +213,11 @@ export class Item extends CDClient {
       commendationCurrencyName: commendationCurrencyName,
       isWeapon: equipLocationNames.includes('Right Hand'), // rawItemComponent.,
       levelRequirement: await this.getLevelRequirementFromPreconditions(
-          rawItemComponent.reqPrecondition), // rawItemComponent.,
+        rawItemComponent.reqPrecondition), // rawItemComponent.,
     };
   }
-  async getSkill(objectSkill:ObjectSkills):Promise<Skill>{
-    let skill = await this.getSkillBehavior(objectSkill.skillID)
+  async getSkill(objectSkill: ObjectSkills): Promise<Skill> {
+    const skill = await this.getSkillBehavior(objectSkill.skillID);
 
     return {
       id: objectSkill.skillID,
@@ -230,18 +229,17 @@ export class Item extends CDClient {
       armorBonus: skill.armorBonusUI,
       healthBonus: skill.lifeBonusUI,
       imaginationBonus: skill.imBonusUI,
-    }
+    };
   }
-  async addItemStats():Promise<void>{
-      let objectSkills = await this.getObjectSkills(this.id)
-      this.skills = await Promise.all(objectSkills.map((skill) => this.getSkill(skill)))
-      // console.log(this.skills);
+  async addItemStats(): Promise<void> {
+    const objectSkills = await this.getObjectSkills(this.id);
+    this.skills = await Promise.all(objectSkills.map((skill) => this.getSkill(skill)));
+    // console.log(this.skills);
 
-      this.stats = {
-        armor: this.skills.find(({armorBonus}) => armorBonus !== null)?.armorBonus || 0,
-        health: this.skills.find(({healthBonus}) => healthBonus !== null)?.healthBonus || 0,
-        imagination: this.skills.find(({imaginationBonus}) => imaginationBonus !== null)?.imaginationBonus || 0,
-      }
-
+    this.stats = {
+      armor: this.skills.find(({ armorBonus }) => armorBonus !== null)?.armorBonus || 0,
+      health: this.skills.find(({ healthBonus }) => healthBonus !== null)?.healthBonus || 0,
+      imagination: this.skills.find(({ imaginationBonus }) => imaginationBonus !== null)?.imaginationBonus || 0,
+    };
   }
 }

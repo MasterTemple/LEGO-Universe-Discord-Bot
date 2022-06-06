@@ -1,7 +1,7 @@
-import {CommandInteraction, CommandInteractionOption, MessageEmbed} from 'discord.js';
-import {CDClient} from '../cdclient';
+import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
+import { CDClient } from '../cdclient';
 import { Item } from '../types/Item';
-import {SlashCommand} from '../types/SlashCommand';
+import { SlashCommand } from '../types/SlashCommand';
 
 export default {
   name: 'item',
@@ -14,10 +14,10 @@ export default {
       required: true,
       autocomplete: true
     }],
-  run: async function(
-      interaction: CommandInteraction,
-      options: readonly CommandInteractionOption[],
-      cdclient: CDClient) {
+  run: async function (
+    interaction: CommandInteraction,
+    options: readonly CommandInteractionOption[],
+    cdclient: CDClient) {
     // console.log('/item');
     let query = options.find((option) => option.name === 'item').value.toString()
     const itemId = parseInt(query) || await cdclient.getObjectId(query)
@@ -29,7 +29,7 @@ export default {
     embed.setURL(item.getURL());
     embed.addField("Rarity", `Tier ${item.itemComponent.rarity}`, true)
     embed.addField("Equip Location(s)", item.itemComponent.equipLocations.join(", "), true)
-    embed.addField("Proxies", item.itemComponent.proxyItems.map(({name, id}) => `${name} [[${id}]](${item.getURL(id)})`).join(", ") || "None", true)
+    embed.addField("Proxies", item.itemComponent.proxyItems.map(({ name, id }) => `${name} [[${id}]](${item.getURL(id)})`).join(", ") || "None", true)
     embed.addField("Armor", item.stats.armor.toString(), true)
     embed.addField("Health", item.stats.health.toString(), true)
     embed.addField("Imagination", item.stats.imagination.toString(), true)
