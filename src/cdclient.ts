@@ -14,7 +14,7 @@ import {
 } from './cdclientInterfaces';
 import { sqlitePath } from './config.json';
 import { LocaleXML } from './locale';
-import { EnemyDrop, ItemDrop, LootDropFirstQuery, NameValuePair, ObjectElement, queryType, Skill } from './luInterfaces';
+import { EnemyDrop, ItemDrop, LootDropFirstQuery, NameValuePair, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
 export const RENDER_COMPONENT = 2;
 export const DESTRUCTIBLE_COMPONENT = 7;
 export const ITEM_COMPONENT = 11;
@@ -355,18 +355,32 @@ export class CDClient {
       )
     })
   }
-  async getEnemyDrops(id: number): Promise<EnemyDrop[]> {
-    return new Promise<EnemyDrop[]>((resolve, reject) => {
+  // async getEnemyDrops(id: number): Promise<EnemyDrop[]> {
+  //   return new Promise<EnemyDrop[]>((resolve, reject) => {
+  //     this.db.all(
+  //       `SELECT LootMatrix.LootTableIndex, LootMatrix.RarityTableIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.rarity, RarityTable.randmax,
+  //       (SELECT COUNT(*) FROM LootTable WHERE LootMatrix.LootTableIndex=LootTable.LootTableIndex) AS ItemCount FROM LootMatrix
+  //       JOIN RarityTable ON LootMatrix.RarityTableIndex=RarityTable.RarityTableIndex AND LootMatrixIndex=(
+  //         SELECT LootMatrixIndex FROM DestructibleComponent WHERE id=(
+  //           SELECT component_id FROM ComponentsRegistry WHERE component_type=7 and id=${id}
+  //         )
+  //       )
+  //       `,
+  //       (_, rows: EnemyDrop[]) => {
+  //         resolve(rows)
+  //       }
+  //     )
+  //   })
+  // }
+  async getSmashableDrops(id: number): Promise<SmashableDrop[]> {
+    return new Promise<SmashableDrop[]>((resolve, reject) => {
       this.db.all(
-        `SELECT LootMatrix.LootTableIndex, LootMatrix.RarityTableIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.rarity, RarityTable.randmax,
-        (SELECT COUNT(*) FROM LootTable WHERE LootMatrix.LootTableIndex=LootTable.LootTableIndex) AS ItemCount FROM LootMatrix
-        JOIN RarityTable ON LootMatrix.RarityTableIndex=RarityTable.RarityTableIndex AND LootMatrixIndex=(
-          SELECT LootMatrixIndex FROM DestructibleComponent WHERE id=(
-            SELECT component_id FROM ComponentsRegistry WHERE component_type=7 and id=${id}
-          )
-        )
-        `,
-        (_, rows: EnemyDrop[]) => {
+        `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity, (SELECT COUNT(*) FROM LootTable WHERE LootMatrix.LootTableIndex=LootTable.LootTableIndex) AS poolSize FROM LootMatrix
+  JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex
+WHERE LootMatrixIndex IN (
+  SELECT LootMatrixIndex FROM 'DestructibleComponent' WHERE id IN (
+    SELECT component_id FROM ComponentsRegistry WHERE component_type=7 AND id=${id}))`,
+        (_, rows: SmashableDrop[]) => {
           resolve(rows)
         }
       )
@@ -439,6 +453,26 @@ WHERE component_type = 7 AND component_id IN (
         (_, rows: any[]) => {
           let map = new Map<number, number>();
           rows.forEach((e) => map.set(e.enemyId, e.lootMatrixIndex))
+          resolve(map)
+        })
+    })
+  }
+
+  async getPackagesAndLootMatrixForLoot(id: number): Promise<Map<number, number>> {
+    return new Promise<Map<number, number>>((resolve, reject) => {
+      let query = `SELECT ComponentsRegistry.id as packageId, LootMatrixIndex as lootMatrixIndex from ComponentsRegistry
+JOIN PackageComponent on PackageComponent.id = ComponentsRegistry.component_id
+WHERE component_type = 11 AND component_id IN (
+    SELECT id from DestructibleComponent WHERE LootMatrixIndex IN (
+        SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN (
+            SELECT LootTableIndex FROM LootTable WHERE itemid = ${id}
+        )
+    )
+)`;
+      this.db.all(query,
+        (_, rows: any[]) => {
+          let map = new Map<number, number>();
+          rows.forEach((e) => map.set(e.packageId, e.lootMatrixIndex))
           resolve(map)
         })
     })

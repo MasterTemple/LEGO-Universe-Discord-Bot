@@ -12,6 +12,16 @@ export interface LootDropFirstQuery {
   rarity: number;
 }
 
+export interface SmashableDrop {
+  lootTableIndex: number;
+  chanceForItem: number;
+  minToDrop: number;
+  maxToDrop: number;
+  chanceForRarity: number;
+  rarity: number;
+  poolSize: number;
+}
+
 export interface LootDrop {
   smashables: ObjectElement[];
   chanceForDrop: number;
