@@ -10,6 +10,7 @@ import {
   EquipLocation,
   ItemPrecondition,
   LootDrop,
+  MissionReward,
 } from '../luInterfaces';
 import { explorerDomain } from '../config.json';
 
@@ -25,7 +26,7 @@ export class Item extends CDClient {
   drop: LootDrop[] = [];
   unpack: LootDrop[] = [];
   buy: ObjectElement[] = [];
-  reward: LootDrop[] = [];
+  reward: MissionReward[] = [];
   // earn
   // buy
   constructor(cdclient: CDClient, id: number) {
@@ -60,6 +61,10 @@ export class Item extends CDClient {
       const lowerRarity = await this.getPercentToDropRarity(drop.RarityTableIndex, this.itemComponent.rarity - 1);
       return thisRarity - lowerRarity;
     }
+  }
+
+  async addMissionRewards(): Promise<void> {
+    this.reward = await this.getMissionsThatRewardItem(this.id);
   }
 
   async addVendors(): Promise<void> {

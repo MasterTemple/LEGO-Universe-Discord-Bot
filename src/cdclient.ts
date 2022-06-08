@@ -15,7 +15,7 @@ import {
 } from './cdclientInterfaces';
 import { sqlitePath } from './config.json';
 import { LocaleXML } from './locale';
-import { EnemyDrop, ItemDrop, ItemSold, LootDropFirstQuery, NameValuePair, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
+import { EnemyDrop, ItemDrop, ItemSold, LootDropFirstQuery, MissionReward, NameValuePair, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
 export const RENDER_COMPONENT = 2;
 export const DESTRUCTIBLE_COMPONENT = 7;
 export const ITEM_COMPONENT = 11;
@@ -531,4 +531,46 @@ export class CDClient {
         })
     })
   }
+
+  async getItemsWithRarityInLootTable(lootTable: number): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      this.db.get(
+        `SELECT itemid as id, ItemComponent.rarity FROM LootTable JOIN ItemComponent ON ItemComponent.id = (SELECT component_id FROM ComponentsRegistry WHERE id = LootTable.itemid AND component_type = ${ITEM_COMPONENT}) WHERE LootTable.LootTableIndex = ${lootTable};`,
+        (_, row: any) => {
+          resolve(row?.RarityCount || 0)
+        }
+      )
+    })
+  }
+
+  async getMissionsThatRewardItem(item: number): Promise<MissionReward[]> {
+    return new Promise<MissionReward[]>((resolve, reject) => {
+      this.db.all(
+        `SELECT id, defined_type as type, defined_subtype as subtype, reward_item1, reward_item2, reward_item3, reward_item4, reward_item1_count, reward_item2_count, reward_item3_count, reward_item4_count FROM Missions WHERE reward_item1 = ${item} OR reward_item2 = ${item} OR reward_item3 = ${item} OR reward_item4 = ${item};`,
+        (_, rows) => {
+          let count = 0
+
+          rows = rows.map((row) => {
+            if (item === row.reward_item1) count = row.reward_item1_count;
+            else if (item === row.reward_item2) count = row.reward_item2_count;
+            else if (item === row.reward_item3) count = row.reward_item3_count;
+            else if (item === row.reward_item4) count = row.reward_item4_count;
+
+            return {
+              id: row.id,
+              type: row.type,
+              subtype: row.subtype,
+              name: this.locale.getMissionName(row.id),
+              description: this.locale.getMissionDescription(row.id),
+              rewardCount: count
+            }
+          })
+
+          rows = rows.filter((r) => r.rewardCount > 0)
+          resolve(rows)
+        }
+      )
+    })
+  }
+
 }

@@ -1,5 +1,14 @@
 export type localeXMLType = "Activities_ID_ActivityName" | "ItemSets_ID_kitName" | "MissionEmail_ID_announceText" | "MissionEmail_ID_bodyText" | "MissionEmail_ID_senderName" | "MissionEmail_ID_subjectText" | "MissionTasks_ID_description" | "MissionText_ID_accept_chat_bubble" | "MissionText_ID_chat_state_1" | "MissionText_ID_chat_state_2" | "MissionText_ID_chat_state_3_turnin" | "MissionText_ID_completion_succeed_tip" | "MissionText_ID_in_progress" | "MissionText_ID_offer" | "MissionText_ID_ready_to_complete" | "MissionText_ID_description" | "MissionText_ID_chat_state_3" | "MissionText_ID_chat_state_4" | "MissionText_ID_chat_state_4_turnin" | "MissionText_ID_offer_repeatable" | "Missions_ID_name" | "Objects_ID_description" | "Objects_ID_name" | "Preconditions_ID_FailureReason" | "SkillBehavior_ID_descriptionUI" | "SkillBehavior_ID_name"
 
+export interface MissionReward {
+  id: number;
+  type: string;
+  subtype: string;
+  name: string;
+  description: string;
+  rewardCount: number;
+}
+
 export interface ItemSold {
   id: number;
   name: string;

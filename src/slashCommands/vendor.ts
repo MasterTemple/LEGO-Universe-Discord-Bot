@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { textToChunks } from '../functions';
+import { bracketURL, textToChunks } from '../functions';
 import { Item } from '../types/Item';
 import { NPC } from '../types/NPC';
 import { SlashCommand } from '../types/SlashCommand';
@@ -41,7 +41,7 @@ export default {
         if (item.commendationCost) costs.push(`**${item.commendationCost}** ${item.commendationCurrency.name}s`)
         if (item.alternateCost) costs.push(`**${item.alternateCost}** ${item.alternateCurrency.name}s`)
         totalCost = costs.join(" **+** ")
-        return `**${index + 1}.** ${item.name} [[${item.id}]](${npc.getURL(item.id)}) for ${totalCost}`
+        return `**${index + 1}.** ${item.name} ${bracketURL(item.id)}) for ${totalCost}`
       }).join("\n");
       let totalSize = 0
       textToChunks(vendorsText).forEach((vendors) => {

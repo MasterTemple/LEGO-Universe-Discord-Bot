@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { textToChunks } from '../functions';
+import { bracketURL, textToChunks } from '../functions';
 import { ObjectElement } from '../luInterfaces';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
@@ -76,7 +76,7 @@ export default {
 
     embed.addField("Price", `${item.itemComponent.buyPrice} Coins`, false)
     if (item.buy.length) {
-      let vendorsText = item.buy.map((vendor, index) => `**${index + 1}.** ${vendor.name} [[${vendor.id}]](${item.getURL(vendor.id)})`).join("\n");
+      let vendorsText = item.buy.map((vendor, index) => `**${index + 1}.** ${vendor.name} ${bracketURL(vendor.id)}`).join("\n");
       textToChunks(vendorsText).forEach((vendors) => {
         embed.addField("Vendors", vendors)
       })

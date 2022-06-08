@@ -37,3 +37,9 @@ export function textToChunks(input: string, size: number = 1024): string[] {
     return [input]
   }
 }
+import { explorerDomain } from './config.json';
+type urlType = "objects" | "missions"
+
+export function bracketURL(id: number, type: urlType = "objects"): string {
+  return `[[${id}]](${explorerDomain}/${type}/${id})`
+}

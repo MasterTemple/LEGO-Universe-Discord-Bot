@@ -66,6 +66,14 @@ export class LocaleXML {
     return this.locale.get("Objects_ID_name").get(id.toString());
   }
 
+  getMissionName(id: number): string {
+    return this.locale.get("Missions_ID_name").get(id.toString());
+  }
+
+  getMissionDescription(id: number): string {
+    return this.locale.get("MissionText_ID_description").get(id.toString());
+  }
+
   getPreconditionDescription(id: number): string {
     return this.locale.get("Preconditions_ID_FailureReason").get(id.toString());
   }
