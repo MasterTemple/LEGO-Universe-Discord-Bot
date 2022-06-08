@@ -17,7 +17,7 @@ import {
 } from './cdclientInterfaces';
 import { sqlitePath } from './config.json';
 import { LocaleXML } from './locale';
-import { EnemyDrop, EnemyHealth, ItemDrop, ItemSold, LootDropFirstQuery, MissionReward, NameValuePair, NPCMission, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
+import { EnemyDrop, EnemyHealth, ItemDrop, ItemSold, LootDrop, LootDropFirstQuery, MissionReward, NameValuePair, NPCMission, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
 export const RENDER_COMPONENT = 2;
 export const DESTRUCTIBLE_COMPONENT = 7;
 export const ITEM_COMPONENT = 11;
@@ -385,10 +385,39 @@ export class CDClient {
   }
 
   async getSmashableDrops(id: number): Promise<SmashableDrop[]> {
-    return new Promise<SmashableDrop[]>((resolve, reject) => {
+    return new Promise<SmashableDrop[]>(async (resolve, reject) => {
       this.db.all(
-        `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity, (SELECT COUNT(*) FROM LootTable WHERE LootMatrix.LootTableIndex=LootTable.LootTableIndex) AS poolSize FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM 'DestructibleComponent' WHERE id IN ( SELECT component_id FROM ComponentsRegistry WHERE component_type=${DESTRUCTIBLE_COMPONENT} AND id=${id}))`,
-        (_, rows: SmashableDrop[]) => {
+        `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM DestructibleComponent WHERE id IN ( SELECT component_id FROM ComponentsRegistry WHERE component_type=${DESTRUCTIBLE_COMPONENT} AND id=${id}))`,
+        async (_, rows: SmashableDrop[]) => {
+          const lootTableRaritySizes = new Map<number, number>();
+          for (let row of rows) {
+            let ltiSize = lootTableRaritySizes?.get(row.lootTableIndex);
+            if (!ltiSize) {
+              ltiSize = await this.getItemsInLootTableOfRarity(row.lootTableIndex, row.rarity);
+              lootTableRaritySizes.set(row.lootTableIndex, ltiSize);
+            }
+            row.poolSize = ltiSize
+          }
+          resolve(rows)
+        }
+      )
+    })
+  }
+
+  async getPackageDrops(id: number): Promise<SmashableDrop[]> {
+    return new Promise<SmashableDrop[]>(async (resolve, reject) => {
+      this.db.all(
+        `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM PackageComponent WHERE id IN ( SELECT component_id FROM ComponentsRegistry WHERE component_type=${PACKAGE_COMPONENT} AND id=${id}))`,
+        async (_, rows: SmashableDrop[]) => {
+          const lootTableRaritySizes = new Map<number, number>();
+          for (let row of rows) {
+            let ltiSize = lootTableRaritySizes?.get(row.lootTableIndex);
+            if (!ltiSize) {
+              ltiSize = await this.getItemsInLootTableOfRarity(row.lootTableIndex, row.rarity);
+              lootTableRaritySizes.set(row.lootTableIndex, ltiSize);
+            }
+            row.poolSize = ltiSize
+          }
           resolve(rows)
         }
       )
@@ -621,5 +650,4 @@ export class CDClient {
       )
     })
   }
-
 }

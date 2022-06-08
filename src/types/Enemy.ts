@@ -1,7 +1,7 @@
 import { Database } from "sqlite3";
 import { CDClient } from "../cdclient";
 import { ComponentsRegistry } from "../cdclientInterfaces";
-import { EnemyHealth, ItemSold } from "../luInterfaces";
+import { EnemyHealth, ItemSold, SmashableDrop } from "../luInterfaces";
 import { explorerDomain } from '../config.json';
 
 export class Enemy extends CDClient {
@@ -12,6 +12,7 @@ export class Enemy extends CDClient {
   components: ComponentsRegistry[];
   life: number;
   armor: number;
+  drops: SmashableDrop[];
 
   constructor(cdclient: CDClient, id: number) {
     super();
@@ -24,6 +25,7 @@ export class Enemy extends CDClient {
     this.components = await this.getComponents(this.id);
     this.name = (await this.getObjectName(this.id));
     await this.addStats();
+    // await this.addDrops();
   }
 
   getURL(id: number = this.id): string {
@@ -34,5 +36,9 @@ export class Enemy extends CDClient {
     let stats: EnemyHealth = await this.getEnemyHealth(this.id)
     this.life = stats.life || 0
     this.armor = stats.armor || 0
+  }
+
+  async addDrops(): Promise<void> {
+    this.drops = await this.getSmashableDrops(this.id);
   }
 }

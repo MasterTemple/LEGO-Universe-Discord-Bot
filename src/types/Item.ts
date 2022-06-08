@@ -11,6 +11,7 @@ import {
   ItemPrecondition,
   LootDrop,
   MissionReward,
+  SmashableDrop,
 } from '../luInterfaces';
 import { explorerDomain } from '../config.json';
 
@@ -27,6 +28,7 @@ export class Item extends CDClient {
   unpack: LootDrop[] = [];
   buy: ObjectElement[] = [];
   reward: MissionReward[] = [];
+  packageDrops: SmashableDrop[] = [];
   // earn
   // buy
   constructor(cdclient: CDClient, id: number) {
@@ -51,6 +53,10 @@ export class Item extends CDClient {
 
   async thumbnail(id: number = this.id): Promise<string> {
     return `${explorerDomain}${await this.getIconAsset(id)}`
+  }
+
+  async addPackageDrops(): Promise<void> {
+    this.packageDrops = await this.getPackageDrops(this.id);
   }
 
   async getRarityChance(drop: ItemDrop): Promise<number> {
