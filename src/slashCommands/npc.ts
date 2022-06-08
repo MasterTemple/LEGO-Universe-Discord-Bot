@@ -1,6 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { Item } from '../types/Item';
+import { bracketURL } from '../functions';
+import { NPC } from '../types/NPC';
 import { SlashCommand } from '../types/SlashCommand';
 
 export default {
@@ -20,14 +21,21 @@ export default {
     cdclient: CDClient) {
 
     const query = options.find((option) => option.name === 'npc').value.toString();
-    const itemId = parseInt(query) || await cdclient.getObjectId(query);
-    const item = new Item(cdclient, itemId);
-    await item.create();
+    const npcId = parseInt(query) || await cdclient.getObjectId(query);
+    const npc = new NPC(cdclient, npcId);
+    await npc.create();
 
     const embed = new MessageEmbed();
-    embed.setURL(item.getURL());
-    embed.setThumbnail(item.imageURL)
-    embed.setTitle(`${item.name} [${item.id}]`);
+    embed.setURL(npc.getURL());
+    embed.setThumbnail(npc.imageURL)
+    embed.setTitle(`${npc.name} [${npc.id}]`);
+
+    npc.missions.forEach((mission, i) => {
+      let title = `${i + 1}. ${mission.type}`
+      if (mission.subtype) title += ` > ${mission.subtype}`
+      title += ` > ${mission.name}`
+      embed.addField(title, `${mission.description} ${bracketURL(mission.id, "missions")}`)
+    })
 
     interaction.reply({
       embeds: [embed],

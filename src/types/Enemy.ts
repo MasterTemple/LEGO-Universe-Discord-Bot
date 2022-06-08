@@ -1,17 +1,17 @@
 import { Database } from "sqlite3";
 import { CDClient } from "../cdclient";
 import { ComponentsRegistry } from "../cdclientInterfaces";
-import { ItemSold, NPCMission } from "../luInterfaces";
+import { EnemyHealth, ItemSold } from "../luInterfaces";
 import { explorerDomain } from '../config.json';
 
-export class NPC extends CDClient {
+export class Enemy extends CDClient {
   db: Database;
   id: number;
   name: string;
   imageURL: string;
   components: ComponentsRegistry[];
-  vendor: ItemSold[];
-  missions: NPCMission[];
+  life: number;
+  armor: number;
 
   constructor(cdclient: CDClient, id: number) {
     super();
@@ -23,18 +23,16 @@ export class NPC extends CDClient {
   async create(): Promise<void> {
     this.components = await this.getComponents(this.id);
     this.name = (await this.getObjectName(this.id));
-    await this.addSold();
-    await this.addMissions();
+    await this.addStats();
   }
 
   getURL(id: number = this.id): string {
     return `${explorerDomain}/objects/${id}`;
   }
 
-  async addSold(): Promise<void> {
-    this.vendor = await this.getItemsSold(this.id)
-  }
-  async addMissions(): Promise<void> {
-    this.missions = await this.getMissionsFromNPC(this.id)
+  async addStats(): Promise<void> {
+    let stats: EnemyHealth = await this.getEnemyHealth(this.id)
+    this.life = stats.life || 0
+    this.armor = stats.armor || 0
   }
 }

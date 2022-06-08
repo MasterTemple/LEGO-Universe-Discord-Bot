@@ -3,7 +3,7 @@ import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { DOMParser } from 'xmldom';
 import * as xpath from 'xpath-ts';
-import { localeXMLType } from './luInterfaces';
+import { localeXMLType, SkillDescription } from './luInterfaces';
 
 export class LocaleXML {
   localeTypes: localeXMLType[] = [
@@ -53,10 +53,11 @@ export class LocaleXML {
           ].map((e) => e.groups);
           this.locale.set(name, new Map<string, string>());
           for (let { num, content } of matches) {
+            content = content.replace(/\&lt;([^&]+(&apos;)?)+&gt;/gm, "")
+            content = content.replace(/&apos;/gm, "'")
             this.locale.get(name).set(num, content);
           }
         }
-        // console.log(this.locale)
         resolve();
       });
     });
@@ -71,11 +72,22 @@ export class LocaleXML {
   }
 
   getMissionDescription(id: number): string {
-    return this.locale.get("MissionText_ID_description").get(id.toString());
+    let desc = this.locale.get("MissionText_ID_description").get(id.toString());
+    if (!desc) desc = this.locale.get("MissionText_ID_in_progress").get(id.toString());
+    if (!desc) desc = this.locale.get("MissionText_ID_completion_succeed_tip").get(id.toString());
+    return desc;
   }
 
   getPreconditionDescription(id: number): string {
     return this.locale.get("Preconditions_ID_FailureReason").get(id.toString());
+  }
+  getSkillDescription(skillId: number): SkillDescription[] {
+    return [...this.locale.get("SkillBehavior_ID_descriptionUI").get(skillId.toString()).matchAll(/%\((?<name>[^\)]+)\)(?<description>[^%]+)/gm)].map((e) => {
+      return {
+        name: e.groups.name,
+        description: e.groups.description,
+      }
+    })
   }
 
   // async getObjectName(id:number):Promise<string> {

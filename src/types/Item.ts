@@ -239,14 +239,14 @@ export class Item extends CDClient {
 
   async getAllEquipLocations(ids: number[]): Promise<string[]> {
     const components = await Promise.all(ids.map((id) => this.getComponents(id)));
-    const itemComponents = components.map((comp) => comp.find((c) => c.componentType === ITEM_COMPONENT).componentId);
+    const itemComponents = components.map((comp) => comp.find((c) => c.component_type === ITEM_COMPONENT).component_id);
     const equipLocations = await Promise.all(itemComponents.map((comp) => this.getEquipLocationFromCompId(comp)));
     return equipLocations;
   }
 
   async addItemComponent(): Promise<void> {
     const rawItemComponent = await this.getItemComponent(
-      this.components.find((f) => f.componentType === ITEM_COMPONENT)?.componentId,
+      this.components.find((f) => f.component_type === ITEM_COMPONENT)?.component_id,
     );
     if (!rawItemComponent) return;
     const proxyItems: ObjectElement[] = await this.getProxyItemsFromSubItems(rawItemComponent.subItems);

@@ -6,6 +6,8 @@ import {
   ItemComponent,
   LootMatrix,
   LootTable,
+  MissionNPCComponent,
+  Missions,
   Objects,
   ObjectSkills,
   PackageComponent,
@@ -15,13 +17,14 @@ import {
 } from './cdclientInterfaces';
 import { sqlitePath } from './config.json';
 import { LocaleXML } from './locale';
-import { EnemyDrop, ItemDrop, ItemSold, LootDropFirstQuery, MissionReward, NameValuePair, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
+import { EnemyDrop, EnemyHealth, ItemDrop, ItemSold, LootDropFirstQuery, MissionReward, NameValuePair, NPCMission, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
 export const RENDER_COMPONENT = 2;
 export const DESTRUCTIBLE_COMPONENT = 7;
 export const ITEM_COMPONENT = 11;
 export const VENDOR_COMPONENT = 16;
 export const PACKAGE_COMPONENT = 53;
 export const HONOR_ACCOLADE = 13806;
+export const MISSION_OFFER_COMPONENT = 73;
 
 
 export class CDClient {
@@ -71,11 +74,11 @@ export class CDClient {
   async getIconAsset(id: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this.db.get(
-        `SELECT icon_asset as iconAsset FROM RenderComponent WHERE id=(
+        `SELECT icon_asset FROM RenderComponent WHERE id=(
         SELECT component_id FROM ComponentsRegistry WHERE component_type=${RENDER_COMPONENT} and id=${id}
         )`,
         function (_, row: RenderComponent) {
-          let icon = row?.iconAsset;
+          let icon = row?.icon_asset;
           if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
 
           icon = icon.replace(/^\.\.\\\.\.\\/g, "/lu-res/");
@@ -299,7 +302,7 @@ export class CDClient {
       this.db.get(
         `SELECT component_id as componentId FROM ComponentsRegistry WHERE component_type=${ITEM_COMPONENT} AND id=${id}`,
         (_, row: ComponentsRegistry) => {
-          resolve(row.componentId);
+          resolve(row.component_id);
         });
     });
   }
@@ -568,6 +571,52 @@ export class CDClient {
 
           rows = rows.filter((r) => r.rewardCount > 0)
           resolve(rows)
+        }
+      )
+    })
+  }
+
+  async getMissionsFromNPC(npcId: number): Promise<NPCMission[]> {
+    return new Promise<NPCMission[]>((resolve, reject) => {
+      this.db.all(
+        `SELECT * FROM MissionNPCComponent JOIN Missions ON MissionNPCComponent.missionID = Missions.id WHERE MissionNPCComponent.id = (SELECT component_id FROM ComponentsRegistry WHERE component_type = ${MISSION_OFFER_COMPONENT} AND id = ${npcId}) AND offersMission = 1;`,
+        (_, rows: Missions[]) => {
+          let missions: NPCMission[] = rows.map((row) => {
+            return {
+              id: row.id,
+              type: row.defined_type,
+              subtype: row.defined_subtype,
+              name: this.locale.getMissionName(row.id),
+              description: this.locale.getMissionDescription(row.id),
+              repeatable: row.repeatable,
+              rewards: (!row.repeatable ?
+                [
+                  { id: row.reward_item1, name: this.locale.getObjectName(row.reward_item1), count: row.reward_item1_count },
+                  { id: row.reward_item2, name: this.locale.getObjectName(row.reward_item2), count: row.reward_item2_count },
+                  { id: row.reward_item3, name: this.locale.getObjectName(row.reward_item3), count: row.reward_item3_count },
+                  { id: row.reward_item4, name: this.locale.getObjectName(row.reward_item4), count: row.reward_item4_count },
+                ] :
+                [
+                  { id: row.reward_item1_repeatable, name: this.locale.getObjectName(row.reward_item1_repeatable), count: row.reward_item1_repeat_count },
+                  { id: row.reward_item2_repeatable, name: this.locale.getObjectName(row.reward_item2_repeatable), count: row.reward_item2_repeat_count },
+                  { id: row.reward_item3_repeatable, name: this.locale.getObjectName(row.reward_item3_repeatable), count: row.reward_item3_repeat_count },
+                  { id: row.reward_item4_repeatable, name: this.locale.getObjectName(row.reward_item4_repeatable), count: row.reward_item4_repeat_count },
+                ]
+              ).filter(({ id }) => id > 0)
+            }
+          })
+          resolve(missions)
+        }
+      )
+    })
+  }
+
+  async getEnemyHealth(enemyId: number): Promise<EnemyHealth> {
+    return new Promise<EnemyHealth>((resolve, reject) => {
+      this.db.get(
+        `SELECT * FROM DestructibleComponent WHERE id = (SELECT component_id FROM ComponentsRegistry WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND id = ${enemyId})`,
+        (_, row: EnemyHealth) => {
+          resolve(row)
         }
       )
     })
