@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { textToChunks } from '../functions';
 import { ObjectElement } from '../luInterfaces';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
@@ -74,36 +75,12 @@ export default {
     embed.setThumbnail(item.imageURL)
 
     embed.addField("Price", `${item.itemComponent.buyPrice} Coins`, false)
-    if (item.buy) {
+    if (item.buy.length) {
       let vendorsText = item.buy.map((vendor, index) => `**${index + 1}.** ${vendor.name} [[${vendor.id}]](${item.getURL(vendor.id)})`).join("\n");
-      let indexes = [...vendorsText.matchAll(/\n/g)].map(({ index }) => index)
-      let breakIndexes = []
-      let previousIndex = 0;
-      let previousStartIndex = 0;
-      let n = 1;
-      if (vendorsText.length > 1024) {
+      textToChunks(vendorsText).forEach((vendors) => {
+        embed.addField("Vendors", vendors)
+      })
 
-        for (let index of indexes) {
-          if (index >= (1024 * n) && previousIndex < (1024 * n)) {
-            n++;
-            breakIndexes.push([previousStartIndex, previousIndex]);
-            previousStartIndex = previousIndex
-          }
-          previousIndex = index;
-        }
-
-        let vendorsBreaks = []
-        for (let [breakStartIndex, breakIndex] of breakIndexes) {
-          vendorsBreaks.push(vendorsText.slice(breakStartIndex, breakIndex))
-        }
-        if (breakIndexes.length > 0) vendorsBreaks.push(vendorsText.slice(breakIndexes.at(-1)[1], vendorsText.length));
-
-        vendorsBreaks.forEach((vendors) => {
-          embed.addField("Vendors", vendors)
-        })
-      } else {
-        embed.addField("Vendors", vendorsText)
-      }
     } else {
       embed.addField("Not Sold!", `${item.name} is not sold by a vendor!`)
     }

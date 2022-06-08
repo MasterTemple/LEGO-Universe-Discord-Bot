@@ -25,6 +25,8 @@ export default {
     await item.create();
 
     const embed = new MessageEmbed();
+    embed.setURL(item.getURL());
+    // embed.setThumbnail(item.imageURL)
     embed.setTitle(`${item.name} [${item.id}]`);
 
     interaction.reply({

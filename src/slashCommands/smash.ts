@@ -26,6 +26,8 @@ export default {
 
     const embed = new MessageEmbed();
     embed.setTitle(`${item.name} [${item.id}]`);
+    embed.setURL(item.getURL());
+    embed.setThumbnail(item.imageURL)
 
     interaction.reply({
       embeds: [embed],

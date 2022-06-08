@@ -107,7 +107,7 @@ export class Item extends CDClient {
         });
       }
     }
-    console.log(this.unpack)
+    // console.log(this.unpack)
   }
 
   async addDrops(): Promise<void> {
@@ -200,13 +200,19 @@ export class Item extends CDClient {
     }
   }
 
-  async addPreconditionDescription(id: number): Promise<ItemPrecondition> {
-    return new Promise<ItemPrecondition>((resolve, reject) => {
-      resolve({
-        id: id,
-        description: 'description',
-      });
-    });
+  // async addPreconditionDescription(id: number): Promise<ItemPrecondition> {
+  //   return new Promise<ItemPrecondition>((resolve, reject) => {
+  //     resolve({
+  //       id: id,
+  //       description: 'description',
+  //     });
+  //   });
+  // }
+  addPreconditionDescription(id: number): ItemPrecondition {
+    return {
+      id: id,
+      description: this.locale.getPreconditionDescription(id),
+    }
   }
 
   async getPreconditions(preconditionsString: string): Promise<ItemPrecondition[]> {
@@ -214,7 +220,8 @@ export class Item extends CDClient {
     else {
       const preconditionIds = preconditionsString.match(/\d+/g)?.map((n) => parseInt(n)) || [];
 
-      const preconditions = await Promise.all(preconditionIds.map((id) => this.addPreconditionDescription(id)));
+      // const preconditions = await Promise.all(preconditionIds.map((id) => this.addPreconditionDescription(id)));
+      const preconditions = preconditionIds.map((id) => this.addPreconditionDescription(id));
       return preconditions;
     }
   }

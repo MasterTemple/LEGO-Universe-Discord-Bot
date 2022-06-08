@@ -1,6 +1,8 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { textToChunks } from '../functions';
 import { Item } from '../types/Item';
+import { NPC } from '../types/NPC';
 import { SlashCommand } from '../types/SlashCommand';
 
 export default {
@@ -20,12 +22,37 @@ export default {
     cdclient: CDClient) {
 
     const query = options.find((option) => option.name === 'vendor').value.toString();
-    const itemId = parseInt(query) || await cdclient.getObjectId(query);
-    const item = new Item(cdclient, itemId);
-    await item.create();
+    const npcId = parseInt(query) || await cdclient.getObjectId(query);
+    const npc = new NPC(cdclient, npcId);
+    await npc.create();
 
     const embed = new MessageEmbed();
-    embed.setTitle(`${item.name} [${item.id}]`);
+    embed.setTitle(`${npc.name} [${npc.id}]`);
+    embed.setURL(npc.getURL());
+
+    // console.log(npc.vendor)
+
+    if (npc.vendor.length) {
+      let vendorsText = npc.vendor.map((item, index) => {
+
+        let totalCost: string = ""
+        let costs = [];
+        if (item.cost) costs.push(`**${item.cost}** ${item.currency.name}`)
+        if (item.commendationCost) costs.push(`**${item.commendationCost}** ${item.commendationCurrency.name}s`)
+        if (item.alternateCost) costs.push(`**${item.alternateCost}** ${item.alternateCurrency.name}s`)
+        totalCost = costs.join(" **+** ")
+        return `**${index + 1}.** ${item.name} [[${item.id}]](${npc.getURL(item.id)}) for ${totalCost}`
+      }).join("\n");
+      let totalSize = 0
+      textToChunks(vendorsText).forEach((vendors) => {
+        // console.log({ vendors, length: vendors.length })
+        totalSize += vendors.length
+        if (totalSize <= 6000) embed.addField("Sells", vendors);
+      })
+
+    } else {
+      embed.addField("Not A Vendor!", `${npc.name} does not sell anything!`)
+    }
 
     interaction.reply({
       embeds: [embed],

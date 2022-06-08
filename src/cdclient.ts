@@ -15,7 +15,7 @@ import {
 } from './cdclientInterfaces';
 import { sqlitePath } from './config.json';
 import { LocaleXML } from './locale';
-import { EnemyDrop, ItemDrop, LootDropFirstQuery, NameValuePair, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
+import { EnemyDrop, ItemDrop, ItemSold, LootDropFirstQuery, NameValuePair, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
 export const RENDER_COMPONENT = 2;
 export const DESTRUCTIBLE_COMPONENT = 7;
 export const ITEM_COMPONENT = 11;
@@ -76,9 +76,11 @@ export class CDClient {
           let icon = row?.iconAsset;
           if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
 
-          icon = icon.replace(/^\.\.\\\.\.\\/g, "/lu-res/")
-          icon = icon.replace(/\\/g, "/")
-          icon = icon.replace(/(?<=\.)dds/gi, "png")
+          icon = icon.replace(/^\.\.\\\.\.\\/g, "/lu-res/");
+          icon = icon.replace(/\\/g, "/");
+          icon = icon.replace(/ /g, "%20");
+          icon = icon.replace(/(?<=\.)dds/gi, "png");
+          icon = icon.toLowerCase();
           resolve(icon)
         });
     });
@@ -562,6 +564,40 @@ SELECT itemid FROM LootTable WHERE LootTableIndex in (
       this.db.all(query,
         (_, rows: any[]) => {
           let map = rows.map((e) => e.id)
+          resolve(map)
+        })
+    })
+  }
+
+  async getItemsSold(id: number): Promise<ItemSold[]> {
+    return new Promise<ItemSold[]>((resolve, reject) => {
+      let query = `SELECT ComponentsRegistry.id, ItemComponent.baseValue as cost, ItemComponent.currencyLOT as alternateCurrencyId, ItemComponent.altCurrencyCost as alternateCost, ItemComponent.commendationLOT as commendationCurrencyId, ItemComponent.commendationCost as commendationCost FROM ComponentsRegistry
+JOIN ItemComponent ON ItemComponent.id = ComponentsRegistry.component_id
+WHERE component_type = ${ITEM_COMPONENT} AND ComponentsRegistry.id IN(
+	SELECT id FROM Objects WHERE id in (
+		SELECT itemid FROM LootTable WHERE LootTableIndex in (
+		  SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=(
+			  SELECT LootMatrixIndex FROM VendorComponent WHERE id=(
+				SELECT component_id FROM ComponentsRegistry WHERE component_type=${VENDOR_COMPONENT} and id=${id}
+			  )
+		  )
+		)
+	)
+)`;
+      this.db.all(query,
+        (_, rows) => {
+          let map = rows.map((item) => {
+            return {
+              id: item.id,
+              currency: { id: 163, name: "Coins" }, // default coin
+              cost: item.cost,
+              name: this.locale.getObjectName(item.id),
+              alternateCurrency: { id: item.alternateCurrencyId, name: item?.alternateCurrencyId ? this.locale.getObjectName(item.alternateCurrencyId) : "None" },
+              alternateCost: item.alternateCost,
+              commendationCurrency: { id: item.commendationCurrencyId, name: item?.commendationCurrencyId ? this.locale.getObjectName(item.commendationCurrencyId) : "None" },
+              commendationCost: item.commendationCost,
+            }
+          })
           resolve(map)
         })
     })

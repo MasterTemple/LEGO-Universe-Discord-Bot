@@ -41,8 +41,8 @@ export default {
           range = `${eachDrop.minToDrop}-${eachDrop.maxToDrop}`;
         }
         embed.addField(
-          `${c++}. ${decimalToFraction(eachDrop.chance)} for ${range} ${item.name}`,
-          `From ${eachDrop.smashables.map(({ name, id }) => `${name} [[${id}]](${item.getURL(id)})`).join(', ')}`.slice(0, 1023),
+          `${c++}.${decimalToFraction(eachDrop.chance)} for ${range} ${item.name} `,
+          `From ${eachDrop.smashables.map(({ name, id }) => `${name} [[${id}]](${item.getURL(id)})`).join(', ')} `.slice(0, 1023),
         );
       }
     });

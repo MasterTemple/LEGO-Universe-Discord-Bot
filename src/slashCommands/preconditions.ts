@@ -26,6 +26,12 @@ export default {
 
     const embed = new MessageEmbed();
     embed.setTitle(`${item.name} [${item.id}]`);
+    embed.setURL(item.getURL());
+    embed.setThumbnail(item.imageURL)
+    // console.log(item.imageURL)
+    embed.addField("Preconditions",
+      item.itemComponent.preconditions.length ? item.itemComponent.preconditions.map((p, i) => `**${i + 1}.** ${p.description}`).join("\n") : "This item has no preconditions to use it!"
+    )
 
     interaction.reply({
       embeds: [embed],

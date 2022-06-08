@@ -66,6 +66,10 @@ export class LocaleXML {
     return this.locale.get("Objects_ID_name").get(id.toString());
   }
 
+  getPreconditionDescription(id: number): string {
+    return this.locale.get("Preconditions_ID_FailureReason").get(id.toString());
+  }
+
   // async getObjectName(id:number):Promise<string> {
   //   return new Promise<string>((resolve, reject) => {
   //     resolve(this.locale.get("Objects_ID_name").get(id.toString()))
