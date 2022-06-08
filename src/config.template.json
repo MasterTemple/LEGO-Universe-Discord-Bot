@@ -2,6 +2,5 @@
   "token": "DISCORD_TOKEN_GOES_HERE",
   "sqlitePath": "PATH_TO_CDCLIENT.SQLITE",
   "localePath": "PATH_TO_LU_CLIENT/locale/locale.xml",
-  "resPath": "PATH_TO_LU_CLIENT/res",
   "explorerDomain": "https://explorer.lu"
 }

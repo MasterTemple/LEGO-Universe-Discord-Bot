@@ -1,6 +1,6 @@
 import { Database } from 'sqlite3';
-import { CDClient, ITEM_COMPONENT } from '../cdclient';
-import { ComponentsRegistry, ObjectSkills, SkillBehavior } from '../cdclientInterfaces';
+import { CDClient, ITEM_COMPONENT, RENDER_COMPONENT } from '../cdclient';
+import { ComponentsRegistry, ObjectSkills, RenderComponent, SkillBehavior } from '../cdclientInterfaces';
 import {
   ItemStats,
   Skill,
@@ -17,11 +17,15 @@ export class Item extends CDClient {
   db: Database;
   id: number;
   name: string;
+  imageURL: string;
   components: ComponentsRegistry[];
   stats: ItemStats;
   skills: Skill[];
   itemComponent: ItemComponent;
-  drop: LootDrop[];
+  drop: LootDrop[] = [];
+  unpack: LootDrop[] = [];
+  buy: ObjectElement[] = [];
+  reward: LootDrop[] = [];
   // earn
   // buy
   constructor(cdclient: CDClient, id: number) {
@@ -34,14 +38,18 @@ export class Item extends CDClient {
   async create(): Promise<void> {
     this.components = await this.getComponents(this.id);
     this.name = (await this.getObjectName(this.id));
-
+    this.imageURL = await this.thumbnail()
     await this.addItemComponent();
-    await this.addDrops();
+    // await this.addDrops();
     await this.addItemStats();
   }
 
   getURL(id: number = this.id): string {
     return `${explorerDomain}/objects/${id}`;
+  }
+
+  async thumbnail(id: number = this.id): Promise<string> {
+    return `${explorerDomain}${await this.getIconAsset(id)}`
   }
 
   async getRarityChance(drop: ItemDrop): Promise<number> {
@@ -54,17 +62,24 @@ export class Item extends CDClient {
     }
   }
 
-  async addDrops(): Promise<void> {
-    let rawLootDrops = await this.dropItem(this.id, this.itemComponent.rarity);
-    const enemyToLMIMap = await this.getEnemiesAndLootMatrixForLoot(this.id);
-    rawLootDrops = rawLootDrops.filter((v) => enemyToLMIMap.get(v.enemyId) === v.lootMatrixIndex);
-    this.drop = [];
+  async addVendors(): Promise<void> {
+    let vendorIds = await this.getIdsOfVendorsThatSellItem(this.id);
+    // this.buy = await Promise.all(vendorIds.map((id) => this.getObjectElementFromLocale(id)))
+    this.buy = vendorIds.map((id) => this.getObjectElementFromLocale(id))
+    this.buy = this.buy.filter((b) => b?.name)
+  }
+
+  async addUnpacks(): Promise<void> {
+    let rawLootDrops = await this.dropItemFromPackage(this.id, this.itemComponent.rarity);
+
+    const packageToLMIMap = await this.getPackagesAndLootMatrixForLoot(this.id);
+    rawLootDrops = rawLootDrops.filter((v) => packageToLMIMap.get(v.objectId) === v.lootMatrixIndex);
     const lootTableRaritySizes = new Map<number, number>();
     for (const value of rawLootDrops) {
-      const element = this.drop?.find((f) => f.chanceForDrop == value.percent && f.minToDrop == value.minToDrop && f.maxToDrop == value.maxToDrop && f.chanceForRarity == value.randmax);
+      const element = this.unpack?.find((f) => f.chanceForDrop == value.percent && f.minToDrop == value.minToDrop && f.maxToDrop == value.maxToDrop && f.chanceForRarity == value.randmax);
 
       // if name is not in locale, then it is unused
-      const name = this.locale.getObjectName(value.enemyId);
+      const name = this.locale.getObjectName(value.objectId);
       if (!name) continue;
 
       if (!element) {
@@ -73,9 +88,9 @@ export class Item extends CDClient {
           ltiSize = await this.getItemsInLootTableOfRarity(value.lootTableIndex, value.rarity);
           lootTableRaritySizes.set(value.lootTableIndex, ltiSize);
         }
-        this.drop.push({
+        this.unpack.push({
           smashables: [{
-            id: value.enemyId,
+            id: value.objectId,
             name: name,
           }],
           chanceForDrop: value.percent,
@@ -87,7 +102,47 @@ export class Item extends CDClient {
         });
       } else {
         element.smashables.push({
-          id: value.enemyId,
+          id: value.objectId,
+          name: name,
+        });
+      }
+    }
+    console.log(this.unpack)
+  }
+
+  async addDrops(): Promise<void> {
+    let rawLootDrops = await this.dropItemFromEnemy(this.id, this.itemComponent.rarity);
+    const enemyToLMIMap = await this.getEnemiesAndLootMatrixForLoot(this.id);
+    rawLootDrops = rawLootDrops.filter((v) => enemyToLMIMap.get(v.objectId) === v.lootMatrixIndex);
+    const lootTableRaritySizes = new Map<number, number>();
+    for (const value of rawLootDrops) {
+      const element = this.drop?.find((f) => f.chanceForDrop == value.percent && f.minToDrop == value.minToDrop && f.maxToDrop == value.maxToDrop && f.chanceForRarity == value.randmax);
+
+      // if name is not in locale, then it is unused
+      const name = this.locale.getObjectName(value.objectId);
+      if (!name) continue;
+
+      if (!element) {
+        let ltiSize = lootTableRaritySizes?.get(value.lootTableIndex);
+        if (!ltiSize) {
+          ltiSize = await this.getItemsInLootTableOfRarity(value.lootTableIndex, value.rarity);
+          lootTableRaritySizes.set(value.lootTableIndex, ltiSize);
+        }
+        this.drop.push({
+          smashables: [{
+            id: value.objectId,
+            name: name,
+          }],
+          chanceForDrop: value.percent,
+          minToDrop: value.minToDrop,
+          maxToDrop: value.maxToDrop,
+          chanceForRarity: value.randmax,
+          chanceForItemInLootTable: ltiSize,
+          chance: value.percent * value.randmax * (1 / ltiSize),
+        });
+      } else {
+        element.smashables.push({
+          id: value.objectId,
           name: name,
         });
       }
@@ -179,8 +234,9 @@ export class Item extends CDClient {
 
   async addItemComponent(): Promise<void> {
     const rawItemComponent = await this.getItemComponent(
-      this.components.find((f) => f.componentType === ITEM_COMPONENT).componentId,
+      this.components.find((f) => f.componentType === ITEM_COMPONENT)?.componentId,
     );
+    if (!rawItemComponent) return;
     const proxyItems: ObjectElement[] = await this.getProxyItemsFromSubItems(rawItemComponent.subItems);
 
     const allItemIds = [this.id, ...proxyItems.map((item) => item.id)];
