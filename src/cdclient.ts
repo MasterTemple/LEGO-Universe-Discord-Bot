@@ -21,6 +21,8 @@ export const DESTRUCTIBLE_COMPONENT = 7;
 export const ITEM_COMPONENT = 11;
 export const VENDOR_COMPONENT = 16;
 export const PACKAGE_COMPONENT = 53;
+export const HONOR_ACCOLADE = 13806;
+
 
 export class CDClient {
   db: Database;
@@ -295,8 +297,7 @@ export class CDClient {
   async getItemComponentId(id: number): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       this.db.get(
-        `SELECT component_id as componentId FROM ComponentsRegistry
-           WHERE component_type=${ITEM_COMPONENT} AND id=${id}`,
+        `SELECT component_id as componentId FROM ComponentsRegistry WHERE component_type=${ITEM_COMPONENT} AND id=${id}`,
         (_, row: ComponentsRegistry) => {
           resolve(row.componentId);
         });
@@ -365,15 +366,7 @@ export class CDClient {
   async getItemsSoldByVendor(id: number): Promise<ObjectElement[]> {
     return new Promise<ObjectElement[]>((resolve, reject) => {
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE id in (
-          SELECT itemid FROM LootTable WHERE LootTableIndex in (
-            SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=(
-                SELECT LootMatrixIndex FROM VendorComponent WHERE id=(
-                  SELECT component_id FROM ComponentsRegistry WHERE component_type=16 and id=${id}
-                )
-              )
-            )
-          )`,
+        `SELECT id, name, displayName FROM Objects WHERE id in ( SELECT itemid FROM LootTable WHERE LootTableIndex in ( SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=( SELECT LootMatrixIndex FROM VendorComponent WHERE id=( SELECT component_id FROM ComponentsRegistry WHERE component_type=16 and id=${id} ) ) ) )`,
         (_, rows: Objects[]) => {
           resolve(
             rows.map(({ name, displayName, id }) => {
@@ -387,31 +380,11 @@ export class CDClient {
       )
     })
   }
-  // async getEnemyDrops(id: number): Promise<EnemyDrop[]> {
-  //   return new Promise<EnemyDrop[]>((resolve, reject) => {
-  //     this.db.all(
-  //       `SELECT LootMatrix.LootTableIndex, LootMatrix.RarityTableIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.rarity, RarityTable.randmax,
-  //       (SELECT COUNT(*) FROM LootTable WHERE LootMatrix.LootTableIndex=LootTable.LootTableIndex) AS ItemCount FROM LootMatrix
-  //       JOIN RarityTable ON LootMatrix.RarityTableIndex=RarityTable.RarityTableIndex AND LootMatrixIndex=(
-  //         SELECT LootMatrixIndex FROM DestructibleComponent WHERE id=(
-  //           SELECT component_id FROM ComponentsRegistry WHERE component_type=${DESTRUCTIBLE_COMPONENT} and id=${id}
-  //         )
-  //       )
-  //       `,
-  //       (_, rows: EnemyDrop[]) => {
-  //         resolve(rows)
-  //       }
-  //     )
-  //   })
-  // }
+
   async getSmashableDrops(id: number): Promise<SmashableDrop[]> {
     return new Promise<SmashableDrop[]>((resolve, reject) => {
       this.db.all(
-        `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity, (SELECT COUNT(*) FROM LootTable WHERE LootMatrix.LootTableIndex=LootTable.LootTableIndex) AS poolSize FROM LootMatrix
-  JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex
-WHERE LootMatrixIndex IN (
-  SELECT LootMatrixIndex FROM 'DestructibleComponent' WHERE id IN (
-    SELECT component_id FROM ComponentsRegistry WHERE component_type=${DESTRUCTIBLE_COMPONENT} AND id=${id}))`,
+        `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity, (SELECT COUNT(*) FROM LootTable WHERE LootMatrix.LootTableIndex=LootTable.LootTableIndex) AS poolSize FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM 'DestructibleComponent' WHERE id IN ( SELECT component_id FROM ComponentsRegistry WHERE component_type=${DESTRUCTIBLE_COMPONENT} AND id=${id}))`,
         (_, rows: SmashableDrop[]) => {
           resolve(rows)
         }
@@ -421,18 +394,7 @@ WHERE LootMatrixIndex IN (
 
   async dropItemFromEnemy(id: number, rarity: number): Promise<LootDropFirstQuery[]> {
     return new Promise<LootDropFirstQuery[]>((resolve, reject) => {
-      let query = `SELECT ComponentsRegistry.id as objectId, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ComponentsRegistry
-        JOIN LootMatrix ON LootTableIndex IN (
-            SELECT LootTableIndex FROM LootTable WHERE itemid = ${id}
-        )
-        JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1})
-        WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND component_id IN (
-            SELECT id from DestructibleComponent WHERE LootMatrixIndex IN (
-                SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN (
-                    SELECT LootTableIndex FROM LootTable WHERE itemid = ${id}
-                )
-            )
-        )`;
+      let query = `SELECT ComponentsRegistry.id as objectId, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ComponentsRegistry JOIN LootMatrix ON LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${id} ) JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1}) WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND component_id IN ( SELECT id from DestructibleComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${id} ) ) )`;
       this.db.all(query,
         (_, rows: LootDropFirstQuery[]) => {
           // need rows with proper chance (by subtracting percent of rarity-1)
@@ -461,18 +423,7 @@ WHERE LootMatrixIndex IN (
 
   async dropItemFromPackage(id: number, rarity: number): Promise<LootDropFirstQuery[]> {
     return new Promise<LootDropFirstQuery[]>((resolve, reject) => {
-      let query = `SELECT ComponentsRegistry.id as objectId, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ComponentsRegistry
-        JOIN LootMatrix ON LootTableIndex IN (
-            SELECT LootTableIndex FROM LootTable WHERE itemid = ${id}
-        )
-        JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1})
-        WHERE component_type = ${PACKAGE_COMPONENT} AND component_id IN (
-            SELECT id from PackageComponent WHERE LootMatrixIndex IN (
-                SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN (
-                    SELECT LootTableIndex FROM LootTable WHERE itemid = ${id}
-                )
-            )
-        )`;
+      let query = `SELECT ComponentsRegistry.id as objectId, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ComponentsRegistry JOIN LootMatrix ON LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${id} ) JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1}) WHERE component_type = ${PACKAGE_COMPONENT} AND component_id IN ( SELECT id from PackageComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${id} ) ) )`;
       this.db.all(query,
         (_, rows: LootDropFirstQuery[]) => {
           // need rows with proper chance (by subtracting percent of rarity-1)
@@ -512,15 +463,7 @@ WHERE LootMatrixIndex IN (
 
   async getEnemiesAndLootMatrixForLoot(id: number): Promise<Map<number, number>> {
     return new Promise<Map<number, number>>((resolve, reject) => {
-      let query = `SELECT ComponentsRegistry.id as enemyId, LootMatrixIndex as lootMatrixIndex from ComponentsRegistry
-JOIN DestructibleComponent on DestructibleComponent.id = ComponentsRegistry.component_id
-WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND component_id IN (
-    SELECT id from DestructibleComponent WHERE LootMatrixIndex IN (
-        SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN (
-            SELECT LootTableIndex FROM LootTable WHERE itemid = ${id}
-        )
-    )
-)`;
+      let query = `SELECT ComponentsRegistry.id as enemyId, LootMatrixIndex as lootMatrixIndex from ComponentsRegistry JOIN DestructibleComponent on DestructibleComponent.id = ComponentsRegistry.component_id WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND component_id IN ( SELECT id from DestructibleComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${id} ) ) )`;
       this.db.all(query,
         (_, rows: any[]) => {
           let map = new Map<number, number>();
@@ -532,15 +475,7 @@ WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND component_id IN (
 
   async getPackagesAndLootMatrixForLoot(id: number): Promise<Map<number, number>> {
     return new Promise<Map<number, number>>((resolve, reject) => {
-      let query = `SELECT ComponentsRegistry.id as packageId, LootMatrixIndex as lootMatrixIndex from ComponentsRegistry
-JOIN PackageComponent on PackageComponent.id = ComponentsRegistry.component_id
-WHERE component_type = 53 AND component_id IN (
-    SELECT id from PackageComponent WHERE LootMatrixIndex IN (
-        SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN (
-            SELECT LootTableIndex FROM LootTable WHERE itemid = ${id}
-        )
-    )
-)`;
+      let query = `SELECT ComponentsRegistry.id as packageId, LootMatrixIndex as lootMatrixIndex from ComponentsRegistry JOIN PackageComponent on PackageComponent.id = ComponentsRegistry.component_id WHERE component_type = 53 AND component_id IN ( SELECT id from PackageComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${id} ) ) )`;
       this.db.all(query,
         (_, rows: any[]) => {
           let map = new Map<number, number>();
@@ -552,15 +487,7 @@ WHERE component_type = 53 AND component_id IN (
 
   async getIdsOfItemsSold(id: number): Promise<number[]> {
     return new Promise<number[]>((resolve, reject) => {
-      let query = `SELECT id FROM Objects WHERE id in (
-SELECT itemid FROM LootTable WHERE LootTableIndex in (
-  SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=(
-      SELECT LootMatrixIndex FROM VendorComponent WHERE id=(
-        SELECT component_id FROM ComponentsRegistry WHERE component_type=${VENDOR_COMPONENT} and id=${id}
-      )
-    )
-  )
-)`;
+      let query = `SELECT id FROM Objects WHERE id in ( SELECT itemid FROM LootTable WHERE LootTableIndex in ( SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=( SELECT LootMatrixIndex FROM VendorComponent WHERE id=( SELECT component_id FROM ComponentsRegistry WHERE component_type=${VENDOR_COMPONENT} and id=${id} ) ) ) )`;
       this.db.all(query,
         (_, rows: any[]) => {
           let map = rows.map((e) => e.id)
@@ -570,32 +497,23 @@ SELECT itemid FROM LootTable WHERE LootTableIndex in (
   }
 
   async getItemsSold(id: number): Promise<ItemSold[]> {
+    let query = `SELECT ComponentsRegistry.id, ItemComponent.baseValue as cost, ItemComponent.currencyLOT as alternateCurrencyId, ItemComponent.altCurrencyCost as alternateCost, ItemComponent.commendationLOT as commendationCurrencyId, ItemComponent.commendationCost as commendationCost FROM ComponentsRegistry JOIN ItemComponent ON ItemComponent.id = ComponentsRegistry.component_id WHERE component_type = ${ITEM_COMPONENT} AND ComponentsRegistry.id IN( SELECT id FROM Objects WHERE id in ( SELECT itemid FROM LootTable WHERE LootTableIndex in ( SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=( SELECT LootMatrixIndex FROM VendorComponent WHERE id=( SELECT component_id FROM ComponentsRegistry WHERE component_type=${VENDOR_COMPONENT} and id=${id} ) ) ) ) )`;
+    if (id === HONOR_ACCOLADE) {
+      query = `SELECT ComponentsRegistry.id, ItemComponent.baseValue as cost, ItemComponent.currencyLOT as alternateCurrencyId, ItemComponent.altCurrencyCost as alternateCost, ItemComponent.commendationLOT as commendationCurrencyId, ItemComponent.commendationCost as commendationCost FROM ItemComponent JOIN ComponentsRegistry ON ComponentsRegistry.component_id = ItemComponent.id AND  component_type = ${ITEM_COMPONENT} AND ComponentsRegistry.id WHERE ItemComponent.commendationLOT IS NOT NULL`
+    }
     return new Promise<ItemSold[]>((resolve, reject) => {
-      let query = `SELECT ComponentsRegistry.id, ItemComponent.baseValue as cost, ItemComponent.currencyLOT as alternateCurrencyId, ItemComponent.altCurrencyCost as alternateCost, ItemComponent.commendationLOT as commendationCurrencyId, ItemComponent.commendationCost as commendationCost FROM ComponentsRegistry
-JOIN ItemComponent ON ItemComponent.id = ComponentsRegistry.component_id
-WHERE component_type = ${ITEM_COMPONENT} AND ComponentsRegistry.id IN(
-	SELECT id FROM Objects WHERE id in (
-		SELECT itemid FROM LootTable WHERE LootTableIndex in (
-		  SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=(
-			  SELECT LootMatrixIndex FROM VendorComponent WHERE id=(
-				SELECT component_id FROM ComponentsRegistry WHERE component_type=${VENDOR_COMPONENT} and id=${id}
-			  )
-		  )
-		)
-	)
-)`;
       this.db.all(query,
         (_, rows) => {
           let map = rows.map((item) => {
             return {
               id: item.id,
               currency: { id: 163, name: "Coins" }, // default coin
-              cost: item.cost,
+              cost: id === HONOR_ACCOLADE ? 0 : item.cost,
               name: this.locale.getObjectName(item.id),
-              alternateCurrency: { id: item.alternateCurrencyId, name: item?.alternateCurrencyId ? this.locale.getObjectName(item.alternateCurrencyId) : "None" },
-              alternateCost: item.alternateCost,
-              commendationCurrency: { id: item.commendationCurrencyId, name: item?.commendationCurrencyId ? this.locale.getObjectName(item.commendationCurrencyId) : "None" },
-              commendationCost: item.commendationCost,
+              alternateCurrency: { id: item.alternateCurrencyId, name: item?.alternateCurrencyId ? this.locale.getObjectName(item.alternateCurrencyId) : "Faction Token" },
+              alternateCost: item.alternateCost || 0,
+              commendationCurrency: { id: item.commendationCurrencyId, name: "Faction Token" },
+              commendationCost: item.commendationCost || 0,
             }
           })
           resolve(map)
@@ -605,11 +523,7 @@ WHERE component_type = ${ITEM_COMPONENT} AND ComponentsRegistry.id IN(
 
   async getIdsOfVendorsThatSellItem(id: number): Promise<number[]> {
     return new Promise<number[]>((resolve, reject) => {
-      let query = `SELECT id FROM ComponentsRegistry WHERE component_type = ${VENDOR_COMPONENT} AND component_id IN (SELECT id from VendorComponent WHERE LootMatrixIndex IN (
-                SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN (
-                    SELECT LootTableIndex FROM LootTable WHERE itemid = ${id}
-                )
-            ))`;
+      let query = `SELECT id FROM ComponentsRegistry WHERE component_type = ${VENDOR_COMPONENT} AND component_id IN (SELECT id from VendorComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${id} ) ))`;
       this.db.all(query,
         (_, rows: any[]) => {
           let map = rows.map((e) => e.id)
