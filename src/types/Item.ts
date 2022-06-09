@@ -42,9 +42,8 @@ export class Item extends CDClient {
   async create(): Promise<void> {
     this.components = await this.getComponents(this.id);
     this.name = (await this.getObjectName(this.id));
-    this.imageURL = await this.thumbnail()
+    await this.addThumbnail();
     await this.addItemComponent();
-    // await this.addDrops();
     await this.addItemStats();
   }
 
@@ -52,8 +51,8 @@ export class Item extends CDClient {
     return `${explorerDomain}/objects/${id}`;
   }
 
-  async thumbnail(id: number = this.id): Promise<string> {
-    return `${explorerDomain}${await this.getIconAsset(id)}`
+  async addThumbnail(id: number = this.id): Promise<void> {
+    this.imageURL = `${explorerDomain}${await this.getIconAsset(id)}`
   }
 
   async addPackageDrops(): Promise<void> {

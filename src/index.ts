@@ -44,7 +44,6 @@ client.on('interactionCreate', async (interaction: Interaction) => {
           value: value,
         }];
       } else {
-        console.log(interaction.commandName)
         switch (interaction.commandName.toString()) {
           case "activity":
             autocompleteOptions = await cdclient.searchActivity(value.toString())

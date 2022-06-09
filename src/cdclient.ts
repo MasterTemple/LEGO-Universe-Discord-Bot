@@ -4,6 +4,7 @@ import {
   ActivityRewards,
   ComponentsRegistry,
   DestructibleComponent,
+  Icons,
   ItemComponent,
   LootMatrix,
   LootTable,
@@ -81,6 +82,24 @@ export class CDClient {
         )`,
         function (_, row: RenderComponent) {
           let icon = row?.icon_asset;
+          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
+
+          icon = icon.replace(/^\.\.\\\.\.\\/g, "/lu-res/");
+          icon = icon.replace(/\\/g, "/");
+          icon = icon.replace(/ /g, "%20");
+          icon = icon.replace(/(?<=\.)dds/gi, "png");
+          icon = icon.toLowerCase();
+          resolve(icon)
+        });
+    });
+  }
+
+  async getIconAssetFromSkill(skillId: number): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.db.get(
+        `SELECT IconPath FROM Icons WHERE IconID = (SELECT skillIcon FROM SkillBehavior WHERE skillID = ${skillId})`,
+        function (_, row: Icons) {
+          let icon = row?.IconPath;
           if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
 
           icon = icon.replace(/^\.\.\\\.\.\\/g, "/lu-res/");

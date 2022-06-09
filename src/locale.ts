@@ -81,6 +81,9 @@ export class LocaleXML {
   getPreconditionDescription(id: number): string {
     return this.locale.get("Preconditions_ID_FailureReason").get(id.toString());
   }
+  getSkillName(id: number): string {
+    return this.locale.get("SkillBehavior_ID_name").get(id.toString());
+  }
   getSkillDescription(skillId: number): SkillDescription[] {
     return [...this.locale.get("SkillBehavior_ID_descriptionUI").get(skillId.toString()).matchAll(/%\((?<name>[^\)]+)\)(?<description>[^%]+)/gm)].map((e) => {
       return {
