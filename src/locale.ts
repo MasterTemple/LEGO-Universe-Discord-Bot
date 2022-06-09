@@ -1,8 +1,6 @@
 import { localePath } from './config.json';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
-import { DOMParser } from 'xmldom';
-import * as xpath from 'xpath-ts';
 import { localeXMLType, NameValuePair, SkillDescription } from './luInterfaces';
 
 export class LocaleXML {

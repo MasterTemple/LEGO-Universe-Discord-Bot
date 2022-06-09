@@ -29,7 +29,7 @@ export class Item extends CDClient {
   unpack: LootDrop[] = [];
   buy: ObjectElement[] = [];
   reward: MissionReward[] = [];
-  activityReward: LootDrop[] = [];
+  activityRewards: LootDrop[] = [];
   packageDrops: SmashableDrop[] = [];
   objectData: Objects;
   // earn
@@ -163,7 +163,7 @@ export class Item extends CDClient {
   }
 
   async addRewards(id: number = this.id): Promise<void> {
-    let rawLootDrops: ActivityDropFromQuery[] = await this.getActivitiesThatDropItem(id)
+    let rawLootDrops: ActivityDropFromQuery[] = await this.getActivitiesThatDropItem(id, this.itemComponent.rarity)
     const lootTableRaritySizes = new Map<number, number>();
     for (const value of rawLootDrops) {
       const element = this.drop?.find((f) => f.chanceForDrop == value.percent && f.minToDrop == value.minToDrop && f.maxToDrop == value.maxToDrop && f.chanceForRarity == value.randmax);
@@ -173,7 +173,7 @@ export class Item extends CDClient {
           ltiSize = await this.getItemsInLootTableOfRarity(value.lootTableIndex, value.rarity);
           lootTableRaritySizes.set(value.lootTableIndex, ltiSize);
         }
-        this.activityReward.push({
+        this.activityRewards.push({
           smashables: [{
             id: value.id,
             name: value.activityName,

@@ -19,7 +19,7 @@ import {
 } from './cdclientInterfaces';
 import { sqlitePath } from './config.json';
 import { LocaleXML } from './locale';
-import { EnemyDrop, EnemyHealth, ItemDrop, ItemSold, LootDrop, LootDropFirstQuery, LootTableItem, MissionReward, NameValuePair, NPCMission, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
+import { ActivityDropFromQuery, EnemyDrop, EnemyHealth, ItemDrop, ItemSold, LootDrop, LootDropFirstQuery, LootTableItem, MissionReward, NameValuePair, NPCMission, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
 export const RENDER_COMPONENT = 2;
 export const DESTRUCTIBLE_COMPONENT = 7;
 export const ITEM_COMPONENT = 11;
@@ -472,6 +472,26 @@ export class CDClient {
     })
   }
 
+  async getActivityDrops(activityName: string): Promise<SmashableDrop[]> {
+    return new Promise<SmashableDrop[]>(async (resolve, reject) => {
+      this.db.all(
+        `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity, (SELECT COUNT(*) FROM LootTable WHERE LootMatrix.LootTableIndex=LootTable.LootTableIndex) AS poolSize FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN (SELECT LootMatrixIndex FROM ActivityRewards WHERE description = '${activityName}')`,
+        async (_, rows: SmashableDrop[]) => {
+          const lootTableRaritySizes = new Map<number, number>();
+          for (let row of rows) {
+            let ltiSize = lootTableRaritySizes?.get(row.lootTableIndex);
+            if (!ltiSize) {
+              ltiSize = await this.getItemsInLootTableOfRarity(row.lootTableIndex, row.rarity);
+              lootTableRaritySizes.set(row.lootTableIndex, ltiSize);
+            }
+            row.poolSize = ltiSize
+          }
+          resolve(rows)
+        }
+      )
+    })
+  }
+
   async dropItemFromEnemy(id: number, rarity: number): Promise<LootDropFirstQuery[]> {
     return new Promise<LootDropFirstQuery[]>((resolve, reject) => {
       let query = `SELECT ComponentsRegistry.id as objectId, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ComponentsRegistry JOIN LootMatrix ON LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${id} ) JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1}) WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND component_id IN ( SELECT id from DestructibleComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${id} ) ) )`;
@@ -690,8 +710,8 @@ export class CDClient {
                 ]
               ).filter(({ id }) => id > 0),
               isAchievement: false,
-              giver: {id: row.offer_objectID, name: this.locale.getObjectName(row.offer_objectID)},
-              accepter: {id: row.target_objectID, name: this.locale.getObjectName(row.target_objectID)},
+              giver: { id: row.offer_objectID, name: this.locale.getObjectName(row.offer_objectID) },
+              accepter: { id: row.target_objectID, name: this.locale.getObjectName(row.target_objectID) },
             }
           })
           resolve(missions)
@@ -722,12 +742,12 @@ export class CDClient {
     })
   }
 
-  async getActivitiesThatDropItem(itemId: number, rarity: number): Promise<ActivityDropFromQuery> {
-    return new Promise<ActivityDropFromQuery>((resolve, reject) => {
+  async getActivitiesThatDropItem(itemId: number, rarity: number): Promise<ActivityDropFromQuery[]> {
+    return new Promise<ActivityDropFromQuery[]>((resolve, reject) => {
       this.db.all(
-        `SELECT ActivityRewards.objectTemplate as id, ActivityRewards.description, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ActivityRewards 
-        JOIN LootMatrix ON LootMatrix.LootMatrixIndex = ActivityRewards.LootMatrixIndex 
-        JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1}) 
+        `SELECT ActivityRewards.objectTemplate as id, ActivityRewards.description, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ActivityRewards
+        JOIN LootMatrix ON LootMatrix.LootMatrixIndex = ActivityRewards.LootMatrixIndex
+        JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1})
         WHERE ActivityRewardIndex in (
         SELECT ActivityRewardIndex from ActivityRewards WHERE LootMatrixIndex IN (
         SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN (
