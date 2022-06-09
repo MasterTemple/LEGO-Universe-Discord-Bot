@@ -74,6 +74,15 @@ export class CDClient {
     });
   }
 
+  async formatIconPath(icon: string): string {
+    icon = icon.replace(/^\.\.\\\.\.\\/g, "/lu-res/");
+    icon = icon.replace(/\\/g, "/");
+    icon = icon.replace(/ /g, "%20");
+    icon = icon.replace(/(?<=\.)dds/gi, "png");
+    icon = icon.toLowerCase();
+    return icon;
+  }
+
   async getIconAsset(id: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this.db.get(
@@ -83,12 +92,7 @@ export class CDClient {
         function (_, row: RenderComponent) {
           let icon = row?.icon_asset;
           if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
-
-          icon = icon.replace(/^\.\.\\\.\.\\/g, "/lu-res/");
-          icon = icon.replace(/\\/g, "/");
-          icon = icon.replace(/ /g, "%20");
-          icon = icon.replace(/(?<=\.)dds/gi, "png");
-          icon = icon.toLowerCase();
+          icon = formatIconPath(icon);
           resolve(icon)
         });
     });
@@ -97,16 +101,24 @@ export class CDClient {
   async getIconAssetFromSkill(skillId: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this.db.get(
-        `SELECT IconPath FROM Icons WHERE IconID = (SELECT skillIcon FROM SkillBehavior WHERE skillID = ${skillId})`,
+        `SELECT icon_asset FROM RenderComponent WHERE id=(SELECT missionIconID FROM ComponentsRegistry WHERE component_type=${RENDER_COMPONENT} and id=${id})`,
         function (_, row: Icons) {
           let icon = row?.IconPath;
           if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
+          icon = formatIconPath(icon);
+          resolve(icon)
+        });
+    });
+  }
 
-          icon = icon.replace(/^\.\.\\\.\.\\/g, "/lu-res/");
-          icon = icon.replace(/\\/g, "/");
-          icon = icon.replace(/ /g, "%20");
-          icon = icon.replace(/(?<=\.)dds/gi, "png");
-          icon = icon.toLowerCase();
+  async getIconAssetForMission(missionId: number): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.db.get(
+        `SELECT IconID, largeTaskIconID FROM MissionTasks WHERE id = ${missionId})`,
+        function (_, row: MissionTasks) {
+          let icon = row?.largeTaskIconID || row?.IconID;
+          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
+          icon = formatIconPath(icon);
           resolve(icon)
         });
     });
