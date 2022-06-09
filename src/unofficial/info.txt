@@ -1,0 +1,4 @@
+This holds data that is not in the cdclient, but made manually to do likely one of the following:
+1. hold fan-made names of loot tables
+2. hold emoji ids of LU icons
+3. hold paths to certain images as icons for iconless NPCs/enemies
