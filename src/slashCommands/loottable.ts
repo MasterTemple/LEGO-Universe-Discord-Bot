@@ -1,6 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { Item } from '../types/Item';
+import { bracketURL, textToChunks } from '../functions';
+import { LootTable } from '../types/LootTable';
 import { SlashCommand } from '../types/SlashCommand';
 
 export default {
@@ -18,16 +19,31 @@ export default {
     interaction: CommandInteraction,
     options: readonly CommandInteractionOption[],
     cdclient: CDClient) {
-
     const query = options.find((option) => option.name === 'loottable').value.toString();
-    const itemId = parseInt(query) || await cdclient.getObjectId(query);
-    const item = new Item(cdclient, itemId);
-    await item.create();
+    const lootTableId = parseInt(query) || await cdclient.getObjectId(query);
+    const lootTable = new LootTable(cdclient, lootTableId);
+    await lootTable.create();
 
     const embed = new MessageEmbed();
-    embed.setURL(item.getURL());
-    embed.setThumbnail(item.imageURL)
-    embed.setTitle(`${item.name} [${item.id}]`);
+    embed.setURL(lootTable.getURL());
+    embed.setThumbnail(lootTable.imageURL)
+    embed.setTitle(`${lootTable.name} [${lootTable.id}]`);
+    let previousTier = lootTable.loot[0].rarity;
+    let items = ""
+    lootTable.loot.push({ id: 0, name: "", rarity: 0 })
+    let c = 1;
+    lootTable.loot.forEach((loot) => {
+      if (previousTier !== loot.rarity) {
+        let chunks = textToChunks(items)
+        chunks.forEach((chunk) => {
+          embed.addField(`Tier ${previousTier}`, chunk)
+        })
+        previousTier = loot.rarity;
+        items = "";
+        c = 1;
+      }
+      items += `**${c++}.** ${loot.name} ${bracketURL(loot.id, "objects/loot/table")}\n`
+    })
 
     interaction.reply({
       embeds: [embed],

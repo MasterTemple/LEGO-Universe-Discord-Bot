@@ -3,7 +3,7 @@ import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { DOMParser } from 'xmldom';
 import * as xpath from 'xpath-ts';
-import { localeXMLType, SkillDescription } from './luInterfaces';
+import { localeXMLType, NameValuePair, SkillDescription } from './luInterfaces';
 
 export class LocaleXML {
   localeTypes: localeXMLType[] = [
@@ -64,7 +64,7 @@ export class LocaleXML {
   }
 
   getObjectName(id: number): string {
-    return this.locale.get("Objects_ID_name").get(id.toString());
+    return this.locale.get("Objects_ID_name").get(id.toString()) || `Objects_${id}_name`;
   }
 
   getMissionName(id: number): string {
@@ -88,6 +88,30 @@ export class LocaleXML {
         description: e.groups.description,
       }
     })
+  }
+
+  searchSkills(query: string): NameValuePair[] {
+    let matches: NameValuePair[] = [];
+    let re = new RegExp(query, "gi")
+    for (let [id, name] of this.locale.get("SkillBehavior_ID_name")) {
+      if (name.match(re)) {
+        matches.push({ name: `${name} [${id}]`, value: id })
+        if (matches.length === 15) break;
+      }
+    }
+    return matches;
+  }
+
+  searchMissions(query: string): NameValuePair[] {
+    let matches: NameValuePair[] = [];
+    let re = new RegExp(query, "gi")
+    for (let [id, name] of this.locale.get("Missions_ID_name")) {
+      if (name.match(re)) {
+        matches.push({ name: `${name} [${id}]`, value: id })
+        if (matches.length === 15) break;
+      }
+    }
+    return matches;
   }
 
   // async getObjectName(id:number):Promise<string> {

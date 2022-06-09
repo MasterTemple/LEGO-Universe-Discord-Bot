@@ -2,7 +2,7 @@ import { AutocompleteInteraction, Client, CommandInteraction, CommandInteraction
 import { CDClient } from './cdclient';
 import { token } from './config.json';
 import { LocaleXML } from './locale';
-import { LootDrop, NameValuePair } from './luInterfaces';
+import { LootDrop, NameValuePair, queryType } from './luInterfaces';
 import { getSlashCommands, updateSlashCommands } from './setup';
 import { SlashCommandMap } from './types/SlashCommand';
 
@@ -18,40 +18,6 @@ client.once('ready', async () => {
   console.log('\n------------------------------------\n');
   await cdclient.load();
   updateSlashCommands(client, slashCommands);
-
-
-  // let values = await cdclient.dropItem(37337, 4);
-  // // console.log(values)
-  // let newValues = new Map<number, LootDrop>();
-  // let lootTableRaritySizes = new Map<number, number>()
-  // for(let value of values){
-  //   let lmi = newValues?.get(value.lootMatrixIndex)
-  //   if(lmi) {
-  //     lmi.smashables.push({
-  //       id: value.enemyId,
-  //       name: await cdclient.getObjectName(value.enemyId)
-  //     })
-  //   } else {
-  //     let ltiSize = lootTableRaritySizes?.get(value.lootTableIndex);
-  //     if(!ltiSize) {
-  //       ltiSize = await cdclient.getItemsInLootTableOfRarity(value.lootTableIndex, value.rarity)
-  //       lootTableRaritySizes.set(value.lootTableIndex, ltiSize)
-  //     }
-  //     newValues.set(value.lootMatrixIndex, {
-  //       smashables: [],
-  //       chanceForDrop: value.percent,
-  //       minToDrop: value.minToDrop,
-  //       maxToDrop: value.maxToDrop,
-  //       chanceForRarity: value.randmax,
-  //       chanceForItemInLootTable: ltiSize,
-  //       chance: value.percent * value.randmax * (1/ltiSize),
-  //     })
-  //   }
-  // }
-  // console.log(newValues)
-  // await cdclient.dropItem(7570, 4)
-  // console.log(await cdclient.getComponents(7570))
-
 
   console.log('\n------------------------------------\n');
   console.log('LEGO Universe Discord Bot is online.');
@@ -78,8 +44,60 @@ client.on('interactionCreate', async (interaction: Interaction) => {
           value: value,
         }];
       } else {
-        autocompleteOptions = await cdclient.searchObject(value);
+        console.log(interaction.commandName)
+        switch (interaction.commandName.toString()) {
+          case "activity":
+            autocompleteOptions = await cdclient.searchActivity(value.toString())
+            break;
+
+          case "preconditions":
+          case "item":
+          case "buy":
+          case "drop":
+          case "earn":
+          case "reward":
+          case "unpack":
+            autocompleteOptions = await cdclient.searchItem(value.toString())
+            break;
+
+          case "brick":
+            autocompleteOptions = await cdclient.searchBrick(value.toString())
+            break;
+
+          case "loottable":
+            break;
+
+          case "package":
+            autocompleteOptions = await cdclient.searchPackage(value.toString());
+            break;
+
+          case "mission":
+            autocompleteOptions = cdclient.locale.searchMissions(value.toString());
+            break;
+
+          case "enemy":
+          case "smash":
+            autocompleteOptions = await cdclient.searchSmashable(value.toString());
+            break;
+
+          case "skill":
+            autocompleteOptions = cdclient.locale.searchSkills(value.toString());
+            break;
+
+          case "npc":
+            autocompleteOptions = await cdclient.searchMissionNPC(value.toString());
+            break;
+
+          case "vendor":
+            autocompleteOptions = await cdclient.searchVendor(value.toString());
+            break;
+
+          default:
+            autocompleteOptions = await cdclient.searchObject(value);
+        }
       }
+
+      console.log(autocompleteOptions)
       interaction.respond(autocompleteOptions);
     }
   } catch (e) {

@@ -181,3 +181,10 @@ export interface SoldItem {
   name: string;
   cost: number;
 }
+
+
+export interface LootTableItem {
+  id: number;
+  name: string;
+  rarity: number;
+}
