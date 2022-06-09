@@ -38,7 +38,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
       value = value.toString();
 
       let autocompleteOptions: NameValuePair[];
-      if (parseInt(value)) {
+      if (value.match(/^\d+$/g)) {
         autocompleteOptions = [{
           name: `${(await cdclient.getObjectName(parseInt(value)))} [${value}]`,
           value: value,

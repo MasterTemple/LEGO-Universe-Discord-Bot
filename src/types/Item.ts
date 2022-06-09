@@ -1,6 +1,6 @@
 import { Database } from 'sqlite3';
 import { CDClient, ITEM_COMPONENT, RENDER_COMPONENT } from '../cdclient';
-import { ComponentsRegistry, ObjectSkills, RenderComponent, SkillBehavior } from '../cdclientInterfaces';
+import { ComponentsRegistry, Objects, ObjectSkills, RenderComponent, SkillBehavior } from '../cdclientInterfaces';
 import {
   ItemStats,
   Skill,
@@ -29,6 +29,7 @@ export class Item extends CDClient {
   buy: ObjectElement[] = [];
   reward: MissionReward[] = [];
   packageDrops: SmashableDrop[] = [];
+  objectData: Objects;
   // earn
   // buy
   constructor(cdclient: CDClient, id: number) {
@@ -315,5 +316,8 @@ export class Item extends CDClient {
       health: this.skills.find(({ healthBonus }) => healthBonus !== null)?.healthBonus || 0,
       imagination: this.skills.find(({ imaginationBonus }) => imaginationBonus !== null)?.imaginationBonus || 0,
     };
+  }
+  async addObjectData(): Promise<void> {
+    this.objectData = await this.getObjectData(this.id)
   }
 }

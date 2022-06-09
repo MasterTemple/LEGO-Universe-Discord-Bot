@@ -277,6 +277,15 @@ export class CDClient {
     });
   }
 
+  async getObjectData(id: number): Promise<Objects> {
+    return new Promise<Objects>((resolve, reject) => {
+      this.db.get(`SELECT * FROM Objects WHERE id=${id}`,
+        function (_, row: Objects) {
+          resolve(row);
+        });
+    });
+  }
+
   async getItemComponent(itemComponent: number): Promise<ItemComponent> {
     return new Promise<ItemComponent>((resolve, reject) => {
       this.db.get(`SELECT * FROM ItemComponent WHERE id=${itemComponent}`,
