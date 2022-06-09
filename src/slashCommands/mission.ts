@@ -29,7 +29,7 @@ export default {
     embed.setURL(mission.getURL());
     embed.setThumbnail(mission.imageURL)
     embed.setTitle(mission.data.isRepeatable ? `${mission.name} [${mission.id}] (Repeatable)`: `${mission.name} [${mission.id}]`);
-
+    
     let title = mission.data.type
     if (mission.data.subtype) title += ` > ${mission.data.subtype}`
     title += ` > ${mission.data.name}`
@@ -44,7 +44,12 @@ export default {
     
     embed.addField("LEGO Score", (mission.raw.LegoScore || 0).toString(), true)
     embed.addField("Reward Coins", (mission.raw.reward_currency || 0).toString(), true)
-    embed.addField("Reputation", (mission.raw.reward_reputation || 0).toString(), true)
+    
+    if(mission.raw.reward_bankinventory) embed.addField("Vault Increase", (mission.raw.reward_bankinventory).toString(), true)
+    else if(mission.raw.reward_maximagination) embed.addField("Imagination Bonus", (mission.raw.reward_maximagination).toString(), true)
+    else if(mission.raw.reward_maxhealth) embed.addField("Health Bonus", (mission.raw.reward_maxhealth).toString(), true)
+    else if(mission.raw.reward_maxinventory) embed.addField("Inventory Increase", (mission.raw.reward_maxinventory).toString(), true)
+    else embed.addField("Reputation Increase", (mission.raw.reward_reputation).toString(), true)
 
     interaction.reply({
       embeds: [embed],
