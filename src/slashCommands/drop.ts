@@ -33,6 +33,7 @@ export default {
     embed.setThumbnail(item.imageURL)
 
     let c = 1;
+
     item.drop.forEach((eachDrop, index) => {
       if (eachDrop.smashables.length > 0 && embed.fields.length < 25) {
         let range: string;
@@ -41,8 +42,9 @@ export default {
         } else {
           range = `${eachDrop.minToDrop}-${eachDrop.maxToDrop}`;
         }
+        eachDrop.smashables = eachDrop.smashables.filter((e) => !e.name.includes("Objects_"))
         embed.addField(
-          `${c++}.${decimalToFraction(eachDrop.chance)} for ${range} ${item.name} `,
+          `${c++}. ${decimalToFraction(eachDrop.chance)} for ${range} ${item.name} `,
           `From ${eachDrop.smashables.map(({ name, id }) => `${name} ${bracketURL(id)}`).join(', ')} `.slice(0, 1023),
         );
       }
