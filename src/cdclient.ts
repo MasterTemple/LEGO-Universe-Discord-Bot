@@ -663,7 +663,9 @@ export class CDClient {
   async getMissionsFromNPC(npcId: number): Promise<NPCMission[]> {
     return new Promise<NPCMission[]>((resolve, reject) => {
       this.db.all(
-        `SELECT * FROM MissionNPCComponent JOIN Missions ON MissionNPCComponent.missionID = Missions.id WHERE MissionNPCComponent.id = (SELECT component_id FROM ComponentsRegistry WHERE component_type = ${MISSION_OFFER_COMPONENT} AND id = ${npcId}) AND offersMission = 1;`,
+        // `SELECT * FROM MissionNPCComponent JOIN Missions ON MissionNPCComponent.missionID = Missions.id WHERE MissionNPCComponent.id = (SELECT component_id FROM ComponentsRegistry WHERE component_type = ${MISSION_OFFER_COMPONENT} AND id = ${npcId}) AND offersMission = 1;`,
+        `SELECT * FROM Missions WHERE offer_objectID = ${npcId};`,
+
         (_, rows: Missions[]) => {
           let missions: NPCMission[] = rows.map((row) => {
             return {
