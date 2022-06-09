@@ -1,4 +1,5 @@
 import { AutocompleteInteraction, Client, CommandInteraction, CommandInteractionOption, Interaction } from 'discord.js';
+import { getAutocompleteOptions } from './autocomplete';
 import { CDClient } from './cdclient';
 import { token } from './config.json';
 import { LocaleXML } from './locale';
@@ -38,63 +39,18 @@ client.on('interactionCreate', async (interaction: Interaction) => {
       value = value.toString();
 
       let autocompleteOptions: NameValuePair[];
-      if (value.match(/^\d+$/g)) {
-        autocompleteOptions = [{
-          name: `${(await cdclient.getObjectName(parseInt(value)))} [${value}]`,
-          value: value,
-        }];
-      } else {
-        switch (interaction.commandName.toString()) {
-          case "activity":
-            autocompleteOptions = await cdclient.searchActivity(value.toString())
-            break;
 
-          case "preconditions":
-          case "item":
-          case "buy":
-          case "drop":
-          case "earn":
-          case "reward":
-          case "unpack":
-            autocompleteOptions = await cdclient.searchItem(value.toString())
-            break;
+      autocompleteOptions = await getAutocompleteOptions(cdclient, interaction.commandName.toString(), value.toString())
 
-          case "brick":
-            autocompleteOptions = await cdclient.searchBrick(value.toString())
-            break;
-
-          case "loottable":
-            break;
-
-          case "package":
-            autocompleteOptions = await cdclient.searchPackage(value.toString());
-            break;
-
-          case "mission":
-            autocompleteOptions = cdclient.locale.searchMissions(value.toString());
-            break;
-
-          case "enemy":
-          case "smash":
-            autocompleteOptions = await cdclient.searchSmashable(value.toString());
-            break;
-
-          case "skill":
-            autocompleteOptions = cdclient.locale.searchSkills(value.toString());
-            break;
-
-          case "npc":
-            autocompleteOptions = await cdclient.searchMissionNPC(value.toString());
-            break;
-
-          case "vendor":
-            autocompleteOptions = await cdclient.searchVendor(value.toString());
-            break;
-
-          default:
-            autocompleteOptions = await cdclient.searchObject(value);
-        }
-      }
+      // this is so that if they type the number it returns the value
+      // if (value.match(/^\d+$/g)) {
+      //   autocompleteOptions = [{
+      //     name: `${(await cdclient.getObjectName(parseInt(value)))} [${value}]`,
+      //     value: value,
+      //   }];
+      // } else {
+      //   autocompleteOptions = await getAutocompleteOptions(cdclient, interaction.commandName.toString(), value.toString())
+      // }
 
       interaction.respond(autocompleteOptions);
     }

@@ -2,7 +2,7 @@ import { Database } from "sqlite3";
 import { CDClient } from "../cdclient";
 import { ComponentsRegistry, SkillBehavior } from "../cdclientInterfaces";
 import { explorerDomain } from '../config.json';
-import { SkillDescription } from "../luInterfaces";
+import { ObjectElement, SkillDescription } from "../luInterfaces";
 
 export class Skill extends CDClient {
   db: Database;
@@ -12,6 +12,7 @@ export class Skill extends CDClient {
   imageURL: string;
   components: ComponentsRegistry[];
   skillBehavior: SkillBehavior;
+  skillItems: ObjectElement[];
 
   constructor(cdclient: CDClient, id: number) {
     super();
@@ -38,6 +39,10 @@ export class Skill extends CDClient {
 
   async addSkillBehavior(): Promise<void> {
     this.skillBehavior = await this.getSkillBehavior(this.id);
+  }
+
+  async addSkillItems(): Promise<void> {
+    this.skillItems = await this.getItemsWithSkill(this.id);
   }
 
 }

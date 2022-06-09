@@ -396,15 +396,33 @@ export class CDClient {
         });
     });
   }
-  async getItemsSoldByVendor(id: number): Promise<ObjectElement[]> {
+  async getItemsSoldByVendor(vendorId: number): Promise<ObjectElement[]> {
     return new Promise<ObjectElement[]>((resolve, reject) => {
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE id in ( SELECT itemid FROM LootTable WHERE LootTableIndex in ( SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=( SELECT LootMatrixIndex FROM VendorComponent WHERE id=( SELECT component_id FROM ComponentsRegistry WHERE component_type=16 and id=${id} ) ) ) )`,
+        `SELECT id, name, displayName FROM Objects WHERE id in ( SELECT itemid FROM LootTable WHERE LootTableIndex in ( SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=( SELECT LootMatrixIndex FROM VendorComponent WHERE id=( SELECT component_id FROM ComponentsRegistry WHERE component_type=16 and id=${vendorId} ) ) ) )`,
         (_, rows: Objects[]) => {
           resolve(
             rows.map(({ name, displayName, id }) => {
               return {
                 name: displayName || name,
+                id: id
+              }
+            })
+          )
+        }
+      )
+    })
+  }
+
+  async getItemsWithSkill(skillId: number): Promise<ObjectElement[]> {
+    return new Promise<ObjectElement[]>((resolve, reject) => {
+      this.db.all(
+        `SELECT objectTemplate as id FROM ObjectSkills JOIN SkillBehavior ON SkillBehavior.skillID = ObjectSkills.skillID WHERE ObjectSkills.skillID = ${skillId}`,
+        (_, rows) => {
+          resolve(
+            rows.map(({ id }) => {
+              return {
+                name: this.locale.getObjectName(id),
                 id: id
               }
             })
