@@ -65,7 +65,8 @@ export class CDClient {
   async getComponents(id: number) {
     return new Promise<ComponentsRegistry[]>((resolve, reject) => {
       this.db.all(
-        `SELECT component_type as componentType, component_id as componentId FROM ComponentsRegistry WHERE id=${id}`,
+        // `SELECT component_type as componentType, component_id as componentId FROM ComponentsRegistry WHERE id=${id}`,
+        `SELECT * FROM ComponentsRegistry WHERE id=${id}`,
         (_, rows: ComponentsRegistry[]) => {
           resolve(rows);
         });

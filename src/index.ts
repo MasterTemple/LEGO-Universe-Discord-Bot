@@ -97,7 +97,6 @@ client.on('interactionCreate', async (interaction: Interaction) => {
         }
       }
 
-      console.log(autocompleteOptions)
       interaction.respond(autocompleteOptions);
     }
   } catch (e) {
