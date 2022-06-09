@@ -549,7 +549,8 @@ export class CDClient {
       this.db.get(
         `SELECT COUNT() as RarityCount FROM ItemComponent WHERE id IN (SELECT component_id FROM ComponentsRegistry WHERE component_type = ${ITEM_COMPONENT} AND id IN (SELECT itemid FROM LootTable WHERE LootTableIndex = ${lootTable})) AND rarity=${rarity}`,
         (_, row: any) => {
-          resolve(row?.RarityCount || 0)
+          // resolve(row?.RarityCount || 0)
+          resolve(row?.RarityCount)
         }
       )
     })

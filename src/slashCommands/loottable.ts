@@ -28,7 +28,7 @@ export default {
     embed.setURL(lootTable.getURL());
     embed.setThumbnail(lootTable.imageURL)
     embed.setTitle(`${lootTable.name} [${lootTable.id}]`);
-    let previousTier = lootTable.loot[0].rarity;
+    let previousTier = lootTable.loot?.[0]?.rarity || 0;
     let items = ""
     lootTable.loot.push({ id: 0, name: "", rarity: 0 })
     let c = 1;

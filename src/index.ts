@@ -4,6 +4,7 @@ import { CDClient } from './cdclient';
 import { token } from './config.json';
 import { LocaleXML } from './locale';
 import { LootDrop, NameValuePair, queryType } from './luInterfaces';
+import { percent } from './math';
 import { getSlashCommands, updateSlashCommands } from './setup';
 import { SlashCommandMap } from './types/SlashCommand';
 
@@ -19,6 +20,10 @@ client.once('ready', async () => {
   console.log('\n------------------------------------\n');
   await cdclient.load();
   updateSlashCommands(client, slashCommands);
+
+  // console.log(percent(0.0014999985918402459))
+  // console.log(percent(0.029999971389770508 * 0.05000000074505806 * (1 / 1)))
+  // console.log(percent(0.05000000074505806 * ))
 
   console.log('\n------------------------------------\n');
   console.log('LEGO Universe Discord Bot is online.');

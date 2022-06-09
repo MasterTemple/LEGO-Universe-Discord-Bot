@@ -42,7 +42,7 @@ export default {
         } else {
           range = `${eachDrop.minToDrop}-${eachDrop.maxToDrop}`;
         }
-        eachDrop.smashables = eachDrop.smashables.filter((e) => !e.name.includes("Objects_"))
+        // eachDrop.smashables = eachDrop.smashables.filter((e) => !e.name.includes("Objects_"))
         embed.addField(
           `${c++}. ${decimalToFraction(eachDrop.chance)} for ${range} ${item.name} `,
           `From ${eachDrop.smashables.map(({ name, id }) => `${name} ${bracketURL(id)}`).join(', ')} `.slice(0, 1023),

@@ -33,33 +33,34 @@ export default {
     // embed.setThumbnail(enemy.imageURL)
     // console.log(enemy.drops)
     // to force add last embed
-    enemy.drops.push({ lootTableIndex: -1, chanceForItem: 0, chanceForRarity: 0, maxToDrop: 0, minToDrop: 0, poolSize: 0, rarity: 0, })
+    enemy.drops.push({ lootTableIndex: -1, chanceForItem: 0, chanceForRarity: 0, maxToDrop: 0, minToDrop: 0, poolSize: 1, rarity: 0, })
 
     let previousLTI = enemy.drops[0].lootTableIndex;
     let specificDrop = "Specific "
     let anyDrop = "Any "
     let isConsumable = false;
     enemy.drops.forEach((drop, index) => {
-      if (drop.lootTableIndex >= 0) {
-        if (previousLTI !== drop.lootTableIndex) {
-          let itemCountStr = `For ${drop.minToDrop}`
-          if (drop.minToDrop !== drop.maxToDrop) itemCountStr += `-${drop.maxToDrop} Item`
-          if (drop.maxToDrop > 1) itemCountStr += "s"
-          if (isConsumable) {
-            embed.addField(`LTI NAME HERE - ${percent(drop.chanceForItem)} ${itemCountStr}`, `Conumable Do Not Have Rarity ${bracketURL(drop.lootTableIndex, "objects/loot/table")}`)
-          } else {
-            embed.addField(`LTI NAME HERE - ${percent(drop.chanceForItem)} ${itemCountStr}`, `${specificDrop}\n${anyDrop}${bracketURL(drop.lootTableIndex, "objects/loot/table")}`)
-          }
-          previousLTI = drop.lootTableIndex
-          specificDrop = "Specific "
-          anyDrop = "Any "
-          isConsumable = false;
+      if (previousLTI !== drop.lootTableIndex) {
+        let previousDrop = enemy.drops[index - 1]
+        let itemCountStr = `For ${previousDrop.minToDrop}`
+        if (previousDrop.minToDrop !== previousDrop.maxToDrop) itemCountStr += `-${previousDrop.maxToDrop} Item`
+        if (previousDrop.maxToDrop > 1) itemCountStr += "s"
+        if (isConsumable) {
+          embed.addField(`LTI NAME HERE - ${percent(previousDrop.chanceForItem)} ${itemCountStr}`, `Conumable Do Not Have Rarity ${bracketURL(previousLTI, "objects/loot/table")}`)
+        } else {
+          embed.addField(`LTI NAME HERE - ${percent(previousDrop.chanceForItem)} ${itemCountStr}`, `${specificDrop}\n${anyDrop}${bracketURL(previousLTI, "objects/loot/table")}`)
         }
-        let chanceForRarity = drop.rarity === 1 ? drop.chanceForRarity : drop.chanceForRarity - enemy.drops[index - 1].chanceForRarity
-        if (drop.poolSize === 0) isConsumable = true;
-        specificDrop += `**T${drop.rarity}** ${percent(chanceForRarity * drop.chanceForItem)} `
-        anyDrop += `**T${drop.rarity}** ${percent(chanceForRarity * drop.chanceForItem * (1 / drop.poolSize))} `
+        previousLTI = drop.lootTableIndex
+        specificDrop = "Specific "
+        anyDrop = "Any "
+        isConsumable = false;
       }
+
+      if (drop.poolSize === 0) isConsumable = true;
+      let chanceForRarity = drop.rarity === 1 ? drop.chanceForRarity : drop.chanceForRarity - enemy.drops[index - 1].chanceForRarity
+
+      specificDrop += `**T${drop.rarity}** ${percent(chanceForRarity * drop.chanceForItem)} `
+      anyDrop += `**T${drop.rarity}** ${percent(chanceForRarity * drop.chanceForItem * (1 / drop.poolSize))} `
     })
     enemy.drops.pop();
 
