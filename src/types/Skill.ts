@@ -10,7 +10,6 @@ export class Skill extends CDClient {
   name: string;
   descriptions: SkillDescription[];
   imageURL: string;
-  components: ComponentsRegistry[];
   skillBehavior: SkillBehavior;
   skillItems: ObjectElement[];
 
@@ -22,7 +21,6 @@ export class Skill extends CDClient {
   }
 
   async create(): Promise<void> {
-    this.components = await this.getComponents(this.id);
     this.name = this.locale.getSkillName(this.id);
     this.descriptions = this.locale.getSkillDescription(this.id);
     await this.addThumbnail();

@@ -1,11 +1,11 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { Item } from '../types/Item';
+import { Activity } from '../types/Activity';
 import { SlashCommand } from '../types/SlashCommand';
 
 export default {
   name: 'activity',
-  description: 'View all items given from an activity!',
+  description: 'View all activitys given from an activity!',
   options: [
     {
       name: 'activity',
@@ -20,14 +20,14 @@ export default {
     cdclient: CDClient) {
 
     const query = options.find((option) => option.name === 'activity').value.toString();
-    const itemId = parseInt(query) || await cdclient.getObjectId(query);
-    const item = new Item(cdclient, itemId);
-    await item.create();
+    const activityId = query.match(/^[^;]+/g);
+    const activityName = query.match(/(?<=^[^;]+;).*/g)
+    const activity = new Activity(cdclient, activityId, activityName);
+    await activity.create();
 
     const embed = new MessageEmbed();
-    embed.setURL(item.getURL());
-    embed.setThumbnail(item.imageURL)
-    embed.setTitle(`${item.name} [${item.id}]`);
+    embed.setURL(activity.getURL());
+    embed.setTitle(`${activity.name} [${activity.id}]`);
 
     interaction.reply({
       embeds: [embed],

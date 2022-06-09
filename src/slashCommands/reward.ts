@@ -23,11 +23,33 @@ export default {
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
     const item = new Item(cdclient, itemId);
     await item.create();
+    await item.addRewards();
 
     const embed = new MessageEmbed();
     embed.setTitle(`${item.name} [${item.id}]`);
     embed.setURL(item.getURL());
     embed.setThumbnail(item.imageURL)
+
+    let c = 1;
+
+    item.activityRewards.forEach((eachDrop, index) => {
+      if (eachDrop.smashables.length > 0 && embed.fields.length < 25) {
+        let range: string;
+        if (eachDrop.minToDrop === eachDrop.maxToDrop) {
+          range = eachDrop.minToDrop.toString();
+        } else {
+          range = `${eachDrop.minToDrop}-${eachDrop.maxToDrop}`;
+        }
+        embed.addField(
+          `${c++}. ${decimalToFraction(eachDrop.chance)} for ${range} ${item.name} `,
+          `From ${eachDrop.smashables.map(({ name, id }) => `${name} ${bracketURL(id, "activities")}`).join(', ')} `.slice(0, 1023),
+        );
+      }
+    });
+
+    if (embed.fields.length === 0) {
+      embed.addField("Not Rewarded!", `${item.name} is not rewarded from an activity!`)
+    }
 
     interaction.reply({
       embeds: [embed],

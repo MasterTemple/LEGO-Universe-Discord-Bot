@@ -709,7 +709,7 @@ export class CDClient {
   async getActivitiesThatDropItem(itemId: number, rarity: number): Promise<ActivityDropFromQuery> {
     return new Promise<ActivityDropFromQuery>((resolve, reject) => {
       this.db.all(
-        `SELECT ActivityRewards.description, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ActivityRewards 
+        `SELECT ActivityRewards.objectTemplate as id, ActivityRewards.description, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ActivityRewards 
         JOIN LootMatrix ON LootMatrix.LootMatrixIndex = ActivityRewards.LootMatrixIndex 
         JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1}) 
         WHERE ActivityRewardIndex in (

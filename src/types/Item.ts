@@ -14,6 +14,7 @@ import {
   SmashableDrop,
 } from '../luInterfaces';
 import { explorerDomain } from '../config.json';
+import { ActivityDropFromQuery } from '../luInterfaces';
 
 export class Item extends CDClient {
   db: Database;
@@ -28,6 +29,7 @@ export class Item extends CDClient {
   unpack: LootDrop[] = [];
   buy: ObjectElement[] = [];
   reward: MissionReward[] = [];
+  activityReward: LootDrop[] = [];
   packageDrops: SmashableDrop[] = [];
   objectData: Objects;
   // earn
@@ -155,6 +157,38 @@ export class Item extends CDClient {
         element.smashables.push({
           id: value.objectId,
           name: name,
+        });
+      }
+    }
+  }
+
+  async addRewards(id: number = this.id): Promise<void> {
+    let rawLootDrops: ActivityDropFromQuery[] = await this.getActivitiesThatDropItem(id)
+    const lootTableRaritySizes = new Map<number, number>();
+    for (const value of rawLootDrops) {
+      const element = this.drop?.find((f) => f.chanceForDrop == value.percent && f.minToDrop == value.minToDrop && f.maxToDrop == value.maxToDrop && f.chanceForRarity == value.randmax);
+      if (!element) {
+        let ltiSize = lootTableRaritySizes?.get(value.lootTableIndex);
+        if (!ltiSize) {
+          ltiSize = await this.getItemsInLootTableOfRarity(value.lootTableIndex, value.rarity);
+          lootTableRaritySizes.set(value.lootTableIndex, ltiSize);
+        }
+        this.activityReward.push({
+          smashables: [{
+            id: value.id,
+            name: value.activityName,
+          }],
+          chanceForDrop: value.percent,
+          minToDrop: value.minToDrop,
+          maxToDrop: value.maxToDrop,
+          chanceForRarity: value.randmax,
+          chanceForItemInLootTable: ltiSize,
+          chance: value.percent * value.randmax * (1 / ltiSize),
+        });
+      } else {
+        element.smashables.push({
+          id: value.id,
+          name: value.activityName,
         });
       }
     }
