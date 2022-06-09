@@ -1,5 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { bracketURL } from '../functions';
+import { decimalToFraction } from '../math';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
 
@@ -42,7 +44,7 @@ export default {
         }
         embed.addField(
           `${c++}. ${decimalToFraction(eachDrop.chance)} for ${range} ${item.name} `,
-          `From ${eachDrop.smashables.map(({ name, id }) => `${name} ${bracketURL(id, "activities")}`).join(', ')} `.slice(0, 1023),
+          `From ${eachDrop.smashables.map(({ name, id }) => `${name} ${bracketURL(id, "activity")}`).join(', ')} `.slice(0, 1023),
         );
       }
     });

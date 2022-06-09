@@ -2,14 +2,14 @@ import { Database } from "sqlite3";
 import { CDClient } from "../cdclient";
 import { ComponentsRegistry, SkillBehavior } from "../cdclientInterfaces";
 import { explorerDomain } from '../config.json';
-import { ActivityDropFromQuery } from "../luInterfaces";
+import { ActivityDropFromQuery, SmashableDrop } from "../luInterfaces";
 import { ObjectElement, SkillDescription } from "../luInterfaces";
 
-export class Skill extends CDClient {
+export class Activity extends CDClient {
   db: Database;
   id: number;
   name: string;
-  rewards: ActivityDropFromQuery[];
+  rewards: SmashableDrop[];
 
   constructor(cdclient: CDClient, id: number, name: string) {
     super();
@@ -21,16 +21,15 @@ export class Skill extends CDClient {
 
   async create(): Promise<void> {
     this.name = await this.locale.getSkillName(this.id);
-    this.descriptions = this.locale.getSkillDescription(this.id);
     await this.addRewards();
   }
 
   getURL(id: number = this.id): string {
-    return `${explorerDomain}/skills/${id}`;
+    return `${explorerDomain}/activity/${id}`;
   }
 
   async addRewards(id: number = this.id): Promise<void> {
-      this.rewards = await this.getActivitiesThatDropItem()
+    this.rewards = await this.getActivityDrops(this.name)
   }
 
 }
