@@ -479,23 +479,19 @@ export class CDClient {
         (_, rows: LootDropFirstQuery[]) => {
           // need rows with proper chance (by subtracting percent of rarity-1)
           // basically this returns a set of rows in pairs of 2 where i just need the percent of the first one and must subtract it from percent of second one
-          // console.log(rows)
           if (rarity === 1) resolve(rows);
 
           let newRows: LootDropFirstQuery[] = [];
-          //! i must do an if for when rarity is 1
           let previousPercent = 0;
           for (let row of rows) {
 
             if (row.rarity !== rarity) {
               previousPercent = row.randmax;
             } else {
-              // console.log(row.percent, previousPercent)
               row.randmax = row.randmax - previousPercent;
               newRows.push(row);
             }
           }
-          // console.log(newRows)
           resolve(newRows)
         })
     })
@@ -508,23 +504,19 @@ export class CDClient {
         (_, rows: LootDropFirstQuery[]) => {
           // need rows with proper chance (by subtracting percent of rarity-1)
           // basically this returns a set of rows in pairs of 2 where i just need the percent of the first one and must subtract it from percent of second one
-          // console.log(rows)
           if (rarity === 1) resolve(rows);
 
           let newRows: LootDropFirstQuery[] = [];
-          //! i must do an if for when rarity is 1
           let previousPercent = 0;
           for (let row of rows) {
 
             if (row.rarity !== rarity) {
               previousPercent = row.randmax;
             } else {
-              // console.log(row.percent, previousPercent)
               row.randmax = row.randmax - previousPercent;
               newRows.push(row);
             }
           }
-          // console.log(newRows)
           resolve(newRows)
         })
     })
@@ -709,6 +701,38 @@ export class CDClient {
         `SELECT * FROM DestructibleComponent WHERE id = (SELECT component_id FROM ComponentsRegistry WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND id = ${enemyId})`,
         (_, row: EnemyHealth) => {
           resolve(row)
+        }
+      )
+    })
+  }
+
+  async getActivitiesThatDropItem(itemId: number, rarity: number): Promise<ActivityDropFromQuery> {
+    return new Promise<ActivityDropFromQuery>((resolve, reject) => {
+      this.db.all(
+        `SELECT ActivityRewards.description, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ActivityRewards 
+        JOIN LootMatrix ON LootMatrix.LootMatrixIndex = ActivityRewards.LootMatrixIndex 
+        JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1}) 
+        WHERE ActivityRewardIndex in (
+        SELECT ActivityRewardIndex from ActivityRewards WHERE LootMatrixIndex IN (
+        SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN (
+        SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ) )`,
+        (_, rows: ActivityDropFromQuery[]) => {
+          // need rows with proper chance (by subtracting percent of rarity-1)
+          // basically this returns a set of rows in pairs of 2 where i just need the percent of the first one and must subtract it from percent of second one
+          if (rarity === 1) resolve(rows);
+
+          let newRows: ActivityDropFromQuery[] = [];
+          let previousPercent = 0;
+          for (let row of rows) {
+
+            if (row.rarity !== rarity) {
+              previousPercent = row.randmax;
+            } else {
+              row.randmax = row.randmax - previousPercent;
+              newRows.push(row);
+            }
+          }
+          resolve(newRows)
         }
       )
     })
