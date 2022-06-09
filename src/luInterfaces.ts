@@ -185,8 +185,11 @@ export interface NPCMission {
   subtype: string;
   name: string;
   description: string;
-  repeatable: boolean;
+  isRepeatable: boolean;
   rewards: NPCMissionReward[];
+  isAchievement: boolean;
+  giver: ObjectElement;
+  accepter: ObjectElement;
 }
 
 export interface SoldItem {

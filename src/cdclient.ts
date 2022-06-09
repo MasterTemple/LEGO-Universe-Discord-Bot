@@ -674,7 +674,7 @@ export class CDClient {
               subtype: row.defined_subtype,
               name: this.locale.getMissionName(row.id),
               description: this.locale.getMissionDescription(row.id),
-              repeatable: row.repeatable,
+              isRepeatable: row.repeatable,
               rewards: (!row.repeatable ?
                 [
                   { id: row.reward_item1, name: this.locale.getObjectName(row.reward_item1), count: row.reward_item1_count },
@@ -688,7 +688,10 @@ export class CDClient {
                   { id: row.reward_item3_repeatable, name: this.locale.getObjectName(row.reward_item3_repeatable), count: row.reward_item3_repeat_count },
                   { id: row.reward_item4_repeatable, name: this.locale.getObjectName(row.reward_item4_repeatable), count: row.reward_item4_repeat_count },
                 ]
-              ).filter(({ id }) => id > 0)
+              ).filter(({ id }) => id > 0),
+              isAchievement: false,
+              giver: {id: row.offer_objectID, name: this.locale.getObjectName(row.offer_objectID)},
+              accepter: {id: row.target_objectID, name: this.locale.getObjectName(row.target_objectID)},
             }
           })
           resolve(missions)
@@ -702,6 +705,17 @@ export class CDClient {
       this.db.get(
         `SELECT * FROM DestructibleComponent WHERE id = (SELECT component_id FROM ComponentsRegistry WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND id = ${enemyId})`,
         (_, row: EnemyHealth) => {
+          resolve(row)
+        }
+      )
+    })
+  }
+
+  async getMission(missionId: number): Promise<Missions> {
+    return new Promise<Missions>((resolve, reject) => {
+      this.db.get(
+        `SELECT * FROM Missions WHERE id = ${missionId}`,
+        (_, row: Missions) => {
           resolve(row)
         }
       )
