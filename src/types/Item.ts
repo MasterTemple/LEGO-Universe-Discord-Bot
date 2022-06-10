@@ -12,6 +12,7 @@ import {
   LootDrop,
   MissionReward,
   SmashableDrop,
+  HowToGet,
 } from '../luInterfaces';
 import { explorerDomain } from '../config.json';
 import { ActivityDropFromQuery } from '../luInterfaces';
@@ -32,6 +33,7 @@ export class Item extends CDClient {
   activityRewards: LootDrop[] = [];
   packageDrops: SmashableDrop[] = [];
   objectData: Objects;
+  get: HowToGet;
   // earn
   // buy
   constructor(cdclient: CDClient, id: number) {
@@ -75,6 +77,15 @@ export class Item extends CDClient {
     this.reward = await this.getMissionsThatRewardItem(this.id);
   }
 
+  async findHowToGet(): Promise<void> {
+    this.get = {
+      isFromActivity: await this.isFromActivity(this.id),
+      isFromMission: await this.isFromMission(this.id),
+      isFromPackage: await this.isFromPackage(this.id),
+      isFromSmashable: await this.isFromSmashable(this.id),
+      isFromVendor: await this.isFromVendor(this.id),
+    }
+  }
   async addVendors(): Promise<void> {
     let vendorIds = await this.getIdsOfVendorsThatSellItem(this.id);
     // this.buy = await Promise.all(vendorIds.map((id) => this.getObjectElementFromLocale(id)))

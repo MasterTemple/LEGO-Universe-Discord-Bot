@@ -794,13 +794,20 @@ export class CDClient {
   async searchItem(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       this.db.all(
+        // `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '%${query.replace(
+        //   /\s/g,
+        //   "%"
+        // )}%' OR name LIKE '%${query.replace(
+        //   /\s/g,
+        //   "%"
+        // )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${ITEM_COMPONENT}) IS NOT NULL LIMIT 25`,
         `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '%${query.replace(
           /\s/g,
           "%"
         )}%' OR name LIKE '%${query.replace(
           /\s/g,
           "%"
-        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${ITEM_COMPONENT}) IS NOT NULL LIMIT 25`,
+        )}%') AND type = 'Loot' LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -968,9 +975,51 @@ export class CDClient {
   }
 
 
-
-
-
+  async isFromActivity(itemId: number): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.db.get(
+        `SELECT objectTemplate FROM ActivityRewards WHERE ActivityRewards.LootMatrixIndex IN (SELECT LootMatrix.LootMatrixIndex FROM LootMatrix WHERE LootMatrix.LootTableIndex IN (SELECT LootTable.LootTableIndex FROM LootTable WHERE itemid=${itemId}))`,
+        (_, row: ActivityRewards) => {
+          resolve(!!row?.objectTemplate);
+        });
+    });
+  }
+  async isFromMission(itemId: number): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.db.get(
+        `SELECT id FROM Missions WHERE reward_item1 = ${itemId} OR reward_item2 = ${itemId} OR reward_item3 = ${itemId} OR reward_item4 = ${itemId};`,
+        (_, row: Missions) => {
+          resolve(!!row?.id);
+        });
+    });
+  }
+  async isFromPackage(itemId: number): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.db.get(
+        `SELECT id FROM PackageComponent WHERE PackageComponent.LootMatrixIndex IN (SELECT LootMatrix.LootMatrixIndex FROM LootMatrix WHERE LootMatrix.LootTableIndex IN (SELECT LootTable.LootTableIndex FROM LootTable WHERE itemid=${itemId}))`,
+        (_, row: PackageComponent) => {
+          resolve(!!row?.id);
+        });
+    });
+  }
+  async isFromSmashable(itemId: number): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.db.get(
+        `SELECT id FROM DestructibleComponent WHERE DestructibleComponent.LootMatrixIndex IN (SELECT LootMatrix.LootMatrixIndex FROM LootMatrix WHERE LootMatrix.LootTableIndex IN (SELECT LootTable.LootTableIndex FROM LootTable WHERE itemid=${itemId}))`,
+        (_, row: DestructibleComponent) => {
+          resolve(!!row?.id);
+        });
+    });
+  }
+  async isFromVendor(itemId: number): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.db.get(
+        `SELECT id FROM VendorComponent WHERE VendorComponent.LootMatrixIndex IN (SELECT LootMatrix.LootMatrixIndex FROM LootMatrix WHERE LootMatrix.loottableindex IN (SELECT loottable.loottableindex FROM loottable WHERE itemid=${itemId}))`,
+        (_, row: Objects) => {
+          resolve(!!row?.id);
+        });
+    });
+  }
 
 
 

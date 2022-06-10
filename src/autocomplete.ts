@@ -8,7 +8,7 @@ export async function getAutocompleteOptions(cdclient: CDClient, name: string, v
       // autocompleteOptions = await cdclient.searchActivity(value.toString())
       autocompleteOptions = await cdclient.searchFullActivity(value.toString())
       break;
-
+    case "get":
     case "preconditions":
     case "item":
     case "buy":
@@ -16,8 +16,8 @@ export async function getAutocompleteOptions(cdclient: CDClient, name: string, v
     case "earn":
     case "reward":
     case "unpack":
-      // autocompleteOptions = await cdclient.searchItem(value.toString())
-      autocompleteOptions = cdclient.locale.searchObjects(value.toString())
+      autocompleteOptions = await cdclient.searchItem(value.toString())
+      // autocompleteOptions = cdclient.locale.searchObjects(value.toString())
       break;
 
     case "brick":
