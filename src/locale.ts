@@ -1,7 +1,7 @@
 import { localePath } from './config.json';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
-import { localeXMLType, NameValuePair, SkillDescription } from './luInterfaces';
+import { localeXMLType, NameValuePair, SkillDescription, UnofficialType } from './luInterfaces';
 
 export class LocaleXML {
   localeTypes: localeXMLType[] = [
@@ -33,12 +33,14 @@ export class LocaleXML {
     "SkillBehavior_ID_name",
   ];
   locale: Map<localeXMLType, Map<string, string>> = new Map<localeXMLType, Map<string, string>>();
+  unofficial = new Map<UnofficialType, Map<any, any>>();
 
   async load(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!existsSync(localePath)) {
         console.error('Please provide a path to the locale.xml in config.json.');
       }
+      // locale.xml
       readFile(localePath).then((fileData) => {
         // locale parsers are way too slow so im using regex and making a map
         const text = fileData.toString();
@@ -56,6 +58,14 @@ export class LocaleXML {
             this.locale.get(name).set(num, content);
           }
         }
+
+        // loot table names
+        let ltiNames = require("./unofficial/lootTableNames.json")
+        this.unofficial.set("LootTableName", new Map<number, string>())
+        for (let lti of ltiNames) {
+          this.unofficial.get("LootTableName").set(lti.lti, lti.name)
+        }
+
         resolve();
       });
     });
@@ -63,6 +73,9 @@ export class LocaleXML {
 
   getObjectName(id: number): string {
     return this.locale.get("Objects_ID_name").get(id.toString()) || `Objects_${id}_name`;
+  }
+  getLootTableName(id: number): string {
+    return this.unofficial.get("LootTableName").get(id.toString()) || `Loot Table ${id}`;
   }
 
   getActivityName(id: number): string {
@@ -135,6 +148,18 @@ export class LocaleXML {
     let matches: NameValuePair[] = [];
     let re = new RegExp(query, "gi")
     for (let [id, name] of this.locale.get("Missions_ID_name")) {
+      if (name.match(re)) {
+        matches.push({ name: `${name} [${id}]`, value: id })
+        if (matches.length === 15) break;
+      }
+    }
+    return matches;
+  }
+
+  searchLootTable(query: string): NameValuePair[] {
+    let matches: NameValuePair[] = [];
+    let re = new RegExp(query, "gi")
+    for (let [id, name] of this.unofficial.get("LootTableName")) {
       if (name.match(re)) {
         matches.push({ name: `${name} [${id}]`, value: id })
         if (matches.length === 15) break;

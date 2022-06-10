@@ -46,9 +46,9 @@ export default {
         if (previousDrop.minToDrop !== previousDrop.maxToDrop) itemCountStr += `-${previousDrop.maxToDrop} Item`
         if (previousDrop.maxToDrop > 1) itemCountStr += "s"
         if (isConsumable) {
-          embed.addField(`LTI NAME HERE - ${percent(previousDrop.chanceForItem)} ${itemCountStr}`, `Conumable Do Not Have Rarity ${bracketURL(previousLTI, "objects/loot/table")}`)
+          embed.addField(`${enemy.locale.getLootTableName(previousLTI)} - ${percent(previousDrop.chanceForItem)} ${itemCountStr}`, `Conumable Do Not Have Rarity ${bracketURL(previousLTI, "objects/loot/table")}`)
         } else {
-          embed.addField(`LTI NAME HERE - ${percent(previousDrop.chanceForItem)} ${itemCountStr}`, `${specificDrop}\n${anyDrop}${bracketURL(previousLTI, "objects/loot/table")}`)
+          embed.addField(`${enemy.locale.getLootTableName(previousLTI)} - ${percent(previousDrop.chanceForItem)} ${itemCountStr}`, `${specificDrop}\n${anyDrop}${bracketURL(previousLTI, "objects/loot/table")}`)
         }
         previousLTI = drop.lootTableIndex
         specificDrop = "Specific "

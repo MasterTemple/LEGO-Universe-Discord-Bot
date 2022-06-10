@@ -25,6 +25,7 @@ export async function getAutocompleteOptions(cdclient: CDClient, name: string, v
       break;
 
     case "loottable":
+      autocompleteOptions = cdclient.locale.searchLootTable(value.toString());
       break;
 
     case "package":

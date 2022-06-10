@@ -20,7 +20,6 @@ export class Activity extends CDClient {
   }
 
   async create(): Promise<void> {
-    this.name = await this.locale.getSkillName(this.id);
     await this.addRewards();
   }
 
@@ -28,7 +27,7 @@ export class Activity extends CDClient {
     return `${explorerDomain}/activity/${id}`;
   }
 
-  async addRewards(id: number = this.id): Promise<void> {
+  async addRewards(): Promise<void> {
     this.rewards = await this.getActivityDrops(this.name)
   }
 

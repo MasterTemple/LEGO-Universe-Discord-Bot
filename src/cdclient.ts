@@ -379,7 +379,7 @@ export class CDClient {
   async getObjectId(query: string): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       this.db.get(
-        `SELECT id, name, displayName FROM Objects WHERE displayName LIKE '%${query.replace(/\s/g, "%")}%' OR name LIKE '%${query.replace(/\s/g, "%")}%' ORDER BY id ASC LIMIT 15`,
+        `SELECT id, name, displayName FROM Objects WHERE displayName LIKE '%${query.replace(/\s/g, "%")}%' OR name LIKE '%${query.replace(/\s/g, "%")}%' ORDER BY id ASC LIMIT 25`,
         (_, row: Objects) => {
           resolve(row.id);
         });
@@ -388,7 +388,7 @@ export class CDClient {
   async searchObject(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE displayName LIKE '%${query.replace(/\s/g, "%")}%' OR name LIKE '%${query.replace(/\s/g, "%")}%' LIMIT 15`,
+        `SELECT id, name, displayName FROM Objects WHERE displayName LIKE '%${query.replace(/\s/g, "%")}%' OR name LIKE '%${query.replace(/\s/g, "%")}%' LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -403,7 +403,7 @@ export class CDClient {
   async searchObjectByType(query: string, componentType: queryType): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '%${query.replace(/\s/g, "%")}%' OR name LIKE '%${query.replace(/\s/g, "%")}%') AND id IN (SELECT id FROM ComponentsRegistry WHERE component_type=${componentType}) LIMIT 15`,
+        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '%${query.replace(/\s/g, "%")}%' OR name LIKE '%${query.replace(/\s/g, "%")}%') AND id IN (SELECT id FROM ComponentsRegistry WHERE component_type=${componentType}) LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows.map((row: Objects) => {
             return {
@@ -496,6 +496,7 @@ export class CDClient {
       this.db.all(
         `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity, (SELECT COUNT(*) FROM LootTable WHERE LootMatrix.LootTableIndex=LootTable.LootTableIndex) AS poolSize FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN (SELECT LootMatrixIndex FROM ActivityRewards WHERE description = '${activityName}')`,
         async (_, rows: SmashableDrop[]) => {
+          // this is different because im getting across multiple rarities
           const lootTableRaritySizes = new Map<number, number>();
           for (let row of rows) {
             let ltiSize = lootTableRaritySizes?.get(row.lootTableIndex);
@@ -798,7 +799,7 @@ export class CDClient {
         )}%' OR name LIKE '%${query.replace(
           /\s/g,
           "%"
-        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${ITEM_COMPONENT}) IS NOT NULL LIMIT 15`,
+        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${ITEM_COMPONENT}) IS NOT NULL LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -820,7 +821,7 @@ export class CDClient {
         )}%' OR name LIKE '%${query.replace(
           /\s/g,
           "%"
-        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${PACKAGE_COMPONENT}) IS NOT NULL LIMIT 15`,
+        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${PACKAGE_COMPONENT}) IS NOT NULL LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -842,7 +843,7 @@ export class CDClient {
         )}%' OR name LIKE '%${query.replace(
           /\s/g,
           "%"
-        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${DESTRUCTIBLE_COMPONENT}) IS NOT NULL LIMIT 15`,
+        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${DESTRUCTIBLE_COMPONENT}) IS NOT NULL LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -864,7 +865,7 @@ export class CDClient {
         )}%' OR name LIKE '%${query.replace(
           /\s/g,
           "%"
-        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${VENDOR_COMPONENT}) IS NOT NULL LIMIT 15`,
+        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${VENDOR_COMPONENT}) IS NOT NULL LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -886,7 +887,7 @@ export class CDClient {
         )}%' OR name LIKE '%${query.replace(
           /\s/g,
           "%"
-        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${MISSION_OFFER_COMPONENT}) IS NOT NULL LIMIT 15`,
+        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${MISSION_OFFER_COMPONENT}) IS NOT NULL LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -908,7 +909,7 @@ export class CDClient {
         )}%' OR name LIKE '%${query.replace(
           /\s/g,
           "%"
-        )}%') AND Objects.type = 'LEGO brick' LIMIT 15`,
+        )}%') AND Objects.type = 'LEGO brick' LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -927,7 +928,7 @@ export class CDClient {
         `SELECT * FROM ActivityRewards WHERE description LIKE '%${query.replace(
           /\s/g,
           "%"
-        )}%' LIMIT 15`,
+        )}%' LIMIT 25`,
         (_, rows: ActivityRewards[]) => {
           let pairs: NameValuePair[] = rows?.map((row) => {
             return {
@@ -945,10 +946,16 @@ export class CDClient {
       this.db.all(
         `SELECT * FROM ActivityRewards`,
         (_, rows: ActivityRewards[]) => {
+          let newRows: ActivityRewards[] = []
+          let re = new RegExp(`${query.replace(/[^A-z0-9]/gim, ".*")}`, "gi")
           for (let row of rows) {
-            // row.description = `${ro}`
+            if (row.description.match(re) || this.locale.getActivityName(row.objectTemplate).match(re)) {
+              newRows.push(row)
+              if (newRows.length === 25) break;
+            }
           }
-          let pairs: NameValuePair[] = rows?.map((row) => {
+
+          let pairs: NameValuePair[] = newRows?.map((row) => {
             return {
               name: `${this.locale.getActivityName(row.objectTemplate)} > ${row.description} [${row.objectTemplate}]`,
               value: `${row.objectTemplate};${row.description}`

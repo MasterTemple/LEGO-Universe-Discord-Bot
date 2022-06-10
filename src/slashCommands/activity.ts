@@ -45,9 +45,9 @@ export default {
           if (drop.minToDrop !== drop.maxToDrop) itemCountStr += `-${drop.maxToDrop} Item`
           if (drop.maxToDrop > 1) itemCountStr += "s"
           if (isConsumable) {
-            embed.addField(`LTI NAME HERE - ${percent(drop.chanceForItem)} ${itemCountStr}`, `Conumable Do Not Have Rarity ${bracketURL(drop.lootTableIndex, "objects/loot/table")}`)
+            embed.addField(`${activity.locale.getLootTableName(drop.lootTableIndex)} - ${percent(drop.chanceForItem)} ${itemCountStr}`, `Conumable Do Not Have Rarity ${bracketURL(drop.lootTableIndex, "objects/loot/table")}`)
           } else {
-            embed.addField(`LTI NAME HERE - ${percent(drop.chanceForItem)} ${itemCountStr}`, `${specificDrop}\n${anyDrop}${bracketURL(drop.lootTableIndex, "objects/loot/table")}`)
+            embed.addField(`${activity.locale.getLootTableName(drop.lootTableIndex)} percent(drop.chanceForItem)} ${itemCountStr}`, `${specificDrop}\n${anyDrop}${bracketURL(drop.lootTableIndex, "objects/loot/table")}`)
           }
           previousLTI = drop.lootTableIndex
           specificDrop = "Specific "
