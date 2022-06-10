@@ -288,7 +288,7 @@ export class Item extends CDClient {
     const rawItemComponent = await this.getItemComponent(
       this.components.find((f) => f.component_type === ITEM_COMPONENT)?.component_id,
     );
-    console.log("📝 ~ file: Item.ts ~ line 258 ~ Item ~ addItemComponent ~ rawItemComponent", rawItemComponent)
+    // console.log("📝 ~ file: Item.ts ~ line 258 ~ Item ~ addItemComponent ~ rawItemComponent", rawItemComponent)
     if (!rawItemComponent) return;
     const proxyItems: ObjectElement[] = await this.getProxyItemsFromSubItems(rawItemComponent.subItems);
 

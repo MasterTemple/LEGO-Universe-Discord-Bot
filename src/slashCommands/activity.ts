@@ -22,8 +22,8 @@ export default {
     cdclient: CDClient) {
 
     const query = options.find((option) => option.name === 'activity').value.toString();
-    const activityId = query.match(/^[^;]+/g);
-    const activityName = query.match(/(?<=^[^;]+;).*/g)
+    const activityId = parseInt(query.match(/^[^;]+/g)?.[0]);
+    const activityName = query.match(/(?<=^[^;]+;).*/g)?.[0]
     const activity = new Activity(cdclient, activityId, activityName);
     await activity.create();
 

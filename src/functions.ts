@@ -43,3 +43,12 @@ type urlType = "objects" | "missions" | "objects/loot/table" | "activity"
 export function bracketURL(id: number, type: urlType = "objects"): string {
   return `[[${id}]](${explorerDomain}/${type}/${id})`
 }
+
+export function formatIconPath(icon: string): string {
+  icon = icon.replace(/^\.\.\\\.\.\\/g, "/lu-res/");
+  icon = icon.replace(/\\/g, "/");
+  icon = icon.replace(/ /g, "%20");
+  icon = icon.replace(/(?<=\.)dds/gi, "png");
+  icon = icon.toLowerCase();
+  return icon;
+}

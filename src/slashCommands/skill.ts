@@ -29,7 +29,7 @@ export default {
     embed.setURL(skill.getURL());
     embed.setThumbnail(skill.imageURL)
 
-    embed.addField("Cooldown Group", "Group" + skill.skillBehavior.cooldowngroup.toString() || "No Cooldown Group", true)
+    embed.addField("Cooldown Group", "Group " + skill.skillBehavior.cooldowngroup.toString() || "No Cooldown Group", true)
     embed.addField("Cooldown Time", (skill.skillBehavior.cooldown.toString() || "0") + " Seconds", true)
     embed.addField("Imagination Cost", (skill.skillBehavior.imaginationcost.toString() || "0") + " Imagination", true)
     if (skill.skillBehavior.armorBonusUI) embed.addField("Armor Bonus", skill.skillBehavior.armorBonusUI.toString() + " Armor", true)

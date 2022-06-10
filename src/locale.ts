@@ -65,6 +65,10 @@ export class LocaleXML {
     return this.locale.get("Objects_ID_name").get(id.toString()) || `Objects_${id}_name`;
   }
 
+  getActivityName(id: number): string {
+    return this.locale.get("Activities_ID_ActivityName").get(id.toString()) || `Activities_${id}_ActivityName`;
+  }
+
   getMissionName(id: number): string {
     return this.locale.get("Missions_ID_name").get(id.toString());
   }
@@ -89,6 +93,30 @@ export class LocaleXML {
         description: e.groups.description,
       }
     })
+  }
+
+  searchActivities(query: string): NameValuePair[] {
+    let matches: NameValuePair[] = [];
+    let re = new RegExp(query, "gi")
+    for (let [id, name] of this.locale.get("Activities_ID_ActivityName")) {
+      if (name.match(re)) {
+        matches.push({ name: `${name} [${id}]`, value: id })
+        if (matches.length === 15) break;
+      }
+    }
+    return matches;
+  }
+
+  searchObjects(query: string): NameValuePair[] {
+    let matches: NameValuePair[] = [];
+    let re = new RegExp(query, "gi")
+    for (let [id, name] of this.locale.get("Objects_ID_name")) {
+      if (name.match(re)) {
+        matches.push({ name: `${name} [${id}]`, value: id })
+        if (matches.length === 15) break;
+      }
+    }
+    return matches;
   }
 
   searchSkills(query: string): NameValuePair[] {

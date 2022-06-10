@@ -22,7 +22,7 @@ export default {
     const itemId = parseInt(query) || await cdclient.getObjectId(query)
     const item = new Item(cdclient, itemId);
     await item.create()
-    console.log(item)
+    // console.log(item)
     let embed = new MessageEmbed().setTitle(`${item.name} [${item.id}]`)
     embed.setURL(item.getURL());
     embed.setThumbnail(item.imageURL)

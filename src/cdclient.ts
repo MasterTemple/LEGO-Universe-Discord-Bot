@@ -10,6 +10,7 @@ import {
   LootTable,
   MissionNPCComponent,
   Missions,
+  MissionTasks,
   Objects,
   ObjectSkills,
   PackageComponent,
@@ -18,6 +19,7 @@ import {
   SkillBehavior
 } from './cdclientInterfaces';
 import { sqlitePath } from './config.json';
+import { formatIconPath } from './functions';
 import { LocaleXML } from './locale';
 import { ActivityDropFromQuery, EnemyDrop, EnemyHealth, ItemDrop, ItemSold, LootDrop, LootDropFirstQuery, LootTableItem, MissionReward, NameValuePair, NPCMission, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
 export const RENDER_COMPONENT = 2;
@@ -74,15 +76,6 @@ export class CDClient {
     });
   }
 
-  async formatIconPath(icon: string): string {
-    icon = icon.replace(/^\.\.\\\.\.\\/g, "/lu-res/");
-    icon = icon.replace(/\\/g, "/");
-    icon = icon.replace(/ /g, "%20");
-    icon = icon.replace(/(?<=\.)dds/gi, "png");
-    icon = icon.toLowerCase();
-    return icon;
-  }
-
   async getIconAsset(id: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this.db.get(
@@ -101,7 +94,20 @@ export class CDClient {
   async getIconAssetFromSkill(skillId: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this.db.get(
-        `SELECT icon_asset FROM RenderComponent WHERE id=(SELECT missionIconID FROM ComponentsRegistry WHERE component_type=${RENDER_COMPONENT} and id=${id})`,
+        `SELECT IconPath FROM Icons WHERE IconID=(SELECT skillIcon FROM SkillBehavior WHERE skillID = ${skillId})`,
+        function (_, row: Icons) {
+          let icon = row?.IconPath;
+          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
+          icon = formatIconPath(icon);
+          resolve(icon)
+        });
+    });
+  }
+
+  async getIconAssetFromIconId(iconId: number): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.db.get(
+        `SELECT IconPath FROM Icons WHERE IconID=${iconId}`,
         function (_, row: Icons) {
           let icon = row?.IconPath;
           if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
@@ -114,9 +120,10 @@ export class CDClient {
   async getIconAssetForMission(missionId: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this.db.get(
-        `SELECT IconID, largeTaskIconID FROM MissionTasks WHERE id = ${missionId})`,
-        function (_, row: MissionTasks) {
-          let icon = row?.largeTaskIconID || row?.IconID;
+        // `SELECT IconID, largeTaskIconID FROM MissionTasks WHERE id = ${missionId})`,
+        `SELECT IconPath FROM Icons WHERE IconID = (SELECT IconID FROM MissionTasks WHERE id = ${missionId}) OR IconID = (SELECT largeTaskIconID FROM MissionTasks WHERE id = ${missionId})`,
+        function (_, row: Icons) {
+          let icon = row.IconPath;
           if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
           icon = formatIconPath(icon);
           resolve(icon)
@@ -757,13 +764,7 @@ export class CDClient {
   async getActivitiesThatDropItem(itemId: number, rarity: number): Promise<ActivityDropFromQuery[]> {
     return new Promise<ActivityDropFromQuery[]>((resolve, reject) => {
       this.db.all(
-        `SELECT ActivityRewards.objectTemplate as id, ActivityRewards.description, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ActivityRewards
-        JOIN LootMatrix ON LootMatrix.LootMatrixIndex = ActivityRewards.LootMatrixIndex
-        JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1})
-        WHERE ActivityRewardIndex in (
-        SELECT ActivityRewardIndex from ActivityRewards WHERE LootMatrixIndex IN (
-        SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN (
-        SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ) )`,
+        `SELECT ActivityRewards.objectTemplate as id, ActivityRewards.description as activityName, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ActivityRewards JOIN LootMatrix ON LootMatrix.LootMatrixIndex = ActivityRewards.LootMatrixIndex AND LootMatrix.LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId}) JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1}) WHERE ActivityRewards.LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ) `,
         (_, rows: ActivityDropFromQuery[]) => {
           // need rows with proper chance (by subtracting percent of rarity-1)
           // basically this returns a set of rows in pairs of 2 where i just need the percent of the first one and must subtract it from percent of second one
@@ -930,7 +931,26 @@ export class CDClient {
         (_, rows: ActivityRewards[]) => {
           let pairs: NameValuePair[] = rows?.map((row) => {
             return {
-              name: `${row.description} [${row.objectTemplate}]`,
+              name: `${this.locale.getActivityName(row.objectTemplate)} > ${row.description} [${row.objectTemplate}]`,
+              value: `${row.objectTemplate};${row.description}`
+            }
+          });
+          resolve(pairs)
+        });
+    });
+  }
+
+  async searchFullActivity(query: string): Promise<NameValuePair[]> {
+    return new Promise<NameValuePair[]>((resolve, reject) => {
+      this.db.all(
+        `SELECT * FROM ActivityRewards`,
+        (_, rows: ActivityRewards[]) => {
+          for (let row of rows) {
+            // row.description = `${ro}`
+          }
+          let pairs: NameValuePair[] = rows?.map((row) => {
+            return {
+              name: `${this.locale.getActivityName(row.objectTemplate)} > ${row.description} [${row.objectTemplate}]`,
               value: `${row.objectTemplate};${row.description}`
             }
           });
@@ -950,6 +970,3 @@ export class CDClient {
 
 
 }
-
-
-

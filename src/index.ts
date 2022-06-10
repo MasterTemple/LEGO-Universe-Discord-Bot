@@ -21,10 +21,6 @@ client.once('ready', async () => {
   await cdclient.load();
   updateSlashCommands(client, slashCommands);
 
-  // console.log(percent(0.0014999985918402459))
-  // console.log(percent(0.029999971389770508 * 0.05000000074505806 * (1 / 1)))
-  // console.log(percent(0.05000000074505806 * ))
-
   console.log('\n------------------------------------\n');
   console.log('LEGO Universe Discord Bot is online.');
   // process.exit(0)
@@ -46,16 +42,6 @@ client.on('interactionCreate', async (interaction: Interaction) => {
       let autocompleteOptions: NameValuePair[];
 
       autocompleteOptions = await getAutocompleteOptions(cdclient, interaction.commandName.toString(), value.toString())
-
-      // this is so that if they type the number it returns the value
-      // if (value.match(/^\d+$/g)) {
-      //   autocompleteOptions = [{
-      //     name: `${(await cdclient.getObjectName(parseInt(value)))} [${value}]`,
-      //     value: value,
-      //   }];
-      // } else {
-      //   autocompleteOptions = await getAutocompleteOptions(cdclient, interaction.commandName.toString(), value.toString())
-      // }
 
       interaction.respond(autocompleteOptions);
     }
