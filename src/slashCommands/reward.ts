@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { fillEmbedWithLootDrops } from '../discord';
 import { bracketURL } from '../functions';
 import { decimalToFraction } from '../math';
 import { Item } from '../types/Item';
@@ -32,22 +33,7 @@ export default {
     embed.setURL(item.getURL());
     embed.setThumbnail(item.imageURL)
 
-    let c = 1;
-
-    item.activityRewards.forEach((eachDrop, index) => {
-      if (eachDrop.smashables.length > 0 && embed.fields.length < 25) {
-        let range: string;
-        if (eachDrop.minToDrop === eachDrop.maxToDrop) {
-          range = eachDrop.minToDrop.toString();
-        } else {
-          range = `${eachDrop.minToDrop}-${eachDrop.maxToDrop}`;
-        }
-        embed.addField(
-          `${c++}. ${decimalToFraction(eachDrop.chance)} for ${range} ${item.name} `,
-          `From ${eachDrop.smashables.map(({ name, id }) => `${name} ${bracketURL(id, "activity")}`).join(', ')} `.slice(0, 1023),
-        );
-      }
-    });
+    fillEmbedWithLootDrops(embed, item.drop, item.name);
 
     if (embed.fields.length === 0) {
       embed.addField("Not Rewarded!", `${item.name} is not rewarded from an activity!`)
