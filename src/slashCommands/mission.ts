@@ -1,6 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { bracketURL } from '../functions';
+import { Embed } from '../types/Embed';
 import { Mission } from '../types/Mission';
 import { SlashCommand } from '../types/SlashCommand';
 
@@ -25,7 +26,7 @@ export default {
     const mission = new Mission(cdclient, missionId);
     await mission.create();
 
-    const embed = new MessageEmbed();
+    const embed = new Embed();
     embed.setURL(mission.getURL());
     embed.setThumbnail(mission.imageURL)
     embed.setTitle(mission.data.isRepeatable ? `${mission.name} [${mission.id}] (Repeatable)` : `${mission.name} [${mission.id}]`);

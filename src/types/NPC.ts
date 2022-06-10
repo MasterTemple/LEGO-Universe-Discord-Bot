@@ -2,7 +2,7 @@ import { Database } from "sqlite3";
 import { CDClient } from "../cdclient";
 import { ComponentsRegistry } from "../cdclientInterfaces";
 import { ItemSold, NPCMission } from "../luInterfaces";
-import { explorerDomain } from '../config.json';
+import { explorerDomain } from "../config";
 
 export class NPC extends CDClient {
   db: Database;

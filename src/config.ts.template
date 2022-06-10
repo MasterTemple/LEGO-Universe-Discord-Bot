@@ -1,0 +1,7 @@
+export const token =  "DISCORD_TOKEN_GOES_HERE";
+export const sqlitePath =  "PATH_TO_CDCLIENT.SQLITE";
+export const localePath =  "PATH_TO_LU_CLIENT/locale/locale.xml";
+export const explorerDomain =  "https://explorer.lu";
+export const color =  "#rrggbb";
+export var botName = "Nexus Force";
+export var botIcon = "https://cdn.discordapp.com/avatars/813618765685456916/2fb374c98d47b0d50299f9f452c2e0e1.webp";

@@ -18,7 +18,7 @@ import {
   RenderComponent,
   SkillBehavior
 } from './cdclientInterfaces';
-import { sqlitePath } from './config.json';
+import { sqlitePath } from './config';
 import { formatIconPath } from './functions';
 import { LocaleXML } from './locale';
 import { ActivityDropFromQuery, EnemyDrop, EnemyHealth, ItemDrop, ItemSold, LootDrop, LootDropFirstQuery, LootTableItem, MissionReward, NameValuePair, NPCMission, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';

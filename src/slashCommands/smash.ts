@@ -2,6 +2,7 @@ import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'disc
 import { CDClient } from '../cdclient';
 import { bracketURL } from '../functions';
 import { decimalToFraction, percent, round } from '../math';
+import { Embed } from '../types/Embed';
 import { Enemy } from '../types/Enemy';
 import { SlashCommand } from '../types/SlashCommand';
 
@@ -27,7 +28,7 @@ export default {
     await enemy.create();
     await enemy.addDrops();
 
-    const embed = new MessageEmbed();
+    const embed = new Embed();
     embed.setTitle(`${enemy.name} [${enemy.id}]`);
     embed.setURL(enemy.getURL());
     // embed.setThumbnail(enemy.imageURL)

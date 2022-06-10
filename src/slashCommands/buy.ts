@@ -2,6 +2,7 @@ import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'disc
 import { CDClient } from '../cdclient';
 import { bracketURL, textToChunks } from '../functions';
 import { ObjectElement } from '../luInterfaces';
+import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
 // this was to sort them by location
@@ -69,7 +70,7 @@ export default {
     await item.create();
     await item.addVendors();
 
-    const embed = new MessageEmbed();
+    const embed = new Embed();
     embed.setTitle(`${item.name} [${item.id}]`);
     embed.setURL(item.getURL());
     embed.setThumbnail(item.imageURL)

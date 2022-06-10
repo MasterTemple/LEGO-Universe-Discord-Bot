@@ -3,6 +3,7 @@ import { CDClient } from '../cdclient';
 import { fillEmbedWithLootDrops } from '../discord';
 import { bracketURL } from '../functions';
 import { decimalToFraction } from '../math';
+import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
 
@@ -28,7 +29,7 @@ export default {
     await item.create();
     await item.addRewards();
 
-    const embed = new MessageEmbed();
+    const embed = new Embed();
     embed.setTitle(`${item.name} [${item.id}]`);
     embed.setURL(item.getURL());
     embed.setThumbnail(item.imageURL)

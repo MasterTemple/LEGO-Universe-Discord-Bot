@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
 
@@ -23,7 +24,7 @@ export default {
     const item = new Item(cdclient, itemId);
     await item.create()
     // console.log(item)
-    let embed = new MessageEmbed().setTitle(`${item.name} [${item.id}]`)
+    let embed = new Embed().setTitle(`${item.name} [${item.id}]`)
     embed.setURL(item.getURL());
     embed.setThumbnail(item.imageURL)
 

@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "outDir": "lib",
-    "declaration": true,
-    "declarationMap": true,
-    "watch": true,
-    "resolveJsonModule": true,
-    "downlevelIteration": true
+    "skipLibCheck": true,
+    "target": "ES6",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "lib"
   },
-  "include": ["src", "src/**/*.json"]
+    "include": [
+      "src",
+    ]
 }

@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { Embed } from '../types/Embed';
 import { Skill } from '../types/Skill';
 import { SlashCommand } from '../types/SlashCommand';
 
@@ -24,7 +25,7 @@ export default {
     const skill = new Skill(cdclient, skillId);
     await skill.create();
 
-    const embed = new MessageEmbed();
+    const embed = new Embed();
     embed.setTitle(`${skill.name} [${skill.id}]`);
     embed.setURL(skill.getURL());
     embed.setThumbnail(skill.imageURL)

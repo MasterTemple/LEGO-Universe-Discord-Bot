@@ -1,7 +1,7 @@
 import { Database } from "sqlite3";
 import { CDClient } from "../cdclient";
 import { ComponentsRegistry, SkillBehavior } from "../cdclientInterfaces";
-import { explorerDomain } from '../config.json';
+import { explorerDomain } from "../config";
 import { ActivityDropFromQuery, SmashableDrop } from "../luInterfaces";
 import { ObjectElement, SkillDescription } from "../luInterfaces";
 

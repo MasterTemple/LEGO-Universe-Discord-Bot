@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { Embed } from '../types/Embed';
 import { Enemy } from '../types/Enemy';
 import { SlashCommand } from '../types/SlashCommand';
 
@@ -24,7 +25,7 @@ export default {
     const enemy = new Enemy(cdclient, enemyId);
     await enemy.create();
 
-    const embed = new MessageEmbed();
+    const embed = new Embed();
     embed.setURL(enemy.getURL());
     // embed.setThumbnail(enemy.imageURL)
     embed.setTitle(`${enemy.name} [${enemy.id}]`);

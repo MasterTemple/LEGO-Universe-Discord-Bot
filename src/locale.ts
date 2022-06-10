@@ -1,6 +1,6 @@
-import { localePath } from './config.json';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
+import { localePath } from './config';
 import { localeXMLType, NameValuePair, SkillDescription, UnofficialType } from './luInterfaces';
 
 export class LocaleXML {
@@ -38,7 +38,7 @@ export class LocaleXML {
   async load(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!existsSync(localePath)) {
-        console.error('Please provide a path to the locale.xml in config.json.');
+        console.error('Please provide a path to the locale.xml in config.ts.');
       }
       // locale.xml
       readFile(localePath).then((fileData) => {

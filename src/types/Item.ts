@@ -14,7 +14,7 @@ import {
   SmashableDrop,
   HowToGet,
 } from '../luInterfaces';
-import { explorerDomain } from '../config.json';
+import { explorerDomain } from "../config";
 import { ActivityDropFromQuery } from '../luInterfaces';
 
 export class Item extends CDClient {

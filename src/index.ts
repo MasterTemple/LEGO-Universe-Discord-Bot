@@ -1,7 +1,7 @@
 import { AutocompleteInteraction, Client, CommandInteraction, CommandInteractionOption, Interaction } from 'discord.js';
 import { getAutocompleteOptions } from './autocomplete';
 import { CDClient } from './cdclient';
-import { token } from './config.json';
+import { token } from './config';
 import { LocaleXML } from './locale';
 import { LootDrop, NameValuePair, queryType } from './luInterfaces';
 import { percent } from './math';

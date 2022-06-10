@@ -1,6 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { bracketURL, textToChunks } from '../functions';
+import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { NPC } from '../types/NPC';
 import { SlashCommand } from '../types/SlashCommand';
@@ -26,7 +27,7 @@ export default {
     const npc = new NPC(cdclient, npcId);
     await npc.create();
 
-    const embed = new MessageEmbed();
+    const embed = new Embed();
     embed.setTitle(`${npc.name} [${npc.id}]`);
     embed.setURL(npc.getURL());
 

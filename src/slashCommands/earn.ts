@@ -1,6 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { bracketURL } from '../functions';
+import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
 
@@ -26,7 +27,7 @@ export default {
     await item.create();
     await item.addMissionRewards();
 
-    const embed = new MessageEmbed();
+    const embed = new Embed();
     embed.setURL(item.getURL());
     embed.setThumbnail(item.imageURL)
     embed.setTitle(`${item.name} [${item.id}]`);

@@ -2,6 +2,7 @@ import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'disc
 import { CDClient } from '../cdclient';
 import { bracketURL, textToChunks } from '../functions';
 import { ObjectElement } from '../luInterfaces';
+import { Embed } from '../types/Embed';
 import { Skill } from '../types/Skill';
 import { SlashCommand } from '../types/SlashCommand';
 
@@ -27,7 +28,7 @@ export default {
     await skill.create();
     await skill.addSkillItems();
 
-    const embed = new MessageEmbed();
+    const embed = new Embed();
     embed.setTitle(`${skill.name} [${skill.id}]`);
     embed.setURL(skill.getURL());
     embed.setThumbnail(skill.imageURL)

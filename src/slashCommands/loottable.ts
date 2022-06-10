@@ -1,6 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { bracketURL, textToChunks } from '../functions';
+import { Embed } from '../types/Embed';
 import { LootTable } from '../types/LootTable';
 import { SlashCommand } from '../types/SlashCommand';
 
@@ -24,7 +25,7 @@ export default {
     const lootTable = new LootTable(cdclient, lootTableId);
     await lootTable.create();
 
-    const embed = new MessageEmbed();
+    const embed = new Embed();
     embed.setURL(lootTable.getURL());
     embed.setThumbnail(lootTable.imageURL)
     embed.setTitle(`${lootTable.name} [${lootTable.id}]`);

@@ -3,6 +3,7 @@ import { CDClient } from '../cdclient';
 import { bracketURL } from '../functions';
 import { percent } from '../math';
 import { Activity } from '../types/Activity';
+import { Embed } from '../types/Embed';
 import { SlashCommand } from '../types/SlashCommand';
 
 export default {
@@ -28,7 +29,7 @@ export default {
     const activity = new Activity(cdclient, activityId, activityName);
     await activity.create();
 
-    const embed = new MessageEmbed();
+    const embed = new Embed();
     embed.setURL(activity.getURL());
     embed.setTitle(`${activity.name} [${activity.id}]`);
 
