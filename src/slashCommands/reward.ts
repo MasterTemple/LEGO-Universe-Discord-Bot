@@ -33,7 +33,7 @@ export default {
     embed.setURL(item.getURL());
     embed.setThumbnail(item.imageURL)
 
-    fillEmbedWithLootDrops(embed, item.drop, item.name);
+    fillEmbedWithLootDrops(embed, item.activityRewards, item.name);
 
     if (embed.fields.length === 0) {
       embed.addField("Not Rewarded!", `${item.name} is not rewarded from an activity!`)
