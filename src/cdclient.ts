@@ -494,15 +494,16 @@ export class CDClient {
   async getActivityDrops(activityName: string): Promise<SmashableDrop[]> {
     return new Promise<SmashableDrop[]>(async (resolve, reject) => {
       this.db.all(
-        `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity, (SELECT COUNT(*) FROM LootTable WHERE LootMatrix.LootTableIndex=LootTable.LootTableIndex) AS poolSize FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN (SELECT LootMatrixIndex FROM ActivityRewards WHERE description = '${activityName}')`,
+        `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity, (SELECT COUNT(*) FROM LootTable WHERE LootMatrix.LootTableIndex=LootTable.LootTableIndex) AS poolSize FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN (SELECT LootMatrixIndex FROM ActivityRewards WHERE description LIKE '%${activityName}%')`,
         async (_, rows: SmashableDrop[]) => {
           // this is different because im getting across multiple rarities
-          const lootTableRaritySizes = new Map<number, number>();
+          const lootTableRaritySizes = new Map<string, number>();
+          // string: lti:rarity
           for (let row of rows) {
-            let ltiSize = lootTableRaritySizes?.get(row.lootTableIndex);
+            let ltiSize = lootTableRaritySizes?.get(`${row.lootTableIndex}:${row.rarity}`);
             if (!ltiSize) {
               ltiSize = await this.getItemsInLootTableOfRarity(row.lootTableIndex, row.rarity);
-              lootTableRaritySizes.set(row.lootTableIndex, ltiSize);
+              lootTableRaritySizes.set(`${row.lootTableIndex}:${row.rarity}`, ltiSize);
             }
             row.poolSize = ltiSize
           }

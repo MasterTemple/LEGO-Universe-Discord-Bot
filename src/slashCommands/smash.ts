@@ -38,14 +38,13 @@ export default {
     let previousLTI = enemy.drops[0].lootTableIndex;
     let specificDrop = "Specific "
     let anyDrop = "Any "
-    let isConsumable = false;
     enemy.drops.forEach((drop, index) => {
       if (previousLTI !== drop.lootTableIndex) {
         let previousDrop = enemy.drops[index - 1]
         let itemCountStr = `For ${previousDrop.minToDrop}`
         if (previousDrop.minToDrop !== previousDrop.maxToDrop) itemCountStr += `-${previousDrop.maxToDrop} Item`
         if (previousDrop.maxToDrop > 1) itemCountStr += "s"
-        if (isConsumable) {
+        if (specificDrop === "Specific ") {
           embed.addField(`${enemy.locale.getLootTableName(previousLTI)} - ${percent(previousDrop.chanceForItem)} ${itemCountStr}`, `Conumable Do Not Have Rarity ${bracketURL(previousLTI, "objects/loot/table")}`)
         } else {
           embed.addField(`${enemy.locale.getLootTableName(previousLTI)} - ${percent(previousDrop.chanceForItem)} ${itemCountStr}`, `${specificDrop}\n${anyDrop}${bracketURL(previousLTI, "objects/loot/table")}`)
@@ -53,14 +52,13 @@ export default {
         previousLTI = drop.lootTableIndex
         specificDrop = "Specific "
         anyDrop = "Any "
-        isConsumable = false;
       }
 
-      if (drop.poolSize === 0) isConsumable = true;
       let chanceForRarity = drop.rarity === 1 ? drop.chanceForRarity : drop.chanceForRarity - enemy.drops[index - 1].chanceForRarity
-
-      specificDrop += `**T${drop.rarity}** ${percent(chanceForRarity * drop.chanceForItem)} `
-      anyDrop += `**T${drop.rarity}** ${percent(chanceForRarity * drop.chanceForItem * (1 / drop.poolSize))} `
+      if (drop.poolSize > 0) {
+        specificDrop += `**T${drop.rarity}** ${percent(chanceForRarity * drop.chanceForItem)} `
+        anyDrop += `**T${drop.rarity}** ${percent(chanceForRarity * drop.chanceForItem * (1 / drop.poolSize))} `
+      }
     })
     enemy.drops.pop();
 
