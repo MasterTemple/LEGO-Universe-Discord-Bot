@@ -1,5 +1,6 @@
-import { CacheType, CommandInteraction, CommandInteractionOption, MessageActionRow, MessageComponent, MessageEmbed } from "discord.js";
+import { BaseCommandInteraction, CacheType, CommandInteraction, CommandInteractionOption, MessageActionRow, MessageButton, MessageComponent, MessageComponentInteraction, MessageEmbed } from "discord.js";
 import { explorerDomain } from "./config";
+import { Button } from "./types/Button";
 import { Embed } from "./types/Embed";
 
 export function textToChunks(input: string, size: number = 1024): string[] {
@@ -57,13 +58,68 @@ export function formatIconPath(icon: string): string {
   return icon;
 }
 
-export function getOption(options: readonly CommandInteractionOption<CacheType>[], parameter: string) {
+export function getOption(options: readonly CommandInteractionOption<CacheType>[], parameter?: string) {
   let value = options.find((option) => option.name === parameter)?.value?.toString();
   if (!value) value = options[0].value.toString();
   return value;
 }
 
-export function replyOrUpdate(interaction, embeds: Embed[] | MessageEmbed[], components?: MessageActionRow[]) {
+export interface MessageUpdateData {
+  interaction: BaseCommandInteraction | MessageComponentInteraction,
+  embeds: Embed[] | MessageEmbed[],
+  components?: MessageActionRow[],
+  page?: number,
+  pageSize?: number,
+  isPaged?: boolean,
+}
+const DEFAULT_PAGE_SIZE = 8;
+
+export function replyOrUpdate(data: MessageUpdateData) {
+
+  let interaction = data.interaction;
+  let embeds = data.embeds;
+  let components = data.components || [];
+  let page = data.page || 0;
+  let pageSize = data.pageSize || DEFAULT_PAGE_SIZE;
+  let isPaged = data?.isPaged === undefined ? true : data.isPaged
+
+
+  // put description into pages
+
+  // put fields into pages
+  if (isPaged) {
+    let firstEmbed = embeds[0];
+    if (interaction.isMessageComponent()) {
+      page = parseInt(interaction.customId.match(/(?<=[^\/]+\/[^\/]+\/)[^\/]+/gi)?.[0]) || 0
+    }
+    let initialSize = firstEmbed.fields.length
+    firstEmbed.fields = firstEmbed.fields.slice(page * pageSize, (page + 1) * pageSize)
+    let slicedSize = firstEmbed.fields.length
+    if (initialSize != slicedSize) firstEmbed.setTitle(`${firstEmbed.title} (${page + 1})`)
+
+    let hasPreviousPage = page > 0;
+    let hasNextPage = page < Math.floor(initialSize / pageSize);
+
+    let pageButtons = new MessageActionRow()
+    if (interaction.isMessageComponent()) {
+      let { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\/]+)?/gi)][0].groups
+      pageButtons.addComponents(
+        new Button().setCustomId(`${cmd}/${id}/${page - 1}`).setDisabled(!hasPreviousPage).setLabel("Previous Page"),
+        new Button().setCustomId(`${cmd}/${id}/${page + 1}`).setDisabled(!hasNextPage).setLabel("Next Page"),
+      )
+    }
+    if (interaction.isApplicationCommand()) {
+      let cmd = interaction.commandName;
+      let id = getOption(interaction.options?.data || [])
+      pageButtons.addComponents(
+        new Button().setCustomId(`${cmd}/${id}/${page - 1}`).setDisabled(!hasPreviousPage).setLabel("Previous Page"),
+        new Button().setCustomId(`${cmd}/${id}/${page + 1}`).setDisabled(!hasNextPage).setLabel("Next Page"),
+      )
+
+    }
+    components.push(pageButtons)
+  }
+
   if (interaction.isMessageComponent()) {
     interaction.update({
       embeds: embeds,

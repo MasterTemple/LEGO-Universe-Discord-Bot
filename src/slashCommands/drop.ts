@@ -39,6 +39,9 @@ export default {
     if (embed.fields.length === 0) {
       embed.addField("Not Dropped!", `${item.name} is not found by smashing anything!`)
     }
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed]
+    })
   },
 } as SlashCommand;

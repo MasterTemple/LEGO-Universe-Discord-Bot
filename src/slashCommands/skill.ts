@@ -40,7 +40,11 @@ export default {
     skill.descriptions.forEach((desc) => {
       embed.addField(desc.name, desc.description || "No Description")
     })
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed],
+      isPaged: false
+    })
 
   },
 } as SlashCommand;

@@ -40,7 +40,10 @@ export default {
       embed.addField("Not Rewarded!", `${item.name} is not rewarded from an activity!`)
     }
 
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed]
+    })
 
   },
 } as SlashCommand;

@@ -1,7 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { fillEmbedWithLootDrops } from '../discord';
-import { bracketURL, getOption } from '../functions';
+import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { decimalToFraction } from '../math';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -43,24 +43,18 @@ export default {
 
     let buttons = new MessageActionRow().addComponents(
       new Button().setDisabled(!item.get.isFromMission).setLabel("Earn").setCustomId(`earn/${itemId}`),
-      new Button().setDisabled(!item.get.isFromSmashable).setLabel("Drop").setCustomId(`drop/${itemId}/2`),
+      new Button().setDisabled(!item.get.isFromSmashable).setLabel("Drop").setCustomId(`drop/${itemId}`),
       new Button().setDisabled(!item.get.isFromPackage).setLabel("Unpack").setCustomId(`unpack/${itemId}`),
       new Button().setDisabled(!item.get.isFromActivity).setLabel("Reward").setCustomId(`reward/${itemId}`),
       new Button().setDisabled(!item.get.isFromVendor).setLabel("Buy").setCustomId(`buy/${itemId}`),
     )
 
 
-    if (interaction.isMessageComponent()) {
-      interaction.update({
-        embeds: [embed],
-        components: [buttons]
-      })
-    }
-    if (interaction.isApplicationCommand()) {
-      interaction.reply({
-        embeds: [embed],
-        components: [buttons]
-      });
-    }
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed],
+      components: [buttons],
+      isPaged: false
+    })
   },
 } as SlashCommand;

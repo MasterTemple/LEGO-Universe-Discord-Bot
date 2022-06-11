@@ -38,7 +38,10 @@ export default {
       embed.addField(title, `${mission.description} ${bracketURL(mission.id, "missions")}`)
     })
 
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed]
+    })
 
   },
 } as SlashCommand;

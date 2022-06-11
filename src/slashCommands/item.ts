@@ -44,7 +44,11 @@ export default {
       embed.addField("Not an Item!", `${item.name} is not an item!`)
     }
 
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed],
+      isPaged: false
+    })
 
   },
 } as SlashCommand;

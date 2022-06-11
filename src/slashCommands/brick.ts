@@ -39,7 +39,10 @@ export default {
     embed.addField("Stack Size", item.itemComponent?.stackSize?.toString() || "999", true)
     embed.addField("Level Requirement", item.itemComponent?.levelRequirement?.toString() || "0", true)
 
-    replyOrUpdate(interaction, [embed])
-
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed],
+      isPaged: false
+    })
   },
 } as SlashCommand;

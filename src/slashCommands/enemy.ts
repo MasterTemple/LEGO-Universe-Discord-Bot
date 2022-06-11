@@ -33,7 +33,11 @@ export default {
 
     embed.setDescription(`Life: **${enemy.life}**\nArmor: **${enemy.armor}**`)
 
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed],
+      isPaged: false
+    })
 
   },
 } as SlashCommand;

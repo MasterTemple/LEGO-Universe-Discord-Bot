@@ -29,7 +29,10 @@ export default {
     const embed = new Embed();
     embed.setTitle(`${item.name} [${item.id}]`);
 
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed]
+    })
 
   },
 } as SlashCommand;

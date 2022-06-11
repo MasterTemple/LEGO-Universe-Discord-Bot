@@ -48,18 +48,10 @@ client.on('interactionCreate', async (interaction: Interaction) => {
 
     if (interaction.isMessageComponent()) {
       let instruction = interaction.customId;
-      // console.log(instruction);
-
-      // console.log([...instruction.matchAll(/[^\/]+\//gim)].map((i) => i.groups))
-      // console.log([...instruction.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\/]+)?/gi)].map((i) => i.groups))
-      console.log([...instruction.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\/]+)?/gi)][0].groups)
       let { cmd, id, page } = [...instruction.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\/]+)?/gi)][0].groups
 
       let options = [{ name: "button", type: "STRING", value: id } as CommandInteractionOption]
       slashCommands.get(cmd).run(interaction, options, cdclient);
-
-
-      // console.log(instruction.match(/([\/]+\/)+/gim))
     }
 
 

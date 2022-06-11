@@ -55,7 +55,10 @@ export default {
       embed.addField("Not A Vendor!", `${npc.name} does not sell anything!`)
     }
 
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed]
+    })
 
   },
 } as SlashCommand;

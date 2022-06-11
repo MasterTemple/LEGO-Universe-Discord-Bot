@@ -43,7 +43,10 @@ export default {
       embed.addField("No Items!", `${skill.name} is not attached to any item!`)
     }
 
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed]
+    })
 
   },
 } as SlashCommand;

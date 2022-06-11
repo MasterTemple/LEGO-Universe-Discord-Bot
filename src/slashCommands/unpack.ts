@@ -40,7 +40,10 @@ export default {
       embed.addField("Not Unpacked!", `${item.name} is not found by opening a package!`)
     }
 
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed]
+    })
 
   },
 } as SlashCommand;

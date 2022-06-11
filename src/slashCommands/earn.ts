@@ -40,7 +40,10 @@ export default {
       embed.addField(title, `${reward.description} ${bracketURL(reward.id)} Rewards **${reward.rewardCount}**`)
     })
 
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed]
+    })
 
   },
 } as SlashCommand;

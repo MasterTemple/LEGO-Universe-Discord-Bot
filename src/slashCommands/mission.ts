@@ -52,7 +52,11 @@ export default {
     else if (mission.raw.reward_maxinventory) embed.addField("Inventory Increase", (mission.raw.reward_maxinventory).toString(), true)
     else embed.addField("Reputation Increase", (mission.raw.reward_reputation).toString(), true)
 
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed],
+      isPaged: false
+    })
 
   },
 } as SlashCommand;

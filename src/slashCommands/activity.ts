@@ -62,7 +62,10 @@ export default {
       }
     })
     activity.rewards.pop();
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed]
+    })
 
   },
 } as SlashCommand;

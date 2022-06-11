@@ -86,7 +86,10 @@ export default {
       embed.addField("Not Sold!", `${item.name} is not sold by a vendor!`)
     }
 
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed]
+    })
 
   },
 } as SlashCommand;

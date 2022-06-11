@@ -46,7 +46,10 @@ export default {
       items += `**${c++}.** ${loot.name} ${bracketURL(loot.id, "objects/loot/table")}\n`
     })
 
-    replyOrUpdate(interaction, [embed])
+    replyOrUpdate({
+      interaction: interaction,
+      embeds: [embed]
+    })
 
   },
 } as SlashCommand;
