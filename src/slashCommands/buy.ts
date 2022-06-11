@@ -75,9 +75,15 @@ export default {
     embed.setURL(item.getURL());
     embed.setThumbnail(item.imageURL)
 
-    embed.addField("Price", `${item.itemComponent.buyPrice} Coins`, false)
+    let price: string = ""
+    let costs = [];
+    if (item.itemComponent.buyPrice) costs.push(`**${item.itemComponent.buyPrice}** Coins`)
+    if (item.itemComponent.commendationCurrencyCost) costs.push(`**${item.itemComponent.commendationCurrencyCost}** ${item.itemComponent.commendationCurrencyName}s`)
+    if (item.itemComponent.alternateCurrencyCost) costs.push(`**${item.itemComponent.alternateCurrencyCost}** ${item.itemComponent.alternateCurrencyName}s`)
+    price = costs.join(" **+** ")
+
     if (item.buy.length) {
-      let vendorsText = item.buy.map((vendor, index) => `**${index + 1}.** ${vendor.name} ${bracketURL(vendor.id)}`).join("\n");
+      let vendorsText = item.buy.map((vendor, index) => `**${index + 1}.** ${vendor.name} ${bracketURL(vendor.id)} for ${price}`).join("\n");
       textToChunks(vendorsText).forEach((vendors) => {
         embed.addField("Vendors", vendors)
       })
