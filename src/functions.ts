@@ -92,13 +92,15 @@ export function replyOrUpdate(data: MessageUpdateData) {
     if (interaction.isMessageComponent()) {
       page = parseInt(interaction.customId.match(/(?<=[^\/]+\/[^\/]+\/)[^\/]+/gi)?.[0]) || 0
     }
+
     let initialSize = firstEmbed.fields.length
+    let hasPreviousPage = page > 0;
+    let hasNextPage = !!(firstEmbed.fields[(page + 1) * pageSize])
+
     firstEmbed.fields = firstEmbed.fields.slice(page * pageSize, (page + 1) * pageSize)
     let slicedSize = firstEmbed.fields.length
     if (initialSize != slicedSize) firstEmbed.setTitle(`${firstEmbed.title} (${page + 1})`)
 
-    let hasPreviousPage = page > 0;
-    let hasNextPage = page < Math.floor(initialSize / pageSize);
 
     let pageButtons = new MessageActionRow()
     if (interaction.isMessageComponent()) {
