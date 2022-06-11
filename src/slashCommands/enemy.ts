@@ -1,6 +1,7 @@
-import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
+import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { getOption, replyOrUpdate } from '../functions';
+import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
 import { Enemy } from '../types/Enemy';
 import { SlashCommand } from '../types/SlashCommand';
@@ -33,9 +34,15 @@ export default {
 
     embed.setDescription(`Life: **${enemy.life}**\nArmor: **${enemy.armor}**`)
 
+    let buttons = new MessageActionRow().addComponents(
+      new Button().setLabel("Enemy Stats").setCustomId(`enemy/${enemy.id}`).setStyle("SUCCESS"),
+      new Button().setLabel("Smash Enemy").setCustomId(`smash/${enemy.id}`),
+    )
+
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
+      components: [buttons],
       isPaged: false
     })
 

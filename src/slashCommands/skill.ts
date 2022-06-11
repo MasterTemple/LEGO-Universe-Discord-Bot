@@ -1,6 +1,7 @@
-import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
+import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { getOption, replyOrUpdate } from '../functions';
+import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
 import { Skill } from '../types/Skill';
 import { SlashCommand } from '../types/SlashCommand';
@@ -40,10 +41,17 @@ export default {
     skill.descriptions.forEach((desc) => {
       embed.addField(desc.name, desc.description || "No Description")
     })
+
+    let buttons = new MessageActionRow().addComponents(
+      new Button().setLabel(skill.name).setCustomId(`skill/${skill.id}`).setStyle("SUCCESS"),
+      new Button().setLabel(`Items with ${skill.name}`).setCustomId(`skillitems/${skill.id}`),
+    )
+
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
-      isPaged: false
+      isPaged: false,
+      components: [buttons],
     })
 
   },

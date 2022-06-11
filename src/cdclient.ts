@@ -843,7 +843,8 @@ export class CDClient {
   async searchSmashable(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${DESTRUCTIBLE_COMPONENT}) IS NOT NULL LIMIT 25`,
+        // `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${DESTRUCTIBLE_COMPONENT}) IS NOT NULL LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${DESTRUCTIBLE_COMPONENT}) AND (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {

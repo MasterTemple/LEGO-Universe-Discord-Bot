@@ -1,7 +1,8 @@
-import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
+import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
 import { ObjectElement } from '../luInterfaces';
+import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
@@ -91,11 +92,18 @@ export default {
     } else {
       embed.addField("Not Sold!", `${item.name} is not sold by a vendor!`)
     }
-
+    let buttons = new MessageActionRow().addComponents(
+      new Button().setDisabled(!item.get.isFromMission).setLabel("Earn").setCustomId(`earn/${itemId}`),
+      new Button().setDisabled(!item.get.isFromSmashable).setLabel("Drop").setCustomId(`drop/${itemId}`),
+      new Button().setDisabled(!item.get.isFromPackage).setLabel("Unpack").setCustomId(`unpack/${itemId}`),
+      new Button().setDisabled(!item.get.isFromActivity).setLabel("Reward").setCustomId(`reward/${itemId}`),
+      new Button().setDisabled(!item.get.isFromVendor).setLabel("Buy").setCustomId(`buy/${itemId}`).setStyle("SUCCESS"),
+    )
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
-      pageSize: 1
+      pageSize: 1,
+      components: [buttons],
     })
 
   },

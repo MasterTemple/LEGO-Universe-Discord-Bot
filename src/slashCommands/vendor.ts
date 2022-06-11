@@ -1,6 +1,7 @@
-import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
+import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
+import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { NPC } from '../types/NPC';
@@ -55,10 +56,16 @@ export default {
       embed.addField("Not A Vendor!", `${npc.name} does not sell anything!`)
     }
 
+    let buttons = new MessageActionRow().addComponents(
+      new Button().setLabel("Missions Given").setCustomId(`npc/${npc.id}`),
+      new Button().setLabel("Sold Items").setCustomId(`vendor/${npc.id}`).setStyle("SUCCESS"),
+    )
+
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
-      pageSize: 2
+      pageSize: 2,
+      components: [buttons],
     })
 
   },

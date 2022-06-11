@@ -1,6 +1,7 @@
-import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
+import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { getOption, replyOrUpdate } from '../functions';
+import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
@@ -39,10 +40,19 @@ export default {
     embed.addField("Stack Size", item.itemComponent?.stackSize?.toString() || "999", true)
     embed.addField("Level Requirement", item.itemComponent?.levelRequirement?.toString() || "0", true)
 
+    let buttons = new MessageActionRow().addComponents(
+      new Button().setDisabled(!item.get.isFromMission).setLabel("Earn").setCustomId(`earn/${itemId}`),
+      new Button().setDisabled(!item.get.isFromSmashable).setLabel("Drop").setCustomId(`drop/${itemId}`),
+      new Button().setDisabled(!item.get.isFromPackage).setLabel("Unpack").setCustomId(`unpack/${itemId}`),
+      new Button().setDisabled(!item.get.isFromActivity).setLabel("Reward").setCustomId(`reward/${itemId}`),
+      new Button().setDisabled(!item.get.isFromVendor).setLabel("Buy").setCustomId(`buy/${itemId}`),
+    )
+
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
-      isPaged: false
+      isPaged: false,
+      components: [buttons],
     })
   },
 } as SlashCommand;

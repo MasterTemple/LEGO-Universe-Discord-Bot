@@ -1,8 +1,9 @@
-import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
+import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { fillEmbedWithLootDrops } from '../discord';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { decimalToFraction } from '../math';
+import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
@@ -39,9 +40,19 @@ export default {
     if (embed.fields.length === 0) {
       embed.addField("Not Dropped!", `${item.name} is not found by smashing anything!`)
     }
+
+    let buttons = new MessageActionRow().addComponents(
+      new Button().setDisabled(!item.get.isFromMission).setLabel("Earn").setCustomId(`earn/${itemId}`),
+      new Button().setDisabled(!item.get.isFromSmashable).setLabel("Drop").setCustomId(`drop/${itemId}`).setStyle("SUCCESS"),
+      new Button().setDisabled(!item.get.isFromPackage).setLabel("Unpack").setCustomId(`unpack/${itemId}`),
+      new Button().setDisabled(!item.get.isFromActivity).setLabel("Reward").setCustomId(`reward/${itemId}`),
+      new Button().setDisabled(!item.get.isFromVendor).setLabel("Buy").setCustomId(`buy/${itemId}`),
+    )
+
     replyOrUpdate({
       interaction: interaction,
-      embeds: [embed]
+      embeds: [embed],
+      components: [buttons],
     })
   },
 } as SlashCommand;

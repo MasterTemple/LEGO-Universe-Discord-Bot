@@ -119,7 +119,8 @@ export function replyOrUpdate(data: MessageUpdateData) {
       )
 
     }
-    components.push(pageButtons)
+
+    if (!pageButtons.components.every((button) => button.disabled)) components.push(pageButtons)
   }
 
   if (interaction.isMessageComponent()) {
@@ -135,20 +136,3 @@ export function replyOrUpdate(data: MessageUpdateData) {
     });
   }
 }
-
-//! make my own extension of command interaction later
-// CommandInteraction.prototype.replyOrUpdate = function (interaction, embeds: Embed[] | MessageEmbed[], components?: MessageActionRow[]) {
-//   if (interaction.isMessageComponent()) {
-//     interaction.update({
-//       embeds: embeds,
-//       components: components
-//     })
-//   }
-//   if (interaction.isApplicationCommand()) {
-//     interaction.reply({
-//       embeds: embeds,
-//       components: components
-//     });
-//   }
-// }
-

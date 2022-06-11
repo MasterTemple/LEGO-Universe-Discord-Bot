@@ -49,6 +49,7 @@ export class Item extends CDClient {
     await this.addThumbnail();
     await this.addItemComponent();
     await this.addItemStats();
+    await this.findHowToGet();
   }
 
   getURL(id: number = this.id): string {
@@ -355,12 +356,12 @@ export class Item extends CDClient {
     const objectSkills = await this.getObjectSkills(this.id);
     this.skills = await Promise.all(objectSkills.map((skill) => this.getSkill(skill)));
     // console.log(this.skills);
-
-    this.stats = {
-      armor: this.skills.find(({ armorBonus }) => armorBonus !== null)?.armorBonus || 0,
-      health: this.skills.find(({ healthBonus }) => healthBonus !== null)?.healthBonus || 0,
-      imagination: this.skills.find(({ imaginationBonus }) => imaginationBonus !== null)?.imaginationBonus || 0,
-    };
+    if (this.skills.length)
+      this.stats = {
+        armor: this.skills.find(({ armorBonus }) => armorBonus !== null)?.armorBonus || 0,
+        health: this.skills.find(({ healthBonus }) => healthBonus !== null)?.healthBonus || 0,
+        imagination: this.skills.find(({ imaginationBonus }) => imaginationBonus !== null)?.imaginationBonus || 0,
+      };
   }
   async addObjectData(): Promise<void> {
     this.objectData = await this.getObjectData(this.id)
