@@ -45,6 +45,8 @@ export default {
       embed.addField("Not an Item!", `${item.name} is not an item!`)
     }
 
+    //! buttons to add: Get, Preconditions
+
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],

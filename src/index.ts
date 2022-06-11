@@ -48,7 +48,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
 
     if (interaction.isMessageComponent()) {
       let instruction = interaction.customId;
-      let { cmd, id, page } = [...instruction.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\/]+)?/gi)][0].groups
+      let { cmd, id, page } = [...instruction.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\?]+)?/gi)][0].groups
 
       let options = [{ name: "button", type: "STRING", value: id } as CommandInteractionOption]
       slashCommands.get(cmd).run(interaction, options, cdclient);

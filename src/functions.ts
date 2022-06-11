@@ -90,7 +90,7 @@ export function replyOrUpdate(data: MessageUpdateData) {
   if (isPaged) {
     let firstEmbed = embeds[0];
     if (interaction.isMessageComponent()) {
-      page = parseInt(interaction.customId.match(/(?<=[^\/]+\/[^\/]+\/)[^\/]+/gi)?.[0]) || 0
+      page = parseInt(interaction.customId.match(/(?<=[^\/]+\/[^\/]+\/)[^\?]+/gi)?.[0]) || 0
     }
 
     let initialSize = firstEmbed.fields.length
@@ -104,7 +104,7 @@ export function replyOrUpdate(data: MessageUpdateData) {
 
     let pageButtons = new MessageActionRow()
     if (interaction.isMessageComponent()) {
-      let { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\/]+)?/gi)][0].groups
+      let { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\?]+)?/gi)][0].groups
       pageButtons.addComponents(
         new Button().setCustomId(`${cmd}/${id}/${page - 1}`).setDisabled(!hasPreviousPage).setLabel("Previous Page"),
         new Button().setCustomId(`${cmd}/${id}/${page + 1}`).setDisabled(!hasNextPage).setLabel("Next Page"),

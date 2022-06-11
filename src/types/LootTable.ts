@@ -18,7 +18,7 @@ export class LootTable extends CDClient {
   }
 
   async create(): Promise<void> {
-    this.name = `Loot Table`;
+    this.name = this.locale.getLootTableName(this.id) || `Loot Table`;
     await this.addLoot();
   }
 
