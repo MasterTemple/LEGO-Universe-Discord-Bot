@@ -3,7 +3,7 @@ function gcd(a, b) {
 }
 
 export function decimalToFraction(_decimal): string {
-  _decimal = Math.floor(_decimal * 100000) / 100000
+  _decimal = Math.floor(_decimal * 100000) / 100000;
   if (_decimal == 1) {
     return '1';
   } else {
@@ -13,14 +13,14 @@ export function decimalToFraction(_decimal): string {
       top = +top + Math.floor(_decimal) * bottom;
     }
     var x = gcd(top, bottom);
-    return `${top / x}/${bottom / x}`
+    return `${top / x}/${bottom / x}`;
   }
 };
 
 export function percent(num: number) {
-  return `${(round(num, 5) * 100).toFixed(2)}%`
+  return `${(round(num, 5) * 100).toFixed(2)}%`;
 }
 
 export function round(decimal: number, places: number = 2) {
-  return Math.round(decimal * Math.pow(10, places)) / Math.pow(10, places)
+  return Math.round(decimal * Math.pow(10, places)) / Math.pow(10, places);
 }

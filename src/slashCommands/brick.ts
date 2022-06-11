@@ -22,7 +22,7 @@ export default {
     options,
     cdclient) {
 
-    const query = getOption(options, "brick")
+    const query = getOption(options, "brick");
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
     const item = new Item(cdclient, itemId);
     await item.create();
@@ -30,15 +30,15 @@ export default {
 
     const embed = new Embed();
     embed.setURL(item.getURL());
-    embed.setThumbnail(item.imageURL)
+    embed.setThumbnail(item.imageURL);
     embed.setTitle(`${item.name} [${item.id}]`);
 
-    embed.addField("Name", item.name, true)
-    embed.addField("Description", item.objectData.description || "None", true)
-    embed.addField("Internal Notes", item.objectData._internalNotes || "None", true)
-    embed.addField("Cost", item.itemComponent?.buyPrice?.toString() || "0", true)
-    embed.addField("Stack Size", item.itemComponent?.stackSize?.toString() || "999", true)
-    embed.addField("Level Requirement", item.itemComponent?.levelRequirement?.toString() || "0", true)
+    embed.addField("Name", item.name, true);
+    embed.addField("Description", item.objectData.description || "None", true);
+    embed.addField("Internal Notes", item.objectData._internalNotes || "None", true);
+    embed.addField("Cost", item.itemComponent?.buyPrice?.toString() || "0", true);
+    embed.addField("Stack Size", item.itemComponent?.stackSize?.toString() || "999", true);
+    embed.addField("Level Requirement", item.itemComponent?.levelRequirement?.toString() || "0", true);
 
     let buttons = new MessageActionRow().addComponents(
       new Button().setDisabled(!item.get.isFromMission).setLabel("Earn").setCustomId(`earn/${itemId}`),
@@ -46,13 +46,13 @@ export default {
       new Button().setDisabled(!item.get.isFromPackage).setLabel("Unpack").setCustomId(`unpack/${itemId}`),
       new Button().setDisabled(!item.get.isFromActivity).setLabel("Reward").setCustomId(`reward/${itemId}`),
       new Button().setDisabled(!item.get.isFromVendor).setLabel("Buy").setCustomId(`buy/${itemId}`),
-    )
+    );
 
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       isPaged: false,
       components: [buttons],
-    })
+    });
   },
 } as SlashCommand;

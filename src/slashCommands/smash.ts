@@ -24,7 +24,7 @@ export default {
     options,
     cdclient) {
 
-    const query = getOption(options, "enemy")
+    const query = getOption(options, "enemy");
     const enemyId = parseInt(query) || await cdclient.getObjectId(query);
     const enemy = new Enemy(cdclient, enemyId);
     await enemy.create();
@@ -34,17 +34,17 @@ export default {
     embed.setTitle(`${enemy.name} [${enemy.id}]`);
     embed.setURL(enemy.getURL());
 
-    fillEmbedWithSmashableDrops(embed, enemy.drops, enemy.locale)
+    fillEmbedWithSmashableDrops(embed, enemy.drops, enemy.locale);
     let buttons = new MessageActionRow().addComponents(
       new Button().setLabel("Enemy Stats").setCustomId(`enemy/${enemy.id}`),
       new Button().setLabel("Smash Enemy").setCustomId(`smash/${enemy.id}`).setStyle("SUCCESS"),
-    )
+    );
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [buttons],
 
-    })
+    });
 
   },
 } as SlashCommand;

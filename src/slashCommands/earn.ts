@@ -22,7 +22,7 @@ export default {
     options,
     cdclient) {
 
-    const query = getOption(options, "item")
+    const query = getOption(options, "item");
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
     const item = new Item(cdclient, itemId);
     await item.create();
@@ -30,16 +30,16 @@ export default {
 
     const embed = new Embed();
     embed.setURL(item.getURL());
-    embed.setThumbnail(item.imageURL)
+    embed.setThumbnail(item.imageURL);
     embed.setTitle(`${item.name} [${item.id}]`);
 
     item.reward.forEach((reward) => {
       // let title = `${reward.type} > ${reward.subtype} > ${reward.name}`
-      let title = reward.type
-      if (reward.subtype) title += ` > ${reward.subtype}`
-      title += ` > ${reward.name}`
-      embed.addField(title, `${reward.description} ${bracketURL(reward.id)} Rewards **${reward.rewardCount}**`)
-    })
+      let title = reward.type;
+      if (reward.subtype) title += ` > ${reward.subtype}`;
+      title += ` > ${reward.name}`;
+      embed.addField(title, `${reward.description} ${bracketURL(reward.id)} Rewards **${reward.rewardCount}**`);
+    });
 
     let buttons = new MessageActionRow().addComponents(
       new Button().setDisabled(!item.get.isFromMission).setLabel("Earn").setCustomId(`earn/${itemId}`).setStyle("SUCCESS"),
@@ -47,13 +47,13 @@ export default {
       new Button().setDisabled(!item.get.isFromPackage).setLabel("Unpack").setCustomId(`unpack/${itemId}`),
       new Button().setDisabled(!item.get.isFromActivity).setLabel("Reward").setCustomId(`reward/${itemId}`),
       new Button().setDisabled(!item.get.isFromVendor).setLabel("Buy").setCustomId(`buy/${itemId}`),
-    )
+    );
 
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [buttons],
-    })
+    });
 
   },
 } as SlashCommand;

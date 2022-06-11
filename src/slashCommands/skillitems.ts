@@ -23,7 +23,7 @@ export default {
     options,
     cdclient) {
 
-    const query = getOption(options, "skill")
+    const query = getOption(options, "skill");
     const skillId = parseInt(query) || parseInt(cdclient.locale.searchSkills(query)[0].value);
     const skill = new Skill(cdclient, skillId);
     await skill.create();
@@ -32,29 +32,29 @@ export default {
     const embed = new Embed();
     embed.setTitle(`${skill.name} [${skill.id}]`);
     embed.setURL(skill.getURL());
-    embed.setThumbnail(skill.imageURL)
+    embed.setThumbnail(skill.imageURL);
 
     if (skill.skillItems.length) {
       let text = skill.skillItems.map((item, index) => `**${index + 1}.** ${item.name} ${bracketURL(item.id)}`).join("\n");
       textToChunks(text).forEach((chunk) => {
-        embed.addField("Items", chunk, true)
-      })
+        embed.addField("Items", chunk, true);
+      });
 
     } else {
-      embed.addField("No Items!", `${skill.name} is not attached to any item!`)
+      embed.addField("No Items!", `${skill.name} is not attached to any item!`);
     }
 
     let buttons = new MessageActionRow().addComponents(
       new Button().setLabel(skill.name).setCustomId(`skill/${skill.id}`),
       new Button().setLabel(`Items with ${skill.name}`).setCustomId(`skillitems/${skill.id}`).setStyle("SUCCESS"),
-    )
+    );
 
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       pageSize: 2,
       components: [buttons],
-    })
+    });
 
   },
 } as SlashCommand;

@@ -32,7 +32,7 @@ export const HONOR_ACCOLADE = 13806;
 export const MISSION_OFFER_COMPONENT = 73;
 
 function sqlike(str: string): string {
-  return `%${str.replace(/\s/g, "%")}%`
+  return `%${str.replace(/\s/g, "%")}%`;
 }
 export class CDClient {
   db: Database;
@@ -87,9 +87,9 @@ export class CDClient {
         )`,
         function (_, row: RenderComponent) {
           let icon = row?.icon_asset;
-          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
+          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png");
           icon = formatIconPath(icon);
-          resolve(icon)
+          resolve(icon);
         });
     });
   }
@@ -100,9 +100,9 @@ export class CDClient {
         `SELECT IconPath FROM Icons WHERE IconID=(SELECT skillIcon FROM SkillBehavior WHERE skillID = ${skillId})`,
         function (_, row: Icons) {
           let icon = row?.IconPath;
-          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
+          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png");
           icon = formatIconPath(icon);
-          resolve(icon)
+          resolve(icon);
         });
     });
   }
@@ -113,9 +113,9 @@ export class CDClient {
         `SELECT IconPath FROM Icons WHERE IconID=${iconId}`,
         function (_, row: Icons) {
           let icon = row?.IconPath;
-          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
+          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png");
           icon = formatIconPath(icon);
-          resolve(icon)
+          resolve(icon);
         });
     });
   }
@@ -127,9 +127,9 @@ export class CDClient {
         `SELECT IconPath FROM Icons WHERE IconID = (SELECT IconID FROM MissionTasks WHERE id = ${missionId}) OR IconID = (SELECT largeTaskIconID FROM MissionTasks WHERE id = ${missionId})`,
         function (_, row: Icons) {
           let icon = row?.IconPath;
-          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
+          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png");
           icon = formatIconPath(icon);
-          resolve(icon)
+          resolve(icon);
         });
     });
   }
@@ -166,7 +166,7 @@ export class CDClient {
 
   async getObjectName(id: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      let name = this.locale.getObjectName(id)
+      let name = this.locale.getObjectName(id);
       if (name) {
         resolve(name);
       } else {
@@ -178,19 +178,19 @@ export class CDClient {
   }
 
   getObjectElementFromLocale(id: number): ObjectElement {
-    let name = this.locale.getObjectName(id)
+    let name = this.locale.getObjectName(id);
     if (name) return {
       id: id,
       name: name,
     };
     else {
-      return
+      return;
     }
   }
 
   async getObjectElement(id: number): Promise<ObjectElement> {
     return new Promise<ObjectElement>((resolve, reject) => {
-      let name = this.locale.getObjectName(id)
+      let name = this.locale.getObjectName(id);
       const element: ObjectElement = {
         id: id,
         name: name,
@@ -397,9 +397,9 @@ export class CDClient {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
               value: row.id.toString()
-            }
+            };
           });
-          resolve(pairs)
+          resolve(pairs);
         });
     });
   }
@@ -412,9 +412,9 @@ export class CDClient {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
               value: row.id.toString()
-            }
-          })
-          resolve(pairs)
+            };
+          });
+          resolve(pairs);
         });
     });
   }
@@ -428,12 +428,12 @@ export class CDClient {
               return {
                 name: displayName || name,
                 id: id
-              }
+              };
             })
-          )
+          );
         }
-      )
-    })
+      );
+    });
   }
 
   async getItemsWithSkill(skillId: number): Promise<ObjectElement[]> {
@@ -446,12 +446,12 @@ export class CDClient {
               return {
                 name: this.locale.getObjectName(id),
                 id: id
-              }
+              };
             })
-          )
+          );
         }
-      )
-    })
+      );
+    });
   }
 
   async getSmashableDrops(id: number): Promise<SmashableDrop[]> {
@@ -466,17 +466,17 @@ export class CDClient {
               ltiSize = await this.getItemsInLootTableOfRarity(row.lootTableIndex, row.rarity);
               lootTableRaritySizes.set(row.lootTableIndex, ltiSize);
             }
-            row.poolSize = ltiSize
+            row.poolSize = ltiSize;
           }
-          resolve(rows)
+          resolve(rows);
         }
-      )
-    })
+      );
+    });
   }
 
   async getPackageDrops(id: number): Promise<SmashableDrop[]> {
     return new Promise<SmashableDrop[]>(async (resolve, reject) => {
-      let query = `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM PackageComponent WHERE id IN ( SELECT component_id FROM ComponentsRegistry WHERE component_type=${PACKAGE_COMPONENT} AND id=${id}))`
+      let query = `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM PackageComponent WHERE id IN ( SELECT component_id FROM ComponentsRegistry WHERE component_type=${PACKAGE_COMPONENT} AND id=${id}))`;
       this.db.all(
         query,
         async (_, rows: SmashableDrop[]) => {
@@ -487,12 +487,12 @@ export class CDClient {
               ltiSize = await this.getItemsInLootTableOfRarity(row.lootTableIndex, row.rarity);
               lootTableRaritySizes.set(row.lootTableIndex, ltiSize);
             }
-            row.poolSize = ltiSize
+            row.poolSize = ltiSize;
           }
-          resolve(rows)
+          resolve(rows);
         }
-      )
-    })
+      );
+    });
   }
 
   async getActivityDrops(activityName: string): Promise<SmashableDrop[]> {
@@ -509,12 +509,12 @@ export class CDClient {
               ltiSize = await this.getItemsInLootTableOfRarity(row.lootTableIndex, row.rarity);
               lootTableRaritySizes.set(`${row.lootTableIndex}:${row.rarity}`, ltiSize);
             }
-            row.poolSize = ltiSize
+            row.poolSize = ltiSize;
           }
-          resolve(rows)
+          resolve(rows);
         }
-      )
-    })
+      );
+    });
   }
 
   async dropItemFromEnemy(id: number, rarity: number): Promise<LootDropFirstQuery[]> {
@@ -537,9 +537,9 @@ export class CDClient {
               newRows.push(row);
             }
           }
-          resolve(newRows)
-        })
-    })
+          resolve(newRows);
+        });
+    });
   }
 
   async dropItemFromPackage(id: number, rarity: number): Promise<LootDropFirstQuery[]> {
@@ -562,9 +562,9 @@ export class CDClient {
               newRows.push(row);
             }
           }
-          resolve(newRows)
-        })
-    })
+          resolve(newRows);
+        });
+    });
   }
 
   async getItemsInLootTableWithRarity(lootTable: number): Promise<LootTableItem[]> {
@@ -573,12 +573,12 @@ export class CDClient {
         `SELECT itemid as id, ItemComponent.rarity FROM LootTable JOIN ItemComponent ON ItemComponent.id = (SELECT component_id FROM ComponentsRegistry WHERE id = LootTable.itemid AND component_type = ${ITEM_COMPONENT}) WHERE LootTable.LootTableIndex = ${lootTable} ORDER BY rarity ASC;`,
         (_, rows: LootTableItem[]) => {
           for (let row of rows) {
-            row.name = this.locale.getObjectName(row.id)
+            row.name = this.locale.getObjectName(row.id);
           }
-          resolve(rows)
+          resolve(rows);
         }
-      )
-    })
+      );
+    });
   }
 
   async getItemsInLootTableOfRarity(lootTable: number, rarity: number): Promise<number> {
@@ -587,10 +587,10 @@ export class CDClient {
         `SELECT COUNT() as RarityCount FROM ItemComponent WHERE id IN (SELECT component_id FROM ComponentsRegistry WHERE component_type = ${ITEM_COMPONENT} AND id IN (SELECT itemid FROM LootTable WHERE LootTableIndex = ${lootTable})) AND rarity=${rarity}`,
         (_, row: any) => {
           // resolve(row?.RarityCount || 0)
-          resolve(row?.RarityCount)
+          resolve(row?.RarityCount);
         }
-      )
-    })
+      );
+    });
   }
 
   async getEnemiesAndLootMatrixForLoot(id: number): Promise<Map<number, number>> {
@@ -599,10 +599,10 @@ export class CDClient {
       this.db.all(query,
         (_, rows: any[]) => {
           let map = new Map<number, number>();
-          rows.forEach((e) => map.set(e.enemyId, e.lootMatrixIndex))
-          resolve(map)
-        })
-    })
+          rows.forEach((e) => map.set(e.enemyId, e.lootMatrixIndex));
+          resolve(map);
+        });
+    });
   }
 
   async getPackagesAndLootMatrixForLoot(id: number): Promise<Map<number, number>> {
@@ -611,10 +611,10 @@ export class CDClient {
       this.db.all(query,
         (_, rows: any[]) => {
           let map = new Map<number, number>();
-          rows.forEach((e) => map.set(e.packageId, e.lootMatrixIndex))
-          resolve(map)
-        })
-    })
+          rows.forEach((e) => map.set(e.packageId, e.lootMatrixIndex));
+          resolve(map);
+        });
+    });
   }
 
   async getIdsOfItemsSold(id: number): Promise<number[]> {
@@ -622,16 +622,16 @@ export class CDClient {
       let query = `SELECT id FROM Objects WHERE id in ( SELECT itemid FROM LootTable WHERE LootTableIndex in ( SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=( SELECT LootMatrixIndex FROM VendorComponent WHERE id=( SELECT component_id FROM ComponentsRegistry WHERE component_type=${VENDOR_COMPONENT} and id=${id} ) ) ) )`;
       this.db.all(query,
         (_, rows: any[]) => {
-          let map = rows.map((e) => e.id)
-          resolve(map)
-        })
-    })
+          let map = rows.map((e) => e.id);
+          resolve(map);
+        });
+    });
   }
 
   async getItemsSold(id: number): Promise<ItemSold[]> {
     let query = `SELECT ComponentsRegistry.id, ItemComponent.baseValue as cost, ItemComponent.currencyLOT as alternateCurrencyId, ItemComponent.altCurrencyCost as alternateCost, ItemComponent.commendationLOT as commendationCurrencyId, ItemComponent.commendationCost as commendationCost FROM ComponentsRegistry JOIN ItemComponent ON ItemComponent.id = ComponentsRegistry.component_id WHERE component_type = ${ITEM_COMPONENT} AND ComponentsRegistry.id IN( SELECT id FROM Objects WHERE id in ( SELECT itemid FROM LootTable WHERE LootTableIndex in ( SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=( SELECT LootMatrixIndex FROM VendorComponent WHERE id=( SELECT component_id FROM ComponentsRegistry WHERE component_type=${VENDOR_COMPONENT} and id=${id} ) ) ) ) )`;
     if (id === HONOR_ACCOLADE) {
-      query = `SELECT ComponentsRegistry.id, ItemComponent.baseValue as cost, ItemComponent.currencyLOT as alternateCurrencyId, ItemComponent.altCurrencyCost as alternateCost, ItemComponent.commendationLOT as commendationCurrencyId, ItemComponent.commendationCost as commendationCost FROM ItemComponent JOIN ComponentsRegistry ON ComponentsRegistry.component_id = ItemComponent.id AND  component_type = ${ITEM_COMPONENT} AND ComponentsRegistry.id WHERE ItemComponent.commendationLOT IS NOT NULL`
+      query = `SELECT ComponentsRegistry.id, ItemComponent.baseValue as cost, ItemComponent.currencyLOT as alternateCurrencyId, ItemComponent.altCurrencyCost as alternateCost, ItemComponent.commendationLOT as commendationCurrencyId, ItemComponent.commendationCost as commendationCost FROM ItemComponent JOIN ComponentsRegistry ON ComponentsRegistry.component_id = ItemComponent.id AND  component_type = ${ITEM_COMPONENT} AND ComponentsRegistry.id WHERE ItemComponent.commendationLOT IS NOT NULL`;
     }
     return new Promise<ItemSold[]>((resolve, reject) => {
       this.db.all(query,
@@ -646,11 +646,11 @@ export class CDClient {
               alternateCost: item.alternateCost || 0,
               commendationCurrency: { id: item.commendationCurrencyId, name: "Faction Token" },
               commendationCost: item.commendationCost || 0,
-            }
-          })
-          resolve(map)
-        })
-    })
+            };
+          });
+          resolve(map);
+        });
+    });
   }
 
   async getIdsOfVendorsThatSellItem(id: number): Promise<number[]> {
@@ -658,10 +658,10 @@ export class CDClient {
       let query = `SELECT id FROM ComponentsRegistry WHERE component_type = ${VENDOR_COMPONENT} AND component_id IN (SELECT id from VendorComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${id} ) ))`;
       this.db.all(query,
         (_, rows: any[]) => {
-          let map = rows.map((e) => e.id)
-          resolve(map)
-        })
-    })
+          let map = rows.map((e) => e.id);
+          resolve(map);
+        });
+    });
   }
 
   async getItemsWithRarityInLootTable(lootTable: number): Promise<number> {
@@ -669,10 +669,10 @@ export class CDClient {
       this.db.get(
         `SELECT itemid as id, ItemComponent.rarity FROM LootTable JOIN ItemComponent ON ItemComponent.id = (SELECT component_id FROM ComponentsRegistry WHERE id = LootTable.itemid AND component_type = ${ITEM_COMPONENT}) WHERE LootTable.LootTableIndex = ${lootTable};`,
         (_, row: any) => {
-          resolve(row?.RarityCount || 0)
+          resolve(row?.RarityCount || 0);
         }
-      )
-    })
+      );
+    });
   }
 
   async getMissionsThatRewardItem(item: number): Promise<MissionReward[]> {
@@ -680,7 +680,7 @@ export class CDClient {
       this.db.all(
         `SELECT id, defined_type as type, defined_subtype as subtype, reward_item1, reward_item2, reward_item3, reward_item4, reward_item1_count, reward_item2_count, reward_item3_count, reward_item4_count FROM Missions WHERE reward_item1 = ${item} OR reward_item2 = ${item} OR reward_item3 = ${item} OR reward_item4 = ${item};`,
         (_, rows) => {
-          let count = 0
+          let count = 0;
 
           rows = rows.map((row) => {
             if (item === row.reward_item1) count = row.reward_item1_count;
@@ -695,14 +695,14 @@ export class CDClient {
               name: this.locale.getMissionName(row.id),
               description: this.locale.getMissionDescription(row.id),
               rewardCount: count
-            }
-          })
+            };
+          });
 
-          rows = rows.filter((r) => r.rewardCount > 0)
-          resolve(rows)
+          rows = rows.filter((r) => r.rewardCount > 0);
+          resolve(rows);
         }
-      )
-    })
+      );
+    });
   }
 
   async getMissionsFromNPC(npcId: number): Promise<NPCMission[]> {
@@ -737,12 +737,12 @@ export class CDClient {
               isAchievement: false,
               giver: { id: row.offer_objectID, name: this.locale.getObjectName(row.offer_objectID) },
               accepter: { id: row.target_objectID, name: this.locale.getObjectName(row.target_objectID) },
-            }
-          })
-          resolve(missions)
+            };
+          });
+          resolve(missions);
         }
-      )
-    })
+      );
+    });
   }
 
   async getEnemyHealth(enemyId: number): Promise<EnemyHealth> {
@@ -750,10 +750,10 @@ export class CDClient {
       this.db.get(
         `SELECT * FROM DestructibleComponent WHERE id = (SELECT component_id FROM ComponentsRegistry WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND id = ${enemyId})`,
         (_, row: EnemyHealth) => {
-          resolve(row)
+          resolve(row);
         }
-      )
-    })
+      );
+    });
   }
 
   async getMission(missionId: number): Promise<Missions> {
@@ -761,10 +761,10 @@ export class CDClient {
       this.db.get(
         `SELECT * FROM Missions WHERE id = ${missionId}`,
         (_, row: Missions) => {
-          resolve(row)
+          resolve(row);
         }
-      )
-    })
+      );
+    });
   }
 
   async getActivitiesThatDropItem(itemId: number, rarity: number): Promise<ActivityDropFromQuery[]> {
@@ -787,27 +787,27 @@ export class CDClient {
               newRows.push(row);
             }
           }
-          resolve(newRows)
+          resolve(newRows);
         }
-      )
-    })
+      );
+    });
   }
 
   async getRarityVarianceMap(): Promise<Map<number, number>> {
     return new Promise<Map<number, number>>(async (resolve, reject) => {
-      let query = `SELECT RarityTableIndex FROM RarityTable`
+      let query = `SELECT RarityTableIndex FROM RarityTable`;
       this.db.all(
         query,
         async (_, rows: RarityTable[]) => {
           let map = new Map<number, number>();
           for (let { RarityTableIndex: rti } of rows) {
-            if (map.has(rti)) map.set(rti, map.get(rti) + 1)
-            else map.set(rti, 1)
+            if (map.has(rti)) map.set(rti, map.get(rti) + 1);
+            else map.set(rti, 1);
           }
           return map;
         }
-      )
-    })
+      );
+    });
   }
 
 
@@ -822,9 +822,9 @@ export class CDClient {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
               value: row.id.toString()
-            }
+            };
           });
-          resolve(pairs)
+          resolve(pairs);
         });
     });
   }
@@ -838,9 +838,9 @@ export class CDClient {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
               value: row.id.toString()
-            }
+            };
           });
-          resolve(pairs)
+          resolve(pairs);
         });
     });
   }
@@ -854,9 +854,9 @@ export class CDClient {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
               value: row.id.toString()
-            }
+            };
           });
-          resolve(pairs)
+          resolve(pairs);
         });
     });
   }
@@ -864,7 +864,7 @@ export class CDClient {
   async searchVendor(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       let statement =
-        `SELECT id, name, displayName FROM Objects WHERE Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${VENDOR_COMPONENT}) AND (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') LIMIT 25`
+        `SELECT id, name, displayName FROM Objects WHERE Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${VENDOR_COMPONENT}) AND (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') LIMIT 25`;
       this.db.all(
         statement,
         (_, rows: Objects[]) => {
@@ -872,9 +872,9 @@ export class CDClient {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
               value: row.id.toString()
-            }
+            };
           });
-          resolve(pairs)
+          resolve(pairs);
         });
     });
   }
@@ -888,9 +888,9 @@ export class CDClient {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
               value: row.id.toString()
-            }
+            };
           });
-          resolve(pairs)
+          resolve(pairs);
         });
     });
   }
@@ -904,9 +904,9 @@ export class CDClient {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
               value: row.id.toString()
-            }
+            };
           });
-          resolve(pairs)
+          resolve(pairs);
         });
     });
   }
@@ -920,9 +920,9 @@ export class CDClient {
             return {
               name: `${this.locale.getActivityName(row.objectTemplate)} > ${row.description} [${row.objectTemplate}]`,
               value: `${row.objectTemplate};${row.description}`
-            }
+            };
           });
-          resolve(pairs)
+          resolve(pairs);
         });
     });
   }
@@ -932,11 +932,11 @@ export class CDClient {
       this.db.all(
         `SELECT * FROM ActivityRewards`,
         (_, rows: ActivityRewards[]) => {
-          let newRows: ActivityRewards[] = []
-          let re = new RegExp(`${query.replace(/[^A-z0-9]/gim, ".*")}`, "gi")
+          let newRows: ActivityRewards[] = [];
+          let re = new RegExp(`${query.replace(/[^A-z0-9]/gim, ".*")}`, "gi");
           for (let row of rows) {
             if (row.description.match(re) || this.locale.getActivityName(row.objectTemplate).match(re)) {
-              newRows.push(row)
+              newRows.push(row);
               if (newRows.length === 25) break;
             }
           }
@@ -945,9 +945,9 @@ export class CDClient {
             return {
               name: `${this.locale.getActivityName(row.objectTemplate)} > ${row.description} [${row.objectTemplate}]`,
               value: `${row.objectTemplate};${row.description}`
-            }
+            };
           });
-          resolve(pairs)
+          resolve(pairs);
         });
     });
   }

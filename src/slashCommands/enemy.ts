@@ -22,7 +22,7 @@ export default {
     options,
     cdclient) {
 
-    const query = getOption(options, "enemy")
+    const query = getOption(options, "enemy");
     const enemyId = parseInt(query) || await cdclient.getObjectId(query);
     const enemy = new Enemy(cdclient, enemyId);
     await enemy.create();
@@ -32,19 +32,19 @@ export default {
     // embed.setThumbnail(enemy.imageURL)
     embed.setTitle(`${enemy.name} [${enemy.id}]`);
 
-    embed.setDescription(`Life: **${enemy.life}**\nArmor: **${enemy.armor}**`)
+    embed.setDescription(`Life: **${enemy.life}**\nArmor: **${enemy.armor}**`);
 
     let buttons = new MessageActionRow().addComponents(
       new Button().setLabel("Enemy Stats").setCustomId(`enemy/${enemy.id}`).setStyle("SUCCESS"),
       new Button().setLabel("Smash Enemy").setCustomId(`smash/${enemy.id}`),
-    )
+    );
 
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [buttons],
       isPaged: false
-    })
+    });
 
   },
 } as SlashCommand;

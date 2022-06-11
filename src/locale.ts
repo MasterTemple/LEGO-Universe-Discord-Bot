@@ -53,17 +53,17 @@ export class LocaleXML {
           ].map((e) => e.groups);
           this.locale.set(name, new Map<string, string>());
           for (let { num, content } of matches) {
-            content = content.replace(/\&lt;([^&]+(&apos;)?)+&gt;/gm, "")
-            content = content.replace(/&apos;/gm, "'")
+            content = content.replace(/\&lt;([^&]+(&apos;)?)+&gt;/gm, "");
+            content = content.replace(/&apos;/gm, "'");
             this.locale.get(name).set(num, content);
           }
         }
 
         // loot table names
-        let ltiNames = require("./unofficial/lootTableNames.json")
-        this.unofficial.set("LootTableName", new Map<number, string>())
+        let ltiNames = require("./unofficial/lootTableNames.json");
+        this.unofficial.set("LootTableName", new Map<number, string>());
         for (let lti of ltiNames) {
-          this.unofficial.get("LootTableName").set(lti.lti, lti.name)
+          this.unofficial.get("LootTableName").set(lti.lti, lti.name);
         }
 
         resolve();
@@ -104,16 +104,16 @@ export class LocaleXML {
       return {
         name: e.groups.name,
         description: e.groups.description,
-      }
-    })
+      };
+    });
   }
 
   searchActivities(query: string): NameValuePair[] {
     let matches: NameValuePair[] = [];
-    let re = new RegExp(query, "gi")
+    let re = new RegExp(query, "gi");
     for (let [id, name] of this.locale.get("Activities_ID_ActivityName")) {
       if (name.match(re)) {
-        matches.push({ name: `${name} [${id}]`, value: id })
+        matches.push({ name: `${name} [${id}]`, value: id });
         if (matches.length === 15) break;
       }
     }
@@ -122,10 +122,10 @@ export class LocaleXML {
 
   searchObjects(query: string): NameValuePair[] {
     let matches: NameValuePair[] = [];
-    let re = new RegExp(query, "gi")
+    let re = new RegExp(query, "gi");
     for (let [id, name] of this.locale.get("Objects_ID_name")) {
       if (name.match(re)) {
-        matches.push({ name: `${name} [${id}]`, value: id })
+        matches.push({ name: `${name} [${id}]`, value: id });
         if (matches.length === 15) break;
       }
     }
@@ -134,10 +134,10 @@ export class LocaleXML {
 
   searchSkills(query: string): NameValuePair[] {
     let matches: NameValuePair[] = [];
-    let re = new RegExp(query, "gi")
+    let re = new RegExp(query, "gi");
     for (let [id, name] of this.locale.get("SkillBehavior_ID_name")) {
       if (name.match(re)) {
-        matches.push({ name: `${name} [${id}]`, value: id })
+        matches.push({ name: `${name} [${id}]`, value: id });
         if (matches.length === 15) break;
       }
     }
@@ -146,10 +146,10 @@ export class LocaleXML {
 
   searchMissions(query: string): NameValuePair[] {
     let matches: NameValuePair[] = [];
-    let re = new RegExp(query, "gi")
+    let re = new RegExp(query, "gi");
     for (let [id, name] of this.locale.get("Missions_ID_name")) {
       if (name.match(re)) {
-        matches.push({ name: `${name} [${id}]`, value: id })
+        matches.push({ name: `${name} [${id}]`, value: id });
         if (matches.length === 15) break;
       }
     }
@@ -158,10 +158,10 @@ export class LocaleXML {
 
   searchLootTable(query: string): NameValuePair[] {
     let matches: NameValuePair[] = [];
-    let re = new RegExp(query, "gi")
+    let re = new RegExp(query, "gi");
     for (let [id, name] of this.unofficial.get("LootTableName")) {
       if (name.match(re)) {
-        matches.push({ name: `${name} [${id}]`, value: id })
+        matches.push({ name: `${name} [${id}]`, value: id });
         if (matches.length === 15) break;
       }
     }

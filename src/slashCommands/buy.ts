@@ -65,7 +65,7 @@ export default {
     options,
     cdclient) {
 
-    const query = getOption(options, "item")
+    const query = getOption(options, "item");
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
     const item = new Item(cdclient, itemId);
     await item.create();
@@ -74,23 +74,23 @@ export default {
     const embed = new Embed();
     embed.setTitle(`${item.name} [${item.id}]`);
     embed.setURL(item.getURL());
-    embed.setThumbnail(item.imageURL)
+    embed.setThumbnail(item.imageURL);
 
-    let price: string = ""
+    let price: string = "";
     let costs = [];
-    if (item.itemComponent.buyPrice) costs.push(`**${item.itemComponent.buyPrice}** Coins`)
-    if (item.itemComponent.commendationCurrencyCost) costs.push(`**${item.itemComponent.commendationCurrencyCost}** ${item.itemComponent.commendationCurrencyName}s`)
-    if (item.itemComponent.alternateCurrencyCost) costs.push(`**${item.itemComponent.alternateCurrencyCost}** ${item.itemComponent.alternateCurrencyName}s`)
-    price = costs.join(" **+** ")
+    if (item.itemComponent.buyPrice) costs.push(`**${item.itemComponent.buyPrice}** Coins`);
+    if (item.itemComponent.commendationCurrencyCost) costs.push(`**${item.itemComponent.commendationCurrencyCost}** ${item.itemComponent.commendationCurrencyName}s`);
+    if (item.itemComponent.alternateCurrencyCost) costs.push(`**${item.itemComponent.alternateCurrencyCost}** ${item.itemComponent.alternateCurrencyName}s`);
+    price = costs.join(" **+** ");
 
     if (item.buy.length) {
       let vendorsText = item.buy.map((vendor, index) => `**${index + 1}.** ${vendor.name} ${bracketURL(vendor.id)} for ${price}`).join("\n");
       textToChunks(vendorsText).forEach((vendors) => {
-        embed.addField("Vendors", vendors)
-      })
+        embed.addField("Vendors", vendors);
+      });
 
     } else {
-      embed.addField("Not Sold!", `${item.name} is not sold by a vendor!`)
+      embed.addField("Not Sold!", `${item.name} is not sold by a vendor!`);
     }
     let buttons = new MessageActionRow().addComponents(
       new Button().setDisabled(!item.get.isFromMission).setLabel("Earn").setCustomId(`earn/${itemId}`),
@@ -98,13 +98,13 @@ export default {
       new Button().setDisabled(!item.get.isFromPackage).setLabel("Unpack").setCustomId(`unpack/${itemId}`),
       new Button().setDisabled(!item.get.isFromActivity).setLabel("Reward").setCustomId(`reward/${itemId}`),
       new Button().setDisabled(!item.get.isFromVendor).setLabel("Buy").setCustomId(`buy/${itemId}`).setStyle("SUCCESS"),
-    )
+    );
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       pageSize: 1,
       components: [buttons],
-    })
+    });
 
   },
 } as SlashCommand;

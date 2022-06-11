@@ -22,33 +22,33 @@ export default {
     options,
     cdclient) {
 
-    const query = getOption(options, "npc")
+    const query = getOption(options, "npc");
     const npcId = parseInt(query) || await cdclient.getObjectId(query);
     const npc = new NPC(cdclient, npcId);
     await npc.create();
 
     const embed = new Embed();
     embed.setURL(npc.getURL());
-    embed.setThumbnail(npc.imageURL)
+    embed.setThumbnail(npc.imageURL);
     embed.setTitle(`${npc.name} [${npc.id}]`);
 
     npc.missions.forEach((mission, i) => {
-      let title = `${i + 1}. ${mission.type}`
-      if (mission.subtype) title += ` > ${mission.subtype}`
-      title += ` > ${mission.name}`
-      embed.addField(title, `${mission.description} ${bracketURL(mission.id, "missions")}`)
-    })
+      let title = `${i + 1}. ${mission.type}`;
+      if (mission.subtype) title += ` > ${mission.subtype}`;
+      title += ` > ${mission.name}`;
+      embed.addField(title, `${mission.description} ${bracketURL(mission.id, "missions")}`);
+    });
 
     let buttons = new MessageActionRow().addComponents(
       new Button().setLabel("Missions Given").setCustomId(`npc/${npc.id}`).setStyle("SUCCESS"),
       new Button().setLabel("Sold Items").setCustomId(`vendor/${npc.id}`),
-    )
+    );
 
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [buttons],
-    })
+    });
 
   },
 } as SlashCommand;

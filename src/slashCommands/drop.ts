@@ -24,7 +24,7 @@ export default {
     options,
     cdclient) {
 
-    const query = getOption(options, "item")
+    const query = getOption(options, "item");
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
     const item = new Item(cdclient, itemId);
     await item.create();
@@ -33,12 +33,12 @@ export default {
     const embed = new Embed();
     embed.setTitle(`${item.name} [${item.id}]`);
     embed.setURL(item.getURL());
-    embed.setThumbnail(item.imageURL)
+    embed.setThumbnail(item.imageURL);
 
-    fillEmbedWithLootDrops(embed, item.drop, item.name)
+    fillEmbedWithLootDrops(embed, item.drop, item.name);
 
     if (embed.fields.length === 0) {
-      embed.addField("Not Dropped!", `${item.name} is not found by smashing anything!`)
+      embed.addField("Not Dropped!", `${item.name} is not found by smashing anything!`);
     }
 
     let buttons = new MessageActionRow().addComponents(
@@ -47,12 +47,12 @@ export default {
       new Button().setDisabled(!item.get.isFromPackage).setLabel("Unpack").setCustomId(`unpack/${itemId}`),
       new Button().setDisabled(!item.get.isFromActivity).setLabel("Reward").setCustomId(`reward/${itemId}`),
       new Button().setDisabled(!item.get.isFromVendor).setLabel("Buy").setCustomId(`buy/${itemId}`),
-    )
+    );
 
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [buttons],
-    })
+    });
   },
 } as SlashCommand;

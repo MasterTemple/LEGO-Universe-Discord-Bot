@@ -24,7 +24,7 @@ export default {
     options,
     cdclient) {
 
-    const query = getOption(options, "package")
+    const query = getOption(options, "package");
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
     const item = new Item(cdclient, itemId);
     await item.create();
@@ -32,23 +32,23 @@ export default {
 
     const embed = new Embed();
     embed.setURL(item.getURL());
-    embed.setThumbnail(item.imageURL)
+    embed.setThumbnail(item.imageURL);
     embed.setTitle(`${item.name} [${item.id}]`);
 
-    fillEmbedWithSmashableDrops(embed, item.packageDrops, item.locale)
+    fillEmbedWithSmashableDrops(embed, item.packageDrops, item.locale);
 
     let buttons = new MessageActionRow().addComponents(
       new Button().setLabel("Item").setCustomId(`item/${item.id}`),
       new Button().setLabel("Get").setCustomId(`get/${item.id}`),
       new Button().setLabel("Preconditions").setCustomId(`preconditions/${item.id}`),
       new Button().setLabel("Open").setCustomId(`package/${item.id}`).setStyle("SUCCESS"),
-    )
+    );
 
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [buttons],
-    })
+    });
 
   },
 } as SlashCommand;

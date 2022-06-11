@@ -23,11 +23,11 @@ export class Mission extends CDClient {
   async create(): Promise<void> {
     this.raw = await this.getMission(this.id);
     await this.addThumbnail();
-    this.organizeData()
-    let title = this.data.type
-    if (this.data.subtype) title += ` > ${this.data.subtype}`
-    title += ` > ${this.data.name}`
-    this.name = title
+    this.organizeData();
+    let title = this.data.type;
+    if (this.data.subtype) title += ` > ${this.data.subtype}`;
+    title += ` > ${this.data.name}`;
+    this.name = title;
   }
 
   getURL(id: number = this.id): string {
@@ -35,8 +35,8 @@ export class Mission extends CDClient {
   }
 
   async addThumbnail(id: number = this.id): Promise<void> {
-    this.imageURL = `${explorerDomain}${await this.getIconAssetForMission(id)}`
-    console.log(this.imageURL)
+    this.imageURL = `${explorerDomain}${await this.getIconAssetForMission(id)}`;
+    console.log(this.imageURL);
   }
 
   organizeData() {
@@ -64,7 +64,7 @@ export class Mission extends CDClient {
       isAchievement: (this.raw.offer_objectID < 0 && this.raw.target_objectID < 0),
       giver: { id: this.raw.offer_objectID, name: this.locale.getObjectName(this.raw.offer_objectID) },
       accepter: { id: this.raw.target_objectID, name: this.locale.getObjectName(this.raw.target_objectID) },
-    }
+    };
   }
 
 }

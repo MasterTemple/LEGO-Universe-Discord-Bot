@@ -23,8 +23,8 @@ export default {
     options,
     cdclient) {
 
-    let query = getOption(options, "activity")
-    if (!query.match(/;/g)) query = (await cdclient.searchActivity(query))[0].value
+    let query = getOption(options, "activity");
+    if (!query.match(/;/g)) query = (await cdclient.searchActivity(query))[0].value;
     const activityId = parseInt(query.match(/^[^;]+/g)?.[0]);
     const activityName = query.match(/(?<=^[^;]+;).*/g)?.[0];
     const activity = new Activity(cdclient, activityId, activityName);
@@ -34,12 +34,12 @@ export default {
     embed.setURL(activity.getURL());
     embed.setTitle(`${activity.name} [${activity.id}]`);
 
-    fillEmbedWithSmashableDrops(embed, activity.rewards, activity.locale)
+    fillEmbedWithSmashableDrops(embed, activity.rewards, activity.locale);
 
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed]
-    })
+    });
 
   },
 } as SlashCommand;

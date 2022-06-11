@@ -27,7 +27,7 @@ export class LootTable extends CDClient {
   }
 
   async addLoot(): Promise<void> {
-    this.loot = await this.getItemsInLootTableWithRarity(this.id)
+    this.loot = await this.getItemsInLootTableWithRarity(this.id);
   }
 
 }

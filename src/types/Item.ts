@@ -57,7 +57,7 @@ export class Item extends CDClient {
   }
 
   async addThumbnail(id: number = this.id): Promise<void> {
-    this.imageURL = `${explorerDomain}${await this.getIconAsset(id)}`
+    this.imageURL = `${explorerDomain}${await this.getIconAsset(id)}`;
   }
 
   async addPackageDrops(): Promise<void> {
@@ -85,13 +85,13 @@ export class Item extends CDClient {
       isFromPackage: await this.isFromPackage(this.id),
       isFromSmashable: await this.isFromSmashable(this.id),
       isFromVendor: await this.isFromVendor(this.id),
-    }
+    };
   }
   async addVendors(): Promise<void> {
     let vendorIds = await this.getIdsOfVendorsThatSellItem(this.id);
     // this.buy = await Promise.all(vendorIds.map((id) => this.getObjectElementFromLocale(id)))
-    this.buy = vendorIds.map((id) => this.getObjectElementFromLocale(id))
-    this.buy = this.buy.filter((b) => b?.name)
+    this.buy = vendorIds.map((id) => this.getObjectElementFromLocale(id));
+    this.buy = this.buy.filter((b) => b?.name);
   }
 
   async addUnpacks(): Promise<void> {
@@ -175,7 +175,7 @@ export class Item extends CDClient {
   }
 
   async addRewards(id: number = this.id): Promise<void> {
-    let rawLootDrops: ActivityDropFromQuery[] = await this.getActivitiesThatDropItem(id, this.itemComponent.rarity)
+    let rawLootDrops: ActivityDropFromQuery[] = await this.getActivitiesThatDropItem(id, this.itemComponent.rarity);
     const lootTableRaritySizes = new Map<number, number>();
     for (const value of rawLootDrops) {
       const element = this.drop?.find((f) => f.chanceForDrop == value.percent && f.minToDrop == value.minToDrop && f.maxToDrop == value.maxToDrop && f.chanceForRarity == value.randmax);
@@ -269,7 +269,7 @@ export class Item extends CDClient {
     return {
       id: id,
       description: this.locale.getPreconditionDescription(id),
-    }
+    };
   }
 
   async getPreconditions(preconditionsString: string): Promise<ItemPrecondition[]> {
@@ -364,6 +364,6 @@ export class Item extends CDClient {
       };
   }
   async addObjectData(): Promise<void> {
-    this.objectData = await this.getObjectData(this.id)
+    this.objectData = await this.getObjectData(this.id);
   }
 }

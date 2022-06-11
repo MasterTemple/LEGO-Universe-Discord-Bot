@@ -1,10 +1,8 @@
-import { AutocompleteInteraction, BaseCommandInteraction, CacheType, Client, CommandInteraction, CommandInteractionOption, Interaction } from 'discord.js';
+import { Client, CommandInteractionOption, Interaction } from 'discord.js';
 import { getAutocompleteOptions } from './autocomplete';
 import { CDClient } from './cdclient';
 import { token } from './config';
-import { LocaleXML } from './locale';
-import { LootDrop, NameValuePair, queryType } from './luInterfaces';
-import { percent } from './math';
+import { NameValuePair } from './luInterfaces';
 import { getSlashCommands, updateSlashCommands } from './setup';
 import { SlashCommandMap } from './types/SlashCommand';
 
@@ -20,10 +18,8 @@ client.once('ready', async () => {
   console.log('\n------------------------------------\n');
   await cdclient.load();
   updateSlashCommands(client, slashCommands);
-
   console.log('\n------------------------------------\n');
   console.log('LEGO Universe Discord Bot is online.');
-  // process.exit(0)
 });
 
 client.on('interactionCreate', async (interaction: Interaction) => {
@@ -34,27 +30,17 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     }
 
     if (interaction.isAutocomplete()) {
-      const options = interaction.options?.data || [];
-      // this is currently a general search for ALL objects in the 'Objects' table
+      const options = interaction.options.data;
       let { value } = options.find((f) => f.focused);
-      value = value.toString();
-
-      let autocompleteOptions: NameValuePair[];
-
-      autocompleteOptions = await getAutocompleteOptions(cdclient, interaction.commandName.toString(), value.toString())
-
+      let autocompleteOptions: NameValuePair[] = await getAutocompleteOptions(cdclient, interaction.commandName.toString(), value.toString());
       interaction.respond(autocompleteOptions);
     }
 
     if (interaction.isMessageComponent()) {
-      let instruction = interaction.customId;
-      let { cmd, id, page } = [...instruction.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\?]+)?/gi)][0].groups
-
-      let options = [{ name: "button", type: "STRING", value: id } as CommandInteractionOption]
+      let { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)/gi)][0].groups;
+      let options = [{ name: "button", type: "STRING", value: id } as CommandInteractionOption];
       slashCommands.get(cmd).run(interaction, options, cdclient);
     }
-
-
   } catch (e) {
     console.log(e);
   }

@@ -32,9 +32,9 @@ export class NPC extends CDClient {
   }
 
   async addSold(): Promise<void> {
-    this.vendor = await this.getItemsSold(this.id)
+    this.vendor = await this.getItemsSold(this.id);
   }
   async addMissions(): Promise<void> {
-    this.missions = await this.getMissionsFromNPC(this.id)
+    this.missions = await this.getMissionsFromNPC(this.id);
   }
 }

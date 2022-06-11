@@ -32,7 +32,7 @@ export class Skill extends CDClient {
   }
 
   async addThumbnail(id: number = this.id): Promise<void> {
-    this.imageURL = `${explorerDomain}${await this.getIconAssetFromSkill(id)}`
+    this.imageURL = `${explorerDomain}${await this.getIconAssetFromSkill(id)}`;
   }
 
   async addSkillBehavior(): Promise<void> {

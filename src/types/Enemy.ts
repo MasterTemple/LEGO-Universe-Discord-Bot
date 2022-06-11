@@ -33,9 +33,9 @@ export class Enemy extends CDClient {
   }
 
   async addStats(): Promise<void> {
-    let stats: EnemyHealth = await this.getEnemyHealth(this.id)
-    this.life = stats.life || 0
-    this.armor = stats.armor || 0
+    let stats: EnemyHealth = await this.getEnemyHealth(this.id);
+    this.life = stats.life || 0;
+    this.armor = stats.armor || 0;
   }
 
   async addDrops(): Promise<void> {

@@ -22,7 +22,7 @@ export default {
     options,
     cdclient) {
 
-    const query = getOption(options, "skill")
+    const query = getOption(options, "skill");
     const skillId = parseInt(query) || parseInt(cdclient.locale.searchSkills(query)[0].value);
     const skill = new Skill(cdclient, skillId);
     await skill.create();
@@ -30,29 +30,29 @@ export default {
     const embed = new Embed();
     embed.setTitle(`${skill.name} [${skill.id}]`);
     embed.setURL(skill.getURL());
-    embed.setThumbnail(skill.imageURL)
+    embed.setThumbnail(skill.imageURL);
 
-    embed.addField("Cooldown Group", "Group " + skill.skillBehavior.cooldowngroup.toString() || "No Cooldown Group", true)
-    embed.addField("Cooldown Time", (skill.skillBehavior.cooldown.toString() || "0") + " Seconds", true)
-    embed.addField("Imagination Cost", (skill.skillBehavior.imaginationcost.toString() || "0") + " Imagination", true)
-    if (skill.skillBehavior.armorBonusUI) embed.addField("Armor Bonus", skill.skillBehavior.armorBonusUI.toString() + " Armor", true)
-    if (skill.skillBehavior.imBonusUI) embed.addField("Imagination Bonus", skill.skillBehavior.imBonusUI.toString() + " Imagination", true)
-    if (skill.skillBehavior.lifeBonusUI) embed.addField("Life Bonus", skill.skillBehavior.lifeBonusUI.toString() + " Life", true)
+    embed.addField("Cooldown Group", "Group " + skill.skillBehavior.cooldowngroup.toString() || "No Cooldown Group", true);
+    embed.addField("Cooldown Time", (skill.skillBehavior.cooldown.toString() || "0") + " Seconds", true);
+    embed.addField("Imagination Cost", (skill.skillBehavior.imaginationcost.toString() || "0") + " Imagination", true);
+    if (skill.skillBehavior.armorBonusUI) embed.addField("Armor Bonus", skill.skillBehavior.armorBonusUI.toString() + " Armor", true);
+    if (skill.skillBehavior.imBonusUI) embed.addField("Imagination Bonus", skill.skillBehavior.imBonusUI.toString() + " Imagination", true);
+    if (skill.skillBehavior.lifeBonusUI) embed.addField("Life Bonus", skill.skillBehavior.lifeBonusUI.toString() + " Life", true);
     skill.descriptions.forEach((desc) => {
-      embed.addField(desc.name, desc.description || "No Description")
-    })
+      embed.addField(desc.name, desc.description || "No Description");
+    });
 
     let buttons = new MessageActionRow().addComponents(
       new Button().setLabel(skill.name).setCustomId(`skill/${skill.id}`).setStyle("SUCCESS"),
       new Button().setLabel(`Items with ${skill.name}`).setCustomId(`skillitems/${skill.id}`),
-    )
+    );
 
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       isPaged: false,
       components: [buttons],
-    })
+    });
 
   },
 } as SlashCommand;

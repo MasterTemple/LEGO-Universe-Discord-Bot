@@ -28,7 +28,7 @@ export class Activity extends CDClient {
   }
 
   async addRewards(): Promise<void> {
-    this.rewards = await this.getActivityDrops(this.name)
+    this.rewards = await this.getActivityDrops(this.name);
   }
 
 }
