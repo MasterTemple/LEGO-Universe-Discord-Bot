@@ -867,14 +867,16 @@ export class CDClient {
 
   async searchVendor(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
-      this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '%${query.replace(
+      let statement =
+        `SELECT id, name, displayName FROM Objects WHERE Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${VENDOR_COMPONENT}) AND (displayName LIKE '%${query.replace(
           /\s/g,
           "%"
         )}%' OR name LIKE '%${query.replace(
           /\s/g,
           "%"
-        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${VENDOR_COMPONENT}) IS NOT NULL LIMIT 25`,
+        )}%') LIMIT 25`
+      this.db.all(
+        statement,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {

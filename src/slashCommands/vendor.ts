@@ -42,7 +42,7 @@ export default {
         if (item.commendationCost) costs.push(`**${item.commendationCost}** ${item.commendationCurrency.name}s`)
         if (item.alternateCost) costs.push(`**${item.alternateCost}** ${item.alternateCurrency.name}s`)
         totalCost = costs.join(" **+** ")
-        return `**${index + 1}.** ${item.name} ${bracketURL(item.id)}) for ${totalCost}`
+        return `**${index + 1}.** ${item.name} ${bracketURL(item.id)} for ${totalCost}`
       }).join("\n");
       let totalSize = 0
       textToChunks(vendorsText).forEach((vendors) => {
@@ -57,7 +57,8 @@ export default {
 
     replyOrUpdate({
       interaction: interaction,
-      embeds: [embed]
+      embeds: [embed],
+      pageSize: 1
     })
 
   },
