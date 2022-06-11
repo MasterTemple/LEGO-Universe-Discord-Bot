@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL, getOption } from '../functions';
+import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { percent } from '../math';
 import { Activity } from '../types/Activity';
 import { Embed } from '../types/Embed';
@@ -18,9 +18,9 @@ export default {
       autocomplete: true,
     }],
   run: async function (
-    interaction: CommandInteraction,
-    options: readonly CommandInteractionOption[],
-    cdclient: CDClient) {
+    interaction,
+    options,
+    cdclient) {
 
     let query = getOption(options, "activity")
     if (!query.match(/;/g)) query = (await cdclient.searchActivity(query))[0].value
@@ -62,8 +62,7 @@ export default {
       }
     })
     activity.rewards.pop();
-    interaction.reply({
-      embeds: [embed],
-    });
+    replyOrUpdate(interaction, [embed])
+
   },
 } as SlashCommand;

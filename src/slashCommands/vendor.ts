@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL, getOption, textToChunks } from '../functions';
+import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
 import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { NPC } from '../types/NPC';
@@ -18,9 +18,9 @@ export default {
       autocomplete: true,
     }],
   run: async function (
-    interaction: CommandInteraction,
-    options: readonly CommandInteractionOption[],
-    cdclient: CDClient) {
+    interaction,
+    options,
+    cdclient) {
 
     const query = getOption(options, "vendor")
     const npcId = parseInt(query) || await cdclient.getObjectId(query);
@@ -55,8 +55,7 @@ export default {
       embed.addField("Not A Vendor!", `${npc.name} does not sell anything!`)
     }
 
-    interaction.reply({
-      embeds: [embed],
-    });
+    replyOrUpdate(interaction, [embed])
+
   },
 } as SlashCommand;

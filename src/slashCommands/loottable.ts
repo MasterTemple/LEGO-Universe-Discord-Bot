@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL, getOption, textToChunks } from '../functions';
+import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
 import { Embed } from '../types/Embed';
 import { LootTable } from '../types/LootTable';
 import { SlashCommand } from '../types/SlashCommand';
@@ -17,9 +17,9 @@ export default {
       autocomplete: true,
     }],
   run: async function (
-    interaction: CommandInteraction,
-    options: readonly CommandInteractionOption[],
-    cdclient: CDClient) {
+    interaction,
+    options,
+    cdclient) {
     const query = getOption(options, "loottable")
     const lootTableId = parseInt(query) || await cdclient.getObjectId(query);
     const lootTable = new LootTable(cdclient, lootTableId);
@@ -46,8 +46,7 @@ export default {
       items += `**${c++}.** ${loot.name} ${bracketURL(loot.id, "objects/loot/table")}\n`
     })
 
-    interaction.reply({
-      embeds: [embed],
-    });
+    replyOrUpdate(interaction, [embed])
+
   },
 } as SlashCommand;

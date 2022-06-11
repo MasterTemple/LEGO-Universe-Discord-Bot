@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL, getOption, textToChunks } from '../functions';
+import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
 import { ObjectElement } from '../luInterfaces';
 import { Embed } from '../types/Embed';
 import { Skill } from '../types/Skill';
@@ -18,9 +18,9 @@ export default {
       autocomplete: true,
     }],
   run: async function (
-    interaction: CommandInteraction,
-    options: readonly CommandInteractionOption[],
-    cdclient: CDClient) {
+    interaction,
+    options,
+    cdclient) {
 
     const query = getOption(options, "skill")
     const skillId = parseInt(query) || parseInt(cdclient.locale.searchSkills(query)[0].value);
@@ -43,8 +43,7 @@ export default {
       embed.addField("No Items!", `${skill.name} is not attached to any item!`)
     }
 
-    interaction.reply({
-      embeds: [embed],
-    });
+    replyOrUpdate(interaction, [embed])
+
   },
 } as SlashCommand;

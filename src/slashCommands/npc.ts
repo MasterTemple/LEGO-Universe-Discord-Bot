@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL, getOption } from '../functions';
+import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { Embed } from '../types/Embed';
 import { NPC } from '../types/NPC';
 import { SlashCommand } from '../types/SlashCommand';
@@ -17,9 +17,9 @@ export default {
       autocomplete: true,
     }],
   run: async function (
-    interaction: CommandInteraction,
-    options: readonly CommandInteractionOption[],
-    cdclient: CDClient) {
+    interaction,
+    options,
+    cdclient) {
 
     const query = getOption(options, "npc")
     const npcId = parseInt(query) || await cdclient.getObjectId(query);
@@ -38,8 +38,7 @@ export default {
       embed.addField(title, `${mission.description} ${bracketURL(mission.id, "missions")}`)
     })
 
-    interaction.reply({
-      embeds: [embed],
-    });
+    replyOrUpdate(interaction, [embed])
+
   },
 } as SlashCommand;

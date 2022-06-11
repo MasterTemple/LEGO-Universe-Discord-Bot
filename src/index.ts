@@ -29,12 +29,12 @@ client.once('ready', async () => {
 client.on('interactionCreate', async (interaction: Interaction) => {
   try {
     if (interaction.isApplicationCommand()) {
-      const options: readonly CommandInteractionOption[] = interaction.options?.data || [];
+      const options = interaction.options?.data || [];
       slashCommands.get(interaction.commandName).run(interaction, options, cdclient);
     }
 
     if (interaction.isAutocomplete()) {
-      const options: readonly CommandInteractionOption[] = interaction.options?.data || [];
+      const options = interaction.options?.data || [];
       // this is currently a general search for ALL objects in the 'Objects' table
       let { value } = options.find((f) => f.focused);
       value = value.toString();

@@ -1,7 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { fillEmbedWithLootDrops } from '../discord';
-import { bracketURL, getOption } from '../functions';
+import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { decimalToFraction } from '../math';
 import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
@@ -19,9 +19,9 @@ export default {
       autocomplete: true,
     }],
   run: async function (
-    interaction: CommandInteraction,
-    options: readonly CommandInteractionOption[],
-    cdclient: CDClient) {
+    interaction,
+    options,
+    cdclient) {
 
     const query = getOption(options, "package")
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
@@ -40,8 +40,7 @@ export default {
       embed.addField("Not Unpacked!", `${item.name} is not found by opening a package!`)
     }
 
-    interaction.reply({
-      embeds: [embed],
-    });
+    replyOrUpdate(interaction, [embed])
+
   },
 } as SlashCommand;

@@ -20,9 +20,9 @@ export default {
       autocomplete: true,
     }],
   run: async function (
-    interaction: CommandInteraction,
-    options: readonly CommandInteractionOption[],
-    cdclient: CDClient) {
+    interaction,
+    options,
+    cdclient) {
 
     const query = getOption(options, "item")
     const itemId = parseInt(query) || await cdclient.getObjectId(query);

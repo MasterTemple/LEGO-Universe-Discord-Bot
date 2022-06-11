@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL, getOption } from '../functions';
+import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { Embed } from '../types/Embed';
 import { Mission } from '../types/Mission';
 import { SlashCommand } from '../types/SlashCommand';
@@ -17,9 +17,9 @@ export default {
       autocomplete: true,
     }],
   run: async function (
-    interaction: CommandInteraction,
-    options: readonly CommandInteractionOption[],
-    cdclient: CDClient) {
+    interaction,
+    options,
+    cdclient) {
 
     const query = getOption(options, "mission")
     const missionId = parseInt(query) || parseInt((cdclient.locale.searchMissions(query))?.[0]?.value);
@@ -52,8 +52,7 @@ export default {
     else if (mission.raw.reward_maxinventory) embed.addField("Inventory Increase", (mission.raw.reward_maxinventory).toString(), true)
     else embed.addField("Reputation Increase", (mission.raw.reward_reputation).toString(), true)
 
-    interaction.reply({
-      embeds: [embed],
-    });
+    replyOrUpdate(interaction, [embed])
+
   },
 } as SlashCommand;

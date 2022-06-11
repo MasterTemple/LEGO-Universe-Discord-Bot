@@ -1,5 +1,6 @@
-import { CacheType, CommandInteractionOption } from "discord.js";
+import { CacheType, CommandInteraction, CommandInteractionOption, MessageActionRow, MessageComponent, MessageEmbed } from "discord.js";
 import { explorerDomain } from "./config";
+import { Embed } from "./types/Embed";
 
 export function textToChunks(input: string, size: number = 1024): string[] {
   if (input.at(-1) !== "\n") input += "\n"
@@ -61,3 +62,34 @@ export function getOption(options: readonly CommandInteractionOption<CacheType>[
   if (!value) value = options[0].value.toString();
   return value;
 }
+
+export function replyOrUpdate(interaction, embeds: Embed[] | MessageEmbed[], components?: MessageActionRow[]) {
+  if (interaction.isMessageComponent()) {
+    interaction.update({
+      embeds: embeds,
+      components: components
+    })
+  }
+  if (interaction.isApplicationCommand()) {
+    interaction.reply({
+      embeds: embeds,
+      components: components
+    });
+  }
+}
+
+//! make my own extension of command interaction later
+// CommandInteraction.prototype.replyOrUpdate = function (interaction, embeds: Embed[] | MessageEmbed[], components?: MessageActionRow[]) {
+//   if (interaction.isMessageComponent()) {
+//     interaction.update({
+//       embeds: embeds,
+//       components: components
+//     })
+//   }
+//   if (interaction.isApplicationCommand()) {
+//     interaction.reply({
+//       embeds: embeds,
+//       components: components
+//     });
+//   }
+// }

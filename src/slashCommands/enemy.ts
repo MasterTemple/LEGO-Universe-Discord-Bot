@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { getOption } from '../functions';
+import { getOption, replyOrUpdate } from '../functions';
 import { Embed } from '../types/Embed';
 import { Enemy } from '../types/Enemy';
 import { SlashCommand } from '../types/SlashCommand';
@@ -17,9 +17,9 @@ export default {
       autocomplete: true,
     }],
   run: async function (
-    interaction: CommandInteraction,
-    options: readonly CommandInteractionOption[],
-    cdclient: CDClient) {
+    interaction,
+    options,
+    cdclient) {
 
     const query = getOption(options, "enemy")
     const enemyId = parseInt(query) || await cdclient.getObjectId(query);
@@ -33,8 +33,7 @@ export default {
 
     embed.setDescription(`Life: **${enemy.life}**\nArmor: **${enemy.armor}**`)
 
-    interaction.reply({
-      embeds: [embed],
-    });
+    replyOrUpdate(interaction, [embed])
+
   },
 } as SlashCommand;

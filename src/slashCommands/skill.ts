@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { getOption } from '../functions';
+import { getOption, replyOrUpdate } from '../functions';
 import { Embed } from '../types/Embed';
 import { Skill } from '../types/Skill';
 import { SlashCommand } from '../types/SlashCommand';
@@ -17,9 +17,9 @@ export default {
       autocomplete: true,
     }],
   run: async function (
-    interaction: CommandInteraction,
-    options: readonly CommandInteractionOption[],
-    cdclient: CDClient) {
+    interaction,
+    options,
+    cdclient) {
 
     const query = getOption(options, "skill")
     const skillId = parseInt(query) || parseInt(cdclient.locale.searchSkills(query)[0].value);
@@ -40,8 +40,7 @@ export default {
     skill.descriptions.forEach((desc) => {
       embed.addField(desc.name, desc.description || "No Description")
     })
-    interaction.reply({
-      embeds: [embed],
-    });
+    replyOrUpdate(interaction, [embed])
+
   },
 } as SlashCommand;

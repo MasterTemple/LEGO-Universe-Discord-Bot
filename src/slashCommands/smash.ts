@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL, getOption } from '../functions';
+import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { decimalToFraction, percent, round } from '../math';
 import { Embed } from '../types/Embed';
 import { Enemy } from '../types/Enemy';
@@ -18,9 +18,9 @@ export default {
       autocomplete: true,
     }],
   run: async function (
-    interaction: CommandInteraction,
-    options: readonly CommandInteractionOption[],
-    cdclient: CDClient) {
+    interaction,
+    options,
+    cdclient) {
 
     const query = getOption(options, "enemy")
     const enemyId = parseInt(query) || await cdclient.getObjectId(query);
@@ -63,8 +63,7 @@ export default {
     })
     enemy.drops.pop();
 
-    interaction.reply({
-      embeds: [embed],
-    });
+    replyOrUpdate(interaction, [embed])
+
   },
 } as SlashCommand;
