@@ -123,7 +123,7 @@ export class CDClient {
         // `SELECT IconID, largeTaskIconID FROM MissionTasks WHERE id = ${missionId})`,
         `SELECT IconPath FROM Icons WHERE IconID = (SELECT IconID FROM MissionTasks WHERE id = ${missionId}) OR IconID = (SELECT largeTaskIconID FROM MissionTasks WHERE id = ${missionId})`,
         function (_, row: Icons) {
-          let icon = row.IconPath;
+          let icon = row?.IconPath;
           if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png")
           icon = formatIconPath(icon);
           resolve(icon)
@@ -822,14 +822,15 @@ export class CDClient {
 
   async searchPackage(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
+      let statement = `SELECT ComponentsRegistry.id, Objects.name, Objects.displayName FROM ComponentsRegistry JOIN Objects ON(displayName LIKE '%${query.replace(
+        /\s/g,
+        "%"
+      )}%' OR name LIKE '%${query.replace(
+        /\s/g,
+        "%"
+      )}%') WHERE ComponentsRegistry.id = Objects.id AND component_type = ${PACKAGE_COMPONENT} LIMIT 25`
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%' OR name LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${PACKAGE_COMPONENT}) IS NOT NULL LIMIT 25`,
+        statement,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {

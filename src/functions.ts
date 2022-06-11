@@ -1,3 +1,4 @@
+import { CacheType, CommandInteractionOption } from "discord.js";
 import { explorerDomain } from "./config";
 
 export function textToChunks(input: string, size: number = 1024): string[] {
@@ -46,10 +47,17 @@ export function bracketURL(id: number, type: urlType = "objects"): string {
 }
 
 export function formatIconPath(icon: string): string {
+  if (!icon) return icon;
   icon = icon.replace(/^\.\.\\\.\.\\/g, "/lu-res/");
   icon = icon.replace(/\\/g, "/");
   icon = icon.replace(/ /g, "%20");
   icon = icon.replace(/(?<=\.)dds/gi, "png");
   icon = icon.toLowerCase();
   return icon;
+}
+
+export function getOption(options: readonly CommandInteractionOption<CacheType>[], parameter: string) {
+  let value = options.find((option) => option.name === parameter)?.value?.toString();
+  if (!value) value = options[0].value.toString();
+  return value;
 }

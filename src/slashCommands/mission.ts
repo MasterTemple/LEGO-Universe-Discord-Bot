@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL } from '../functions';
+import { bracketURL, getOption } from '../functions';
 import { Embed } from '../types/Embed';
 import { Mission } from '../types/Mission';
 import { SlashCommand } from '../types/SlashCommand';
@@ -21,7 +21,7 @@ export default {
     options: readonly CommandInteractionOption[],
     cdclient: CDClient) {
 
-    const query = options.find((option) => option.name === 'mission').value.toString();
+    const query = getOption(options, "mission")
     const missionId = parseInt(query) || parseInt((cdclient.locale.searchMissions(query))?.[0]?.value);
     const mission = new Mission(cdclient, missionId);
     await mission.create();

@@ -1,8 +1,9 @@
-import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
+import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { fillEmbedWithLootDrops } from '../discord';
-import { bracketURL } from '../functions';
+import { bracketURL, getOption } from '../functions';
 import { decimalToFraction } from '../math';
+import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
@@ -23,7 +24,7 @@ export default {
     options: readonly CommandInteractionOption[],
     cdclient: CDClient) {
 
-    const query = options.find((option) => option.name === 'item').value.toString();
+    const query = getOption(options, "item")
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
     const item = new Item(cdclient, itemId);
     await item.create();
@@ -35,10 +36,31 @@ export default {
     embed.setURL(item.getURL());
     embed.setThumbnail(item.imageURL)
 
-    embed.setDescription(`${item.get.isFromMission ? "✅" : "❌"} Can be earned from a mission\n${item.get.isFromSmashable ? "✅" : "❌"} Can be dropped from a smashable\n${item.get.isFromPackage ? "✅" : "❌"} Can be dropped from a package\n${item.get.isFromActivity ? "✅" : "❌"} Can be rewarded from an activity\n${item.get.isFromVendor ? "✅" : "❌"} Can be bought from a vendor\n`)
+    const good = "✅"
+    const bad = "❌"
 
-    interaction.reply({
-      embeds: [embed],
-    });
+    embed.setDescription(`${item.get.isFromMission ? good : bad} Can be earned from a mission\n${item.get.isFromSmashable ? good : bad} Can be dropped from a smashable\n${item.get.isFromPackage ? good : bad} Can be unpacked from a package\n${item.get.isFromActivity ? good : bad} Can be rewarded from an activity\n${item.get.isFromVendor ? good : bad} Can be bought from a vendor\n`)
+
+    let buttons = new MessageActionRow().addComponents(
+      new Button().setDisabled(!item.get.isFromMission).setLabel("Earn").setCustomId(`earn/${itemId}`),
+      new Button().setDisabled(!item.get.isFromSmashable).setLabel("Drop").setCustomId(`drop/${itemId}/2`),
+      new Button().setDisabled(!item.get.isFromPackage).setLabel("Unpack").setCustomId(`unpack/${itemId}`),
+      new Button().setDisabled(!item.get.isFromActivity).setLabel("Reward").setCustomId(`reward/${itemId}`),
+      new Button().setDisabled(!item.get.isFromVendor).setLabel("Buy").setCustomId(`buy/${itemId}`),
+    )
+
+
+    if (interaction.isMessageComponent()) {
+      interaction.update({
+        embeds: [embed],
+        components: [buttons]
+      })
+    }
+    if (interaction.isApplicationCommand()) {
+      interaction.reply({
+        embeds: [embed],
+        components: [buttons]
+      });
+    }
   },
 } as SlashCommand;

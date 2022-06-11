@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL, textToChunks } from '../functions';
+import { bracketURL, getOption, textToChunks } from '../functions';
 import { Embed } from '../types/Embed';
 import { LootTable } from '../types/LootTable';
 import { SlashCommand } from '../types/SlashCommand';
@@ -20,7 +20,7 @@ export default {
     interaction: CommandInteraction,
     options: readonly CommandInteractionOption[],
     cdclient: CDClient) {
-    const query = options.find((option) => option.name === 'loottable').value.toString();
+    const query = getOption(options, "loottable")
     const lootTableId = parseInt(query) || await cdclient.getObjectId(query);
     const lootTable = new LootTable(cdclient, lootTableId);
     await lootTable.create();

@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL } from '../functions';
+import { bracketURL, getOption } from '../functions';
 import { percent } from '../math';
 import { Activity } from '../types/Activity';
 import { Embed } from '../types/Embed';
@@ -22,7 +22,7 @@ export default {
     options: readonly CommandInteractionOption[],
     cdclient: CDClient) {
 
-    let query = options.find((option) => option.name === 'activity').value.toString();
+    let query = getOption(options, "activity")
     if (!query.match(/;/g)) query = (await cdclient.searchActivity(query))[0].value
     const activityId = parseInt(query.match(/^[^;]+/g)?.[0]);
     const activityName = query.match(/(?<=^[^;]+;).*/g)?.[0];

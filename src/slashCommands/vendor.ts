@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL, textToChunks } from '../functions';
+import { bracketURL, getOption, textToChunks } from '../functions';
 import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { NPC } from '../types/NPC';
@@ -22,7 +22,7 @@ export default {
     options: readonly CommandInteractionOption[],
     cdclient: CDClient) {
 
-    const query = options.find((option) => option.name === 'vendor').value.toString();
+    const query = getOption(options, "vendor")
     const npcId = parseInt(query) || await cdclient.getObjectId(query);
     const npc = new NPC(cdclient, npcId);
     await npc.create();

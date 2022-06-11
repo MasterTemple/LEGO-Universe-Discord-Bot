@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL, textToChunks } from '../functions';
+import { bracketURL, getOption, textToChunks } from '../functions';
 import { ObjectElement } from '../luInterfaces';
 import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
@@ -64,7 +64,7 @@ export default {
     options: readonly CommandInteractionOption[],
     cdclient: CDClient) {
 
-    const query = options.find((option) => option.name === 'item').value.toString();
+    const query = getOption(options, "item")
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
     const item = new Item(cdclient, itemId);
     await item.create();

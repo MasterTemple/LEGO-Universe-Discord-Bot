@@ -1,7 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { fillEmbedWithLootDrops } from '../discord';
-import { bracketURL } from '../functions';
+import { bracketURL, getOption } from '../functions';
 import { decimalToFraction } from '../math';
 import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
@@ -23,7 +23,7 @@ export default {
     options: readonly CommandInteractionOption[],
     cdclient: CDClient) {
 
-    const query = options.find((option) => option.name === 'item').value.toString();
+    const query = getOption(options, "item")
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
     const item = new Item(cdclient, itemId);
     await item.create();
@@ -40,8 +40,15 @@ export default {
       embed.addField("Not Dropped!", `${item.name} is not found by smashing anything!`)
     }
 
-    interaction.reply({
-      embeds: [embed],
-    });
+    if (interaction.isMessageComponent()) {
+      interaction.update({
+        embeds: [embed],
+      })
+    }
+    if (interaction.isApplicationCommand()) {
+      interaction.reply({
+        embeds: [embed],
+      });
+    }
   },
 } as SlashCommand;

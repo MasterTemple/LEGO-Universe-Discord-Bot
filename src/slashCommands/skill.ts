@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { getOption } from '../functions';
 import { Embed } from '../types/Embed';
 import { Skill } from '../types/Skill';
 import { SlashCommand } from '../types/SlashCommand';
@@ -20,7 +21,7 @@ export default {
     options: readonly CommandInteractionOption[],
     cdclient: CDClient) {
 
-    const query = options.find((option) => option.name === 'skill').value.toString();
+    const query = getOption(options, "skill")
     const skillId = parseInt(query) || parseInt(cdclient.locale.searchSkills(query)[0].value);
     const skill = new Skill(cdclient, skillId);
     await skill.create();

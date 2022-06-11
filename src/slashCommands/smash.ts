@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
-import { bracketURL } from '../functions';
+import { bracketURL, getOption } from '../functions';
 import { decimalToFraction, percent, round } from '../math';
 import { Embed } from '../types/Embed';
 import { Enemy } from '../types/Enemy';
@@ -22,7 +22,7 @@ export default {
     options: readonly CommandInteractionOption[],
     cdclient: CDClient) {
 
-    const query = options.find((option) => option.name === 'enemy').value.toString();
+    const query = getOption(options, "enemy")
     const enemyId = parseInt(query) || await cdclient.getObjectId(query);
     const enemy = new Enemy(cdclient, enemyId);
     await enemy.create();

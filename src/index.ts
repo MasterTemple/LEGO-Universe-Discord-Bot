@@ -1,4 +1,4 @@
-import { AutocompleteInteraction, Client, CommandInteraction, CommandInteractionOption, Interaction } from 'discord.js';
+import { AutocompleteInteraction, BaseCommandInteraction, CacheType, Client, CommandInteraction, CommandInteractionOption, Interaction } from 'discord.js';
 import { getAutocompleteOptions } from './autocomplete';
 import { CDClient } from './cdclient';
 import { token } from './config';
@@ -36,7 +36,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     if (interaction.isAutocomplete()) {
       const options: readonly CommandInteractionOption[] = interaction.options?.data || [];
       // this is currently a general search for ALL objects in the 'Objects' table
-      let { name, value } = options.find((f) => f.focused);
+      let { value } = options.find((f) => f.focused);
       value = value.toString();
 
       let autocompleteOptions: NameValuePair[];
@@ -45,6 +45,24 @@ client.on('interactionCreate', async (interaction: Interaction) => {
 
       interaction.respond(autocompleteOptions);
     }
+
+    if (interaction.isMessageComponent()) {
+      let instruction = interaction.customId;
+      // console.log(instruction);
+
+      // console.log([...instruction.matchAll(/[^\/]+\//gim)].map((i) => i.groups))
+      // console.log([...instruction.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\/]+)?/gi)].map((i) => i.groups))
+      console.log([...instruction.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\/]+)?/gi)][0].groups)
+      let { cmd, id, page } = [...instruction.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\/]+)?/gi)][0].groups
+
+      let options = [{ name: "button", type: "STRING", value: id } as CommandInteractionOption]
+      slashCommands.get(cmd).run(interaction, options, cdclient);
+
+
+      // console.log(instruction.match(/([\/]+\/)+/gim))
+    }
+
+
   } catch (e) {
     console.log(e);
   }
