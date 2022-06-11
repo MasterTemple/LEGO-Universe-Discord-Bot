@@ -48,7 +48,7 @@ export default {
       textToChunks(vendorsText).forEach((vendors) => {
         // console.log({ vendors, length: vendors.length })
         totalSize += vendors.length
-        if (totalSize <= 6000) embed.addField("Sells", vendors);
+        if (totalSize <= 6000) embed.addField("Sells", vendors, true);
       })
 
     } else {
@@ -58,7 +58,7 @@ export default {
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
-      pageSize: 1
+      pageSize: 2
     })
 
   },

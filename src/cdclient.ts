@@ -22,6 +22,7 @@ import { sqlitePath } from './config';
 import { formatIconPath } from './functions';
 import { LocaleXML } from './locale';
 import { ActivityDropFromQuery, EnemyDrop, EnemyHealth, ItemDrop, ItemSold, LootDrop, LootDropFirstQuery, LootTableItem, MissionReward, NameValuePair, NPCMission, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
+
 export const RENDER_COMPONENT = 2;
 export const DESTRUCTIBLE_COMPONENT = 7;
 export const ITEM_COMPONENT = 11;
@@ -30,7 +31,9 @@ export const PACKAGE_COMPONENT = 53;
 export const HONOR_ACCOLADE = 13806;
 export const MISSION_OFFER_COMPONENT = 73;
 
-
+function sqlike(str: string): string {
+  return `%${str.replace(/\s/g, "%")}%`
+}
 export class CDClient {
   db: Database;
   locale: LocaleXML;
@@ -801,13 +804,7 @@ export class CDClient {
         //   /\s/g,
         //   "%"
         // )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${ITEM_COMPONENT}) IS NOT NULL LIMIT 25`,
-        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%' OR name LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%') AND type = 'Loot' LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') AND type = 'Loot' LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -846,13 +843,7 @@ export class CDClient {
   async searchSmashable(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%' OR name LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${DESTRUCTIBLE_COMPONENT}) IS NOT NULL LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${DESTRUCTIBLE_COMPONENT}) IS NOT NULL LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -868,13 +859,7 @@ export class CDClient {
   async searchVendor(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       let statement =
-        `SELECT id, name, displayName FROM Objects WHERE Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${VENDOR_COMPONENT}) AND (displayName LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%' OR name LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%') LIMIT 25`
+        `SELECT id, name, displayName FROM Objects WHERE Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${VENDOR_COMPONENT}) AND (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') LIMIT 25`
       this.db.all(
         statement,
         (_, rows: Objects[]) => {
@@ -892,13 +877,7 @@ export class CDClient {
   async searchMissionNPC(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%' OR name LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${MISSION_OFFER_COMPONENT}) IS NOT NULL LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${MISSION_OFFER_COMPONENT}) IS NOT NULL LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -914,13 +893,7 @@ export class CDClient {
   async searchBrick(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%' OR name LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%') AND Objects.type = 'LEGO brick' LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') AND Objects.type = 'LEGO brick' LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -936,10 +909,7 @@ export class CDClient {
   async searchActivity(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       this.db.all(
-        `SELECT * FROM ActivityRewards WHERE description LIKE '%${query.replace(
-          /\s/g,
-          "%"
-        )}%' LIMIT 25`,
+        `SELECT * FROM ActivityRewards WHERE description LIKE '${sqlike(query)}' LIMIT 25`,
         (_, rows: ActivityRewards[]) => {
           let pairs: NameValuePair[] = rows?.map((row) => {
             return {

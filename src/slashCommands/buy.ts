@@ -88,7 +88,8 @@ export default {
 
     replyOrUpdate({
       interaction: interaction,
-      embeds: [embed]
+      embeds: [embed],
+      pageSize: 1
     })
 
   },

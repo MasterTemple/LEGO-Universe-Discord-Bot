@@ -36,7 +36,7 @@ export default {
     if (skill.skillItems.length) {
       let text = skill.skillItems.map((item, index) => `**${index + 1}.** ${item.name} ${bracketURL(item.id)}`).join("\n");
       textToChunks(text).forEach((chunk) => {
-        embed.addField("Items", chunk)
+        embed.addField("Items", chunk, true)
       })
 
     } else {
@@ -45,7 +45,8 @@ export default {
 
     replyOrUpdate({
       interaction: interaction,
-      embeds: [embed]
+      embeds: [embed],
+      pageSize: 2
     })
 
   },
