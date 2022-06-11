@@ -476,8 +476,9 @@ export class CDClient {
 
   async getPackageDrops(id: number): Promise<SmashableDrop[]> {
     return new Promise<SmashableDrop[]>(async (resolve, reject) => {
+      let query = `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM PackageComponent WHERE id IN ( SELECT component_id FROM ComponentsRegistry WHERE component_type=${PACKAGE_COMPONENT} AND id=${id}))`
       this.db.all(
-        `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM PackageComponent WHERE id IN ( SELECT component_id FROM ComponentsRegistry WHERE component_type=${PACKAGE_COMPONENT} AND id=${id}))`,
+        query,
         async (_, rows: SmashableDrop[]) => {
           const lootTableRaritySizes = new Map<number, number>();
           for (let row of rows) {
@@ -787,6 +788,23 @@ export class CDClient {
             }
           }
           resolve(newRows)
+        }
+      )
+    })
+  }
+
+  async getRarityVarianceMap(): Promise<Map<number, number>> {
+    return new Promise<Map<number, number>>(async (resolve, reject) => {
+      let query = `SELECT RarityTableIndex FROM RarityTable`
+      this.db.all(
+        query,
+        async (_, rows: RarityTable[]) => {
+          let map = new Map<number, number>();
+          for (let { RarityTableIndex: rti } of rows) {
+            if (map.has(rti)) map.set(rti, map.get(rti) + 1)
+            else map.set(rti, 1)
+          }
+          return map;
         }
       )
     })

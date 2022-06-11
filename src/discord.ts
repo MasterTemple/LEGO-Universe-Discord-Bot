@@ -51,7 +51,10 @@ export function fillEmbedWithSmashableDrops(embed: MessageEmbed, drops: Smashabl
       anyDrop = "Any "
     }
 
-    let chanceForRarity = drop.rarity === 1 ? drop.chanceForRarity : drop.chanceForRarity - drops[index - 1].chanceForRarity
+    let chanceForRarity = 1;
+    if (drops[index - 1]?.rarity === drop.rarity - 1) drop.chanceForRarity - drops[index - 1].chanceForRarity
+    else chanceForRarity = drop.chanceForRarity
+
     if (drop.poolSize > 0) {
       specificDrop += `**T${drop.rarity}** ${percent(chanceForRarity * drop.chanceForItem)} `
       anyDrop += `**T${drop.rarity}** ${percent(chanceForRarity * drop.chanceForItem * (1 / drop.poolSize))} `

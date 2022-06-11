@@ -49,9 +49,6 @@ export default {
       embed.addField("Not an Item!", `${item.name} is not an item!`)
     }
 
-    console.log(embed);
-
-
     let buttons = new MessageActionRow().addComponents(
       new Button().setLabel("Item").setCustomId(`item/${item.id}`).setStyle("SUCCESS"),
       new Button().setLabel("Get").setCustomId(`get/${item.id}`),
