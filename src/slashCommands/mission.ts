@@ -37,9 +37,10 @@ export default {
 
     embed.addField("Mission", title)
     embed.addField("Objective", mission.data.description)
-
-    embed.addField("Accept From", `${mission.data.giver.name} ${bracketURL(mission.data.giver.id)}`, true)
-    embed.addField("Return To", `${mission.data.accepter.name} ${bracketURL(mission.data.accepter.id)}`, true)
+    if (!mission.data.isAchievement) {
+      embed.addField("Accept From", `${mission.data.giver.name} ${bracketURL(mission.data.giver.id)}`, true)
+      embed.addField("Return To", `${mission.data.accepter.name} ${bracketURL(mission.data.accepter.id)}`, true)
+    }
 
     embed.addField(mission.raw.isChoiceReward ? "Rewards (Choose One)" : "Rewards", mission.data.rewards.map((reward, index) => `${reward.name} ${bracketURL(reward.id)} x **${reward.count}**`).join("\n"))
 

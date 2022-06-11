@@ -24,6 +24,10 @@ export class Mission extends CDClient {
     this.raw = await this.getMission(this.id);
     await this.addThumbnail();
     this.organizeData()
+    let title = this.data.type
+    if (this.data.subtype) title += ` > ${this.data.subtype}`
+    title += ` > ${this.data.name}`
+    this.name = title
   }
 
   getURL(id: number = this.id): string {
@@ -57,7 +61,7 @@ export class Mission extends CDClient {
           { id: this.raw.reward_item4_repeatable, name: this.locale.getObjectName(this.raw.reward_item4_repeatable), count: this.raw.reward_item4_repeat_count },
         ]
       ).filter(({ id }) => id > 0),
-      isAchievement: (this.raw.offer_objectID > 0 && this.raw.target_objectID > 0),
+      isAchievement: (this.raw.offer_objectID < 0 && this.raw.target_objectID < 0),
       giver: { id: this.raw.offer_objectID, name: this.locale.getObjectName(this.raw.offer_objectID) },
       accepter: { id: this.raw.target_objectID, name: this.locale.getObjectName(this.raw.target_objectID) },
     }
