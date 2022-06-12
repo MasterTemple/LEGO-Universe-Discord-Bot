@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { enemyHomeRow, NPCHomeRow } from '../components';
 import { fillEmbedWithSmashableDrops } from '../discord';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { decimalToFraction, percent, round } from '../math';
@@ -35,14 +36,11 @@ export default {
     embed.setURL(enemy.getURL());
 
     fillEmbedWithSmashableDrops(embed, enemy.drops, enemy.locale);
-    let buttons = new MessageActionRow().addComponents(
-      new Button().setLabel("Enemy Stats").setCustomId(`enemy/${enemy.id}`),
-      new Button().setLabel("Smash Enemy").setCustomId(`smash/${enemy.id}`).setStyle("SUCCESS"),
-    );
+
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
-      components: [buttons],
+      components: [enemyHomeRow(enemy, "smash")],
 
     });
 

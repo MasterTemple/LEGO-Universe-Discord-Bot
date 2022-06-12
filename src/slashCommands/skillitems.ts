@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { skillHomeRow } from '../components';
 import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
 import { ObjectElement } from '../luInterfaces';
 import { Button } from '../types/Button';
@@ -44,16 +45,11 @@ export default {
       embed.addField("No Items!", `${skill.name} is not attached to any item!`);
     }
 
-    let buttons = new MessageActionRow().addComponents(
-      new Button().setLabel(skill.name).setCustomId(`skill/${skill.id}`),
-      new Button().setLabel(`Items with ${skill.name}`).setCustomId(`skillitems/${skill.id}`).setStyle("SUCCESS"),
-    );
-
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       pageSize: 2,
-      components: [buttons],
+      components: [skillHomeRow(skill, "skillitems")],
     });
 
   },

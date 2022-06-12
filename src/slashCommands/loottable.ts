@@ -53,12 +53,13 @@ export default {
 
 
 
-    let buttons = new MessageActionRow().addComponents(
-      new Button().setDisabled(!lootTable.loot.find(({ rarity }) => rarity === 1)).setLabel("Tier 1").setCustomId(`loottable/${lootTable.id}/0?t=1`).setStyle(selectedTier === 1 ? "SUCCESS" : "PRIMARY"),
-      new Button().setDisabled(!lootTable.loot.find(({ rarity }) => rarity === 2)).setLabel("Tier 2").setCustomId(`loottable/${lootTable.id}/0?t=2`).setStyle(selectedTier === 2 ? "SUCCESS" : "PRIMARY"),
-      new Button().setDisabled(!lootTable.loot.find(({ rarity }) => rarity === 3)).setLabel("Tier 3").setCustomId(`loottable/${lootTable.id}/0?t=3`).setStyle(selectedTier === 3 ? "SUCCESS" : "PRIMARY"),
-      new Button().setDisabled(!lootTable.loot.find(({ rarity }) => rarity === 4)).setLabel("Tier 4").setCustomId(`loottable/${lootTable.id}/0?t=4`).setStyle(selectedTier === 4 ? "SUCCESS" : "PRIMARY"),
-    );
+    let buttons = new MessageActionRow().addComponents();
+
+    for (let i = 1; i <= 4; i++) {
+      buttons.addComponents(
+        new Button(selectedTier === i).setDisabled(!lootTable.loot.find(({ rarity }) => rarity === 1)).setLabel(`Tier ${i}`).setCustomId(`loottable/${lootTable.id}/0?t=${i}`)
+      );
+    }
 
     replyOrUpdate({
       interaction: interaction,

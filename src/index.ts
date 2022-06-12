@@ -37,12 +37,6 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     }
 
     if (interaction.isMessageComponent()) {
-      console.log(interaction.customId);
-      console.log(interaction.message.embeds[0].author);
-      // console.log(interaction.message.embeds[0].footer);
-      // // console.log(interaction.message.embeds[0].thumbnail);
-      // // console.log(interaction.message.embeds[0].image);
-
       let { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)/gi)][0].groups;
       let options = [{ name: "button", type: "STRING", value: id } as CommandInteractionOption];
       slashCommands.get(cmd).run(interaction, options, cdclient);

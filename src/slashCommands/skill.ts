@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { skillHomeRow } from '../components';
 import { getOption, replyOrUpdate } from '../functions';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -42,16 +43,11 @@ export default {
       embed.addField(desc.name, desc.description || "No Description");
     });
 
-    let buttons = new MessageActionRow().addComponents(
-      new Button().setLabel(skill.name).setCustomId(`skill/${skill.id}`).setStyle("SUCCESS"),
-      new Button().setLabel(`Items with ${skill.name}`).setCustomId(`skillitems/${skill.id}`),
-    );
-
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       isPaged: false,
-      components: [buttons],
+      components: [skillHomeRow(skill, "skill")],
     });
 
   },

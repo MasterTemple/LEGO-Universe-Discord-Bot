@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { NPCHomeRow } from '../components';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -39,15 +40,10 @@ export default {
       embed.addField(title, `${mission.description} ${bracketURL(mission.id, "missions")}`);
     });
 
-    let buttons = new MessageActionRow().addComponents(
-      new Button().setLabel("Missions Given").setCustomId(`npc/${npc.id}`).setStyle("SUCCESS"),
-      new Button().setLabel("Sold Items").setCustomId(`vendor/${npc.id}`),
-    );
-
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
-      components: [buttons],
+      components: [NPCHomeRow(npc, "npc")],
     });
 
   },
