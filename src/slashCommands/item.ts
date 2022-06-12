@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient, PACKAGE_COMPONENT } from '../cdclient';
+import { dropHomeRow, itemHomeRow } from '../components';
 import { getOption, replyOrUpdate } from '../functions';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -49,20 +50,10 @@ export default {
       embed.addField("Not an Item!", `${item.name} is not an item!`);
     }
 
-    let buttons = new MessageActionRow().addComponents(
-      new Button().setLabel("Item").setCustomId(`item/${item.id}`).setStyle("SUCCESS"),
-      new Button().setLabel("Get").setCustomId(`get/${item.id}`),
-      new Button().setLabel("Preconditions").setCustomId(`preconditions/${item.id}`),
-    );
-
-    if (item.components.some((comp) => comp.component_type === PACKAGE_COMPONENT)) buttons.addComponents(
-      new Button().setLabel("Open").setCustomId(`package/${item.id}`),
-    );
-
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
-      components: [buttons],
+      components: [dropHomeRow(item), itemHomeRow(item, "item")],
       isPaged: false
     });
 

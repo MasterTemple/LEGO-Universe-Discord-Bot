@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient, PACKAGE_COMPONENT } from '../cdclient';
+import { dropHomeRow, itemHomeRow } from '../components';
 import { getOption, replyOrUpdate } from '../functions';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -36,19 +37,10 @@ export default {
       item.itemComponent.preconditions.length ? item.itemComponent.preconditions.map((p, i) => `**${i + 1}.** ${p.description}`).join("\n") : "This item has no preconditions to use it!"
     );
 
-    let buttons = new MessageActionRow().addComponents(
-      new Button().setLabel("Item").setCustomId(`item/${item.id}`),
-      new Button().setLabel("Get").setCustomId(`get/${item.id}`),
-      new Button().setLabel("Preconditions").setCustomId(`preconditions/${item.id}`).setStyle("SUCCESS"),
-    );
-    if (item.components.some((comp) => comp.component_type === PACKAGE_COMPONENT)) buttons.addComponents(
-      new Button().setLabel("Open").setCustomId(`package/${item.id}`),
-    );
-
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
-      components: [buttons],
+      components: [dropHomeRow(item), itemHomeRow(item, "preconditions")],
     });
 
   },

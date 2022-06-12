@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { dropHomeRow, itemHomeRow } from '../components';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -41,18 +42,10 @@ export default {
       embed.addField(title, `${reward.description} ${bracketURL(reward.id)} Rewards **${reward.rewardCount}**`);
     });
 
-    let buttons = new MessageActionRow().addComponents(
-      new Button().setDisabled(!item.get.isFromMission).setLabel("Earn").setCustomId(`earn/${itemId}`).setStyle("SUCCESS"),
-      new Button().setDisabled(!item.get.isFromSmashable).setLabel("Drop").setCustomId(`drop/${itemId}`),
-      new Button().setDisabled(!item.get.isFromPackage).setLabel("Unpack").setCustomId(`unpack/${itemId}`),
-      new Button().setDisabled(!item.get.isFromActivity).setLabel("Reward").setCustomId(`reward/${itemId}`),
-      new Button().setDisabled(!item.get.isFromVendor).setLabel("Buy").setCustomId(`buy/${itemId}`),
-    );
-
     replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
-      components: [buttons],
+      components: [dropHomeRow(item, "earn"), itemHomeRow(item)],
     });
 
   },

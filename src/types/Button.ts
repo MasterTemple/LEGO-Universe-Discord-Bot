@@ -1,8 +1,9 @@
 import { MessageButton, MessageEmbed } from "discord.js";
 
 export class Button extends MessageButton {
-  constructor(button?: Button) {
-    super(button);
-    this.setStyle("PRIMARY");
+  constructor(green?: boolean) {
+    super();
+    if (green) this.setStyle("SUCCESS");
+    else this.setStyle("PRIMARY");
   }
 }
