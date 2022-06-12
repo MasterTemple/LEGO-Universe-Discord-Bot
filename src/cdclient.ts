@@ -864,7 +864,7 @@ export class CDClient {
   async searchVendor(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       let statement =
-        `SELECT id, name, displayName FROM Objects WHERE Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${VENDOR_COMPONENT}) AND (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') LIMIT 25`;
+        `SELECT id, name, displayName FROM Objects WHERE Objects.id IN (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${VENDOR_COMPONENT}) AND (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') LIMIT 25`;
       this.db.all(
         statement,
         (_, rows: Objects[]) => {
@@ -882,7 +882,7 @@ export class CDClient {
   async searchMissionNPC(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') AND (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.id = Objects.id AND component_type = ${MISSION_OFFER_COMPONENT}) IS NOT NULL LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE Objects.id IN (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${MISSION_OFFER_COMPONENT}) AND (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
