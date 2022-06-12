@@ -83,10 +83,6 @@ export function replyOrUpdate(data: MessageUpdateData) {
   let pageSize = data.pageSize || DEFAULT_PAGE_SIZE;
   let isPaged = data?.isPaged === undefined ? true : data.isPaged;
 
-  let instruction = "";
-
-  // put description into pages
-
   // put fields into pages
   if (isPaged) {
     let firstEmbed = embeds[0];
@@ -102,20 +98,14 @@ export function replyOrUpdate(data: MessageUpdateData) {
     let slicedSize = firstEmbed.fields.length;
     if (initialSize != slicedSize) firstEmbed.setTitle(`${firstEmbed.title} (${page + 1})`);
 
-
     let pageButtons = new MessageActionRow();
     if (interaction.isMessageComponent()) {
       let { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\?]+)?/gi)][0].groups;
-      // let newCustomId = interaction.customId;
-      // if(newCustomId.match(/.\//gim).length === 2) newCustomId += "?"
-      // if (!page) newCustomId += "1";
 
       pageButtons.addComponents(
         new Button().setCustomId(`${cmd}/${id}/${page - 1}`).setDisabled(!hasPreviousPage).setLabel("Previous Page"),
         new Button().setCustomId(`${cmd}/${id}/${page + 1}`).setDisabled(!hasNextPage).setLabel("Next Page"),
-        // new Button().setCustomId(newCustomId).setLabel("Back").setStyle("DANGER")
       );
-      // pageButtons.addComponents(new Button().setCustomId(interaction.customId).setLabel("Back").setStyle("DANGER"))
     }
     if (interaction.isApplicationCommand()) {
       let cmd = interaction.commandName;
@@ -125,12 +115,8 @@ export function replyOrUpdate(data: MessageUpdateData) {
         new Button().setCustomId(`${cmd}/${id}/${page + 1}`).setDisabled(!hasNextPage).setLabel("Next Page"),
       );
     }
-
     if (!pageButtons.components.every((button) => button.disabled)) components.push(pageButtons);
   }
-  components.at(-1).addComponents(
-    new Button().setCustomId(instruction).setLabel("Back").setStyle("DANGER")
-  )
 
   if (interaction.isMessageComponent()) {
     interaction.update({
