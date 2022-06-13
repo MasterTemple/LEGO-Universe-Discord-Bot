@@ -861,6 +861,22 @@ export class CDClient {
     });
   }
 
+  async searchEnemy(query: string): Promise<NameValuePair[]> {
+    return new Promise<NameValuePair[]>((resolve, reject) => {
+      this.db.all(
+        `SELECT id, name, displayName FROM Objects WHERE Objects.type = 'Enemies' AND (displayName LIKE '${sqlike(query)}' OR name LIKE '${sqlike(query)}') LIMIT 25`,
+        (_, rows: Objects[]) => {
+          let pairs: NameValuePair[] = rows?.map((row: Objects) => {
+            return {
+              name: `${row.displayName || row.name} [${row.id}]`,
+              value: row.id.toString()
+            };
+          });
+          resolve(pairs);
+        });
+    });
+  }
+
   async searchVendor(query: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve, reject) => {
       let statement =
