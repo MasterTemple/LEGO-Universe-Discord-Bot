@@ -43,9 +43,11 @@ client.on('interactionCreate', async (interaction: Interaction) => {
       await slashCommands.get(cmd).run(interaction, options, cdclient);
     }
 
-    if(interaction.isModalSubmit()) {
-      console.log(interaction);
-      await interaction.reply("Modal submitted!")
+    if (interaction.isModalSubmit()) {
+      let options = [{ name: "modal", type: "STRING", value: interaction.customId } as CommandInteractionOption];
+      await slashCommands.get(interaction.customId).run(interaction, options, cdclient);
+      await interaction.reply({ content: 'Your report was recieved!', ephemeral: true });
+
     }
   } catch (err) {
     if (interaction.isMessageComponent() || interaction.isApplicationCommand()) {

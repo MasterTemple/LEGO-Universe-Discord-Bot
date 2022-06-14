@@ -1,11 +1,11 @@
-import { ApplicationCommandOptionData, BaseCommandInteraction, CommandInteraction, CommandInteractionOption, MessageComponentInteraction } from 'discord.js';
+import { ApplicationCommandOptionData, BaseCommandInteraction, CommandInteraction, CommandInteractionOption, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
 import { CDClient } from '../cdclient';
 
 export interface SlashCommand {
   name: string;
   description: string;
   options: ApplicationCommandOptionData[];
-  run(interaction: BaseCommandInteraction | MessageComponentInteraction,
+  run(interaction: BaseCommandInteraction | MessageComponentInteraction | ModalSubmitInteraction,
     options: readonly CommandInteractionOption[] | [],
     cdclient: CDClient): Promise<void>;
 }
