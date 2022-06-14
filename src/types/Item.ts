@@ -207,9 +207,9 @@ export class Item extends CDClient {
   }
 
   async getProxyItemsFromSubItems(subItems: string): Promise<ObjectElement[]> {
-    if (subItems === null) return [];
+    if (!subItems?.match(/\d+/g)) return [];
     else {
-      const ids: number[] = subItems.match(/\d+/g).map((num: string) => parseInt(num));
+      const ids: number[] = subItems.match(/\d+/g)?.map((num: string) => parseInt(num));
       const proxies: ObjectElement[] = await Promise.all(ids.map((id: number) => this.getObjectElement(id)));
       return proxies;
     }

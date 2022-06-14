@@ -2,6 +2,7 @@ import { Client, CommandInteractionOption, Interaction } from 'discord.js';
 import { getAutocompleteOptions } from './autocomplete';
 import { CDClient } from './cdclient';
 import { token } from './config';
+import { error } from './error';
 import { NameValuePair } from './luInterfaces';
 import { getSlashCommands, updateSlashCommands } from './setup';
 import { SlashCommandMap } from './types/SlashCommand';
@@ -24,25 +25,32 @@ client.once('ready', async () => {
 
 client.on('interactionCreate', async (interaction: Interaction) => {
   try {
-    if (interaction.isApplicationCommand()) {
-      const options = interaction.options?.data || [];
-      slashCommands.get(interaction.commandName).run(interaction, options, cdclient);
-    }
-
     if (interaction.isAutocomplete()) {
       const options = interaction.options.data;
       let { value } = options.find((f) => f.focused);
       let autocompleteOptions: NameValuePair[] = await getAutocompleteOptions(cdclient, interaction.commandName.toString(), value.toString());
-      interaction.respond(autocompleteOptions);
+      await interaction.respond(autocompleteOptions);
+    }
+
+    if (interaction.isApplicationCommand()) {
+      const options = interaction.options?.data || [];
+      await slashCommands.get(interaction.commandName).run(interaction, options, cdclient);
     }
 
     if (interaction.isMessageComponent()) {
       let { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)/gi)][0].groups;
       let options = [{ name: "button", type: "STRING", value: id } as CommandInteractionOption];
-      slashCommands.get(cmd).run(interaction, options, cdclient);
+      await slashCommands.get(cmd).run(interaction, options, cdclient);
     }
-  } catch (e) {
-    console.log(e);
+
+    if(interaction.isModalSubmit()) {
+      console.log(interaction);
+      await interaction.reply("Modal submitted!")
+    }
+  } catch (err) {
+    if (interaction.isMessageComponent() || interaction.isApplicationCommand()) {
+      error(interaction, err);
+    }
   }
 });
 
