@@ -1,6 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { skillHomeRow } from '../components';
+import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
 import { ObjectElement } from '../luInterfaces';
 import { Button } from '../types/Button';
@@ -25,7 +26,13 @@ export default {
     cdclient) {
 
     const query = getOption(options, "skill");
-    const skillId = parseInt(query) || parseInt(cdclient.locale.searchSkills(query)[0].value);
+    const skillId = parseInt(query) || parseInt(cdclient.locale.searchSkills(query)?.[0]?.value);
+
+    if (!skillId) {
+      notFound(interaction);
+      return;
+    }
+
     const skill = new Skill(cdclient, skillId);
     await skill.create();
     await skill.addSkillItems();

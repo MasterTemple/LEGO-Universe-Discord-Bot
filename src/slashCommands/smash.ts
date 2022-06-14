@@ -2,6 +2,7 @@ import { CommandInteraction, CommandInteractionOption, MessageActionRow, Message
 import { CDClient } from '../cdclient';
 import { enemyHomeRow, NPCHomeRow } from '../components';
 import { fillEmbedWithSmashableDrops } from '../discord';
+import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { decimalToFraction, percent, round } from '../math';
 import { Button } from '../types/Button';
@@ -27,6 +28,12 @@ export default {
 
     const query = getOption(options, "enemy");
     const enemyId = parseInt(query) || await cdclient.getObjectId(query);
+
+    if (!enemyId) {
+      notFound(interaction);
+      return;
+    }
+
     const enemy = new Enemy(cdclient, enemyId);
     await enemy.create();
     await enemy.addDrops();

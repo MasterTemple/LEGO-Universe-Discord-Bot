@@ -1,6 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { dropHomeRow, itemHomeRow } from '../components';
+import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -25,6 +26,12 @@ export default {
 
     const query = getOption(options, "item");
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
+
+    if (!itemId) {
+      notFound(interaction);
+      return;
+    }
+
     const item = new Item(cdclient, itemId);
     await item.create();
     await item.addMissionRewards();

@@ -2,6 +2,7 @@ import { CommandInteraction, CommandInteractionOption, MessageActionRow, Message
 import { CDClient, PACKAGE_COMPONENT } from '../cdclient';
 import { dropHomeRow, itemHomeRow } from '../components';
 import { fillEmbedWithLootDrops } from '../discord';
+import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { decimalToFraction } from '../math';
 import { Button } from '../types/Button';
@@ -27,6 +28,12 @@ export default {
 
     const query = getOption(options, "item");
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
+
+    if (!itemId) {
+      notFound(interaction);
+      return;
+    }
+
     const item = new Item(cdclient, itemId);
     await item.create();
     await item.findHowToGet();

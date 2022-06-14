@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -23,6 +24,12 @@ export default {
     cdclient) {
     const query = getOption(options, "loottable");
     const lootTableId = parseInt(query) || await cdclient.getObjectId(query);
+
+    if (!lootTableId) {
+      notFound(interaction);
+      return;
+    }
+
     const lootTable = new LootTable(cdclient, lootTableId);
     await lootTable.create();
 

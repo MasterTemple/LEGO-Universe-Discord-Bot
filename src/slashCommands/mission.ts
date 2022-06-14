@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
+import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { Embed } from '../types/Embed';
 import { Mission } from '../types/Mission';
@@ -23,6 +24,12 @@ export default {
 
     const query = getOption(options, "mission");
     const missionId = parseInt(query) || parseInt((cdclient.locale.searchMissions(query))?.[0]?.value);
+
+    if (!missionId) {
+      notFound(interaction);
+      return;
+    }
+
     const mission = new Mission(cdclient, missionId);
     await mission.create();
 

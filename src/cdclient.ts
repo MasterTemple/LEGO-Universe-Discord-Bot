@@ -384,7 +384,7 @@ export class CDClient {
       this.db.get(
         `SELECT id, name, displayName FROM Objects WHERE displayName LIKE '%${query.replace(/\s/g, "%")}%' OR name LIKE '%${query.replace(/\s/g, "%")}%' ORDER BY id ASC LIMIT 25`,
         (_, row: Objects) => {
-          resolve(row.id);
+          resolve(row?.id);
         });
     });
   }
@@ -957,9 +957,13 @@ export class CDClient {
             }
           }
 
+          let isActivityRegex = new RegExp("Activities_\\d+_ActivityName", "gm");
           let pairs: NameValuePair[] = newRows?.map((row) => {
+            let activityName = this.locale.getActivityName(row.objectTemplate);
+            let title = !activityName.match(isActivityRegex) ? `${activityName} > ` : "";
+            title += `${row.description} [${row.objectTemplate}]`;
             return {
-              name: `${this.locale.getActivityName(row.objectTemplate)} > ${row.description} [${row.objectTemplate}]`,
+              name: title,
               value: `${row.objectTemplate};${row.description}`
             };
           });

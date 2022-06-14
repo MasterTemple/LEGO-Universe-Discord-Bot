@@ -1,6 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { dropHomeRow, itemHomeRow } from '../components';
+import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
 import { ObjectElement } from '../luInterfaces';
 import { Button } from '../types/Button';
@@ -68,6 +69,12 @@ export default {
 
     const query = getOption(options, "item");
     const itemId = parseInt(query) || await cdclient.getObjectId(query);
+
+    if (!itemId) {
+      notFound(interaction);
+      return;
+    }
+
     const item = new Item(cdclient, itemId);
     await item.create();
     await item.addVendors();

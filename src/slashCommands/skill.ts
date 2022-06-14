@@ -1,6 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { skillHomeRow } from '../components';
+import { notFound } from '../error';
 import { getOption, replyOrUpdate } from '../functions';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -24,7 +25,13 @@ export default {
     cdclient) {
 
     const query = getOption(options, "skill");
-    const skillId = parseInt(query) || parseInt(cdclient.locale.searchSkills(query)[0].value);
+    const skillId = parseInt(query) || parseInt(cdclient.locale.searchSkills(query)?.[0]?.value);
+
+    if (!skillId) {
+      notFound(interaction);
+      return;
+    }
+
     const skill = new Skill(cdclient, skillId);
     await skill.create();
 

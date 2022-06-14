@@ -1,6 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { NPCHomeRow } from '../components';
+import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -26,6 +27,12 @@ export default {
 
     const query = getOption(options, "vendor");
     const npcId = parseInt(query) || await cdclient.getObjectId(query);
+
+    if (!npcId) {
+      notFound(interaction);
+      return;
+    }
+
     const npc = new NPC(cdclient, npcId);
     await npc.create();
 

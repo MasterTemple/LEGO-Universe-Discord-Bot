@@ -1,6 +1,7 @@
 import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
 import { CDClient } from '../cdclient';
 import { fillEmbedWithSmashableDrops } from '../discord';
+import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { percent } from '../math';
 import { Activity } from '../types/Activity';
@@ -24,9 +25,16 @@ export default {
     cdclient) {
 
     let query = getOption(options, "activity");
-    if (!query.match(/;/g)) query = (await cdclient.searchActivity(query))[0].value;
-    const activityId = parseInt(query.match(/^[^;]+/g)?.[0]);
-    const activityName = query.match(/(?<=^[^;]+;).*/g)?.[0];
+    if (!query.match(/;/g)) query = (await cdclient.searchActivity(query))?.[0]?.value;
+
+    const activityId = parseInt(query?.match(/^[^;]+/g)?.[0]);
+    const activityName = query?.match(/(?<=^[^;]+;).*/g)?.[0];
+
+    if (!activityId || !activityName) {
+      notFound(interaction);
+      return;
+    }
+
     const activity = new Activity(cdclient, activityId, activityName);
     await activity.create();
 
