@@ -16,24 +16,23 @@ export function notFound(interaction: BaseCommandInteraction | MessageComponentI
 }
 
 export async function error(interaction: BaseCommandInteraction | MessageComponentInteraction, err: any): Promise<void> {
+
+  console.error(err);
+
   let embed = new Embed();
   embed.setTitle("Error");
   embed.setDescription(`\`\`\`\n${err.toString()}\`\`\``);
-  // let reportButton = new MessageActionRow().addComponents(
-  //   new MessageButton().setStyle("DANGER").setLabel("Report").setCustomId("modal/report")
-  // );
 
   interaction.reply({
     embeds: [embed],
     ephemeral: true,
-    // components: [reportButton]
   });
+
   if (interaction.isApplicationCommand()) {
     embed.addField("Command", `\`\`\`\n/${interaction.commandName} ${interaction.options.data.map((o) => `${o.name}:"${o.value}"`).join(" ")}\`\`\``);
-    // embed.addField("Options", `\`\`\`json\n${JSON.stringify(interaction.options.data, null, 2)}\`\`\``);
   }
   if (interaction.isMessageComponent()) {
-    embed.addField("Instruction", interaction.customId);
+    embed.addField("Instruction", `\`\`\`\n${interaction.customId}\`\`\``);
   }
 
   let logChannel = await interaction.client.channels.fetch(logChannelId);

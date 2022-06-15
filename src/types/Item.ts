@@ -95,6 +95,7 @@ export class Item extends CDClient {
       isFromVendor: await this.isFromVendor(this.id),
     };
   }
+
   async addVendors(): Promise<void> {
     let vendorIds = await this.getIdsOfVendorsThatSellItem(this.id);
     // this.buy = await Promise.all(vendorIds.map((id) => this.getObjectElementFromLocale(id)))
@@ -343,7 +344,7 @@ export class Item extends CDClient {
       isWeapon: equipLocationNames.includes('Right Hand'), // rawItemComponent.,
       levelRequirement: await this.getLevelRequirementFromPreconditions(
         rawItemComponent.reqPrecondition), // rawItemComponent.,
-      subItems: rawItemComponent.subItems.match(/\d+/g)?.map(parseInt)
+      subItems: rawItemComponent.subItems?.match(/\d+/g)?.map(parseInt) || []
     };
   }
 

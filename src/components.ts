@@ -11,6 +11,9 @@ export function itemHomeRow(item: Item, green?: string): MessageActionRow {
   let row = new MessageActionRow().addComponents(
     new Button(green === "item").setLabel("Item").setCustomId(`item/${item.id}`),
     new Button(green === "get").setLabel("Get").setCustomId(`get/${item.id}`),
+  );
+
+  if (item.itemComponent.preconditions.length > 0) row.addComponents(
     new Button(green === "preconditions").setLabel("Preconditions").setCustomId(`preconditions/${item.id}`),
   );
 
