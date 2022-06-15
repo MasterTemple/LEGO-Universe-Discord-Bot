@@ -1,4 +1,4 @@
-import { BaseCommandInteraction, CommandInteractionOption, Interaction } from 'discord.js';
+import { BaseCommandInteraction, CommandInteractionOption, Interaction, PartialWebhookMixin } from 'discord.js';
 import { slashCommands } from '..';
 import { reportChannelId } from '../config';
 import { Embed } from '../types/Embed';
@@ -6,7 +6,7 @@ import { ModalCommand } from '../types/ModalCommand';
 
 interface Instruction {
   command: string;
-  parameter: string;
+  parameters: string[];
 }
 
 export default {
@@ -20,29 +20,33 @@ export default {
     let input = interaction.fields.getTextInputValue("input");
 
     /*
-    /item 7570, 7415 => same command executed on multiple values
-    /reward 7793 => separate command
+      USAGE:
+      optional slash (/)
+      command (drop)
+      parameters (ids ONLY) separated by space, tab, newline, comma, or semicolon
     */
 
-    let instructions: Instruction[] = [...input.matchAll(/^\/?(?<command>\w+) (?<parameter>.*)/gim)].map((m) => {
+    let instructions: Instruction[] = [...input.matchAll(/^\/?(?<command>\w+)\s+(?<parameters>[^\/A-z]+)/gim)].map((m) => {
       return {
         command: m.groups.command,
-        parameter: m.groups.parameter
+        parameters: m.groups.parameters.match(/\d+/gim) // it should be just numbers anyway
       };
     });
 
     let embed = new Embed();
     embed.setTitle(`Executing ${instructions.length} Commands...`);
-    embed.setDescription(`\`\`\`\n${instructions.map((i) => `/${i.command} ${i.parameter}`).join("\n")}\`\`\``);
+    embed.setDescription(`\`\`\`\n${instructions.map((i) => `/${i.command} ${i.parameters.join(", ")}`).join("\n")}\`\`\``);
 
     interaction.reply({
       embeds: [embed]
     });
 
-    await Promise.all(instructions.map(({ command, parameter }) => {
-      let options = [{ name: "execute", type: "STRING", value: parameter } as CommandInteractionOption];
-      slashCommands.get(command).run(interaction, options, cdclient);
-    }));
+    for (let { command, parameters } of instructions) {
+      for (let parameter of parameters) {
+        let options = [{ name: "execute", type: "STRING", value: parameter } as CommandInteractionOption];
+        await slashCommands.get(command).run(interaction, options, cdclient);
+      }
+    }
 
   }
 } as ModalCommand;

@@ -106,7 +106,7 @@ export class LocaleXML {
   }
   getSkillDescription(skillId: number): SkillDescription[] {
     let description = this.locale.get("SkillBehavior_ID_descriptionUI").get(skillId.toString());
-    let descriptions = [...description.matchAll(/%\((?<name>[^\)]+)\)(?<description>[^%]+)/gm)].map((e) => {
+    let descriptions = [...(description?.matchAll(/%\((?<name>[^\)]+)\)(?<description>[^%]+)/gm) || [])].map((e) => {
       return {
         name: e.groups.name,
         description: e.groups.description,
