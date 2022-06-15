@@ -18,6 +18,12 @@ export default {
     cdclient) {
 
     let input = interaction.fields.getTextInputValue("input");
+
+    /*
+    /item 7570, 7415 => same command executed on multiple values
+    /reward 7793 => separate command
+    */
+
     let instructions: Instruction[] = [...input.matchAll(/^\/?(?<command>\w+) (?<parameter>.*)/gim)].map((m) => {
       return {
         command: m.groups.command,

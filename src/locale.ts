@@ -100,12 +100,15 @@ export class LocaleXML {
     return this.locale.get("SkillBehavior_ID_name").get(id.toString());
   }
   getSkillDescription(skillId: number): SkillDescription[] {
-    return [...this.locale.get("SkillBehavior_ID_descriptionUI").get(skillId.toString()).matchAll(/%\((?<name>[^\)]+)\)(?<description>[^%]+)/gm)].map((e) => {
+    let description = this.locale.get("SkillBehavior_ID_descriptionUI").get(skillId.toString());
+    let descriptions = [...description.matchAll(/%\((?<name>[^\)]+)\)(?<description>[^%]+)/gm)].map((e) => {
       return {
         name: e.groups.name,
         description: e.groups.description,
       };
     });
+    if (descriptions.length === 0) descriptions = [{ name: "Description", description: description }];
+    return descriptions;
   }
 
   searchActivities(query: string): NameValuePair[] {
