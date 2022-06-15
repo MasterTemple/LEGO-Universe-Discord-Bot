@@ -74,6 +74,11 @@ export class LocaleXML {
   getObjectName(id: number): string {
     return this.locale.get("Objects_ID_name").get(id.toString()) || `Objects_${id}_name`;
   }
+
+  getObjectNameOrUndefined(id: number): string {
+    return this.locale.get("Objects_ID_name").get(id.toString());
+  }
+
   getLootTableName(id: number): string {
     return this.unofficial.get("LootTableName").get(id.toString()) || `Loot Table ${id}`;
   }

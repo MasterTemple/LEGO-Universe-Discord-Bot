@@ -16,7 +16,8 @@ import {
   PackageComponent,
   RarityTable,
   RenderComponent,
-  SkillBehavior
+  SkillBehavior,
+  SkillBehaviorWithObjectSkills
 } from './cdclientInterfaces';
 import { sqlitePath } from './config';
 import { formatIconPath } from './functions';
@@ -166,7 +167,7 @@ export class CDClient {
 
   async getObjectName(id: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      let name = this.locale.getObjectName(id);
+      let name = this.locale.getObjectNameOrUndefined(id);
       if (name) {
         resolve(name);
       } else {
@@ -369,6 +370,7 @@ export class CDClient {
         });
     });
   }
+
   async getSkillBehavior(skillId: number): Promise<SkillBehavior> {
     return new Promise<SkillBehavior>((resolve, reject) => {
       this.db.get(
@@ -379,6 +381,59 @@ export class CDClient {
         });
     });
   }
+
+  async getSkillsFromObject(itemId: number): Promise<Skill[]> {
+    return new Promise<Skill[]>((resolve, reject) => {
+      this.db.all(
+        `SELECT * FROM SkillBehavior JOIN ObjectSkills ON SkillBehavior.skillID = ObjectSkills.skillID AND ObjectSkills.objectTemplate = ${itemId} WHERE SkillBehavior.skillID IN (SELECT skillID From ObjectSkills WHERE objectTemplate = ${itemId})`,
+        (_, rows: SkillBehaviorWithObjectSkills[]) => {
+          let skills: Skill[] = rows.map((skill) => {
+            return {
+              itemId: skill.objectTemplate,
+              id: skill.skillID,
+              behaviorId: skill.behaviorID,
+              onEquip: !skill.AICombatWeight,
+              imaginationCost: skill.imaginationcost,
+              cooldownGroup: skill.cooldowngroup,
+              cooldownTime: skill.cooldown,
+              armorBonus: skill.armorBonusUI,
+              healthBonus: skill.lifeBonusUI,
+              imaginationBonus: skill.imBonusUI,
+              name: this.locale.getSkillName(skill.skillID),
+              descriptions: this.locale.getSkillDescription(skill.skillID)
+            };
+          });
+          resolve(skills);
+        });
+    });
+  }
+
+  async getSkillsFromObjects(itemIds: number[]): Promise<Skill[]> {
+    return new Promise<Skill[]>((resolve, reject) => {
+      this.db.all(
+        `SELECT * FROM SkillBehavior JOIN ObjectSkills ON SkillBehavior.skillID = ObjectSkills.skillID AND ObjectSkills.objectTemplate IN (${itemIds.join(",")}) WHERE SkillBehavior.skillID IN (SELECT skillID From ObjectSkills WHERE objectTemplate IN (${itemIds.join(",")})) ORDER BY ObjectSkills.objectTemplate`,
+        (_, rows: SkillBehaviorWithObjectSkills[]) => {
+          let skills: Skill[] = rows?.map((skill) => {
+            return {
+              itemId: skill.objectTemplate,
+              id: skill.skillID,
+              behaviorId: skill.behaviorID,
+              onEquip: !skill.castOnType,
+              imaginationCost: skill.imaginationcost,
+              cooldownGroup: skill.cooldowngroup,
+              cooldownTime: skill.cooldown,
+              armorBonus: skill.armorBonusUI,
+              healthBonus: skill.lifeBonusUI,
+              imaginationBonus: skill.imBonusUI,
+              name: this.locale.getSkillName(skill.skillID),
+              descriptions: this.locale.getSkillDescription(skill.skillID)
+            };
+          });
+          resolve(skills);
+        });
+    });
+  }
+
   async getObjectId(query: string): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       this.db.get(

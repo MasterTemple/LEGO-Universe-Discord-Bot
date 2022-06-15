@@ -1,3 +1,11 @@
+// for joining tables
+export interface SkillBehaviorWithObjectSkills extends SkillBehavior, ObjectSkills { }
+
+
+
+
+
+// natural results
 interface AICombatRoles {
   id: number;
   preferredRole: number;

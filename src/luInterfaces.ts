@@ -1,4 +1,3 @@
-
 export interface ActivityDropFromQuery {
   id: number;
   activityName: string;
@@ -110,6 +109,7 @@ export interface EnemyDrop {
   ItemCount: number;
 }
 export interface Skill {
+  itemId: number;
   id: number;
   behaviorId: number;
   onEquip: boolean;
@@ -119,6 +119,8 @@ export interface Skill {
   armorBonus: number;
   healthBonus: number;
   imaginationBonus: number;
+  name: string;
+  descriptions: SkillDescription[];
 }
 
 export interface ObjectElement {
@@ -154,6 +156,7 @@ export interface ItemComponent {
   commendationCurrencyName: string;
   isWeapon: boolean;
   levelRequirement: number;
+  subItems: number[];
 }
 
 export interface ItemDrop {

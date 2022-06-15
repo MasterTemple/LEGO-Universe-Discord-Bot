@@ -60,6 +60,14 @@ export class Item extends CDClient {
     this.imageURL = `${explorerDomain}${await this.getIconAsset(id)}`;
   }
 
+  async addSkillDescriptions(): Promise<void> {
+    for (let skill of this.skills) {
+      skill.name = this.locale.getSkillName(skill.id);
+      skill.descriptions = this.locale.getSkillDescription(skill.id);
+    }
+  }
+
+
   async addPackageDrops(): Promise<void> {
     this.packageDrops = await this.getPackageDrops(this.id);
   }
@@ -335,27 +343,12 @@ export class Item extends CDClient {
       isWeapon: equipLocationNames.includes('Right Hand'), // rawItemComponent.,
       levelRequirement: await this.getLevelRequirementFromPreconditions(
         rawItemComponent.reqPrecondition), // rawItemComponent.,
+      subItems: rawItemComponent.subItems.match(/\d+/g)?.map(parseInt)
     };
   }
-  async getSkill(objectSkill: ObjectSkills): Promise<Skill> {
-    const skill = await this.getSkillBehavior(objectSkill.skillID);
 
-    return {
-      id: objectSkill.skillID,
-      behaviorId: skill.behaviorID,
-      onEquip: !objectSkill.AICombatWeight,
-      imaginationCost: skill.imaginationcost,
-      cooldownGroup: skill.cooldowngroup,
-      cooldownTime: skill.cooldown,
-      armorBonus: skill.armorBonusUI,
-      healthBonus: skill.lifeBonusUI,
-      imaginationBonus: skill.imBonusUI,
-    };
-  }
   async addItemStats(): Promise<void> {
-    const objectSkills = await this.getObjectSkills(this.id);
-    this.skills = await Promise.all(objectSkills.map((skill) => this.getSkill(skill)));
-    // console.log(this.skills);
+    this.skills = await this.getSkillsFromObjects([this.id, ...this.itemComponent.subItems]);
     if (this.skills.length)
       this.stats = {
         armor: this.skills.find(({ armorBonus }) => armorBonus !== null)?.armorBonus || 0,

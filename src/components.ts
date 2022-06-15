@@ -18,7 +18,7 @@ export function itemHomeRow(item: Item, green?: string): MessageActionRow {
     new Button(green === "package").setLabel("Open").setCustomId(`package/${item.id}`),
   );
 
-  if (item.components.some((comp) => comp.component_type === PACKAGE_COMPONENT)) row.addComponents(
+  if (item.skills.some((skill) => skill.descriptions.length > 0)) row.addComponents(
     new Button(green === "skills").setLabel("Skills").setCustomId(`skills/${item.id}`),
   );
 
