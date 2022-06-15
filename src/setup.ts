@@ -1,5 +1,6 @@
 import { Client } from 'discord.js';
 import { readdirSync } from 'fs';
+import { ModalCommandMap } from './types/ModalCommand';
 import { SlashCommandMap } from './types/SlashCommand';
 
 export async function updateSlashCommands(client: Client, commands: SlashCommandMap) {
@@ -14,4 +15,14 @@ export function getSlashCommands(): SlashCommandMap {
     slashCommands.set(command.name, command);
   }
   return slashCommands;
+}
+
+export function getModalCommands(): ModalCommandMap {
+  const modalCommands: ModalCommandMap = new Map();
+  for (const fileName of readdirSync(__dirname + '/modalCommands')) {
+    if (!fileName.endsWith('.js')) continue;
+    const command = require(`${__dirname}/modalCommands/${fileName}`).default;
+    modalCommands.set(command.name, command);
+  }
+  return modalCommands;
 }

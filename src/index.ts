@@ -4,7 +4,8 @@ import { CDClient } from './cdclient';
 import { token } from './config';
 import { error } from './error';
 import { NameValuePair } from './luInterfaces';
-import { getSlashCommands, updateSlashCommands } from './setup';
+import { getModalCommands, getSlashCommands, updateSlashCommands } from './setup';
+import { ModalCommandMap } from './types/ModalCommand';
 import { SlashCommandMap } from './types/SlashCommand';
 
 const cdclient = new CDClient();
@@ -14,6 +15,7 @@ const client = new Client({
 });
 
 const slashCommands: SlashCommandMap = getSlashCommands();
+const modalCommands: ModalCommandMap = getModalCommands();
 
 client.once('ready', async () => {
   console.log('\n------------------------------------\n');
@@ -45,9 +47,8 @@ client.on('interactionCreate', async (interaction: Interaction) => {
 
     if (interaction.isModalSubmit()) {
       let options = [{ name: "modal", type: "STRING", value: interaction.customId } as CommandInteractionOption];
-      await slashCommands.get(interaction.customId).run(interaction, options, cdclient);
+      await modalCommands.get(interaction.customId).run(interaction, cdclient);
       await interaction.reply({ content: 'Your report was recieved!', ephemeral: true });
-
     }
   } catch (err) {
     if (interaction.isMessageComponent() || interaction.isApplicationCommand()) {

@@ -1,13 +1,12 @@
 import { ApplicationCommandOptionData, BaseCommandInteraction, CommandInteraction, CommandInteractionOption, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
 import { CDClient } from '../cdclient';
 
-export interface SlashCommand {
+export interface ModalCommand {
   name: string;
   description: string;
   options: ApplicationCommandOptionData[];
-  run(interaction: BaseCommandInteraction | MessageComponentInteraction,
-    options: readonly CommandInteractionOption[] | [],
+  run(interaction: ModalSubmitInteraction,
     cdclient: CDClient): Promise<void>;
 }
 
-export type SlashCommandMap = Map<string, SlashCommand>;
+export type ModalCommandMap = Map<string, ModalCommand>;
