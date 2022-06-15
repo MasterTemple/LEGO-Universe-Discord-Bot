@@ -1,4 +1,4 @@
-import { BaseCommandInteraction, CacheType, CommandInteraction, CommandInteractionOption, MessageActionRow, MessageButton, MessageComponent, MessageComponentInteraction, MessageEmbed } from "discord.js";
+import { BaseCommandInteraction, CacheType, CommandInteraction, CommandInteractionOption, MessageActionRow, MessageButton, MessageComponent, MessageComponentInteraction, MessageEmbed, ModalSubmitFieldsResolver, ModalSubmitInteraction } from "discord.js";
 import { explorerDomain } from "./config";
 import { Button } from "./types/Button";
 import { Embed } from "./types/Embed";
@@ -65,7 +65,7 @@ export function getOption(options: readonly CommandInteractionOption<CacheType>[
 }
 
 export interface MessageUpdateData {
-  interaction: BaseCommandInteraction | MessageComponentInteraction,
+  interaction: BaseCommandInteraction | MessageComponentInteraction | ModalSubmitInteraction,
   embeds: Embed[] | MessageEmbed[],
   components?: MessageActionRow[],
   page?: number,
@@ -74,7 +74,7 @@ export interface MessageUpdateData {
 }
 const DEFAULT_PAGE_SIZE = 8;
 
-export function replyOrUpdate(data: MessageUpdateData) {
+export async function replyOrUpdate(data: MessageUpdateData) {
 
   let interaction = data.interaction;
   let embeds = data.embeds;
@@ -119,15 +119,27 @@ export function replyOrUpdate(data: MessageUpdateData) {
   }
 
   if (interaction.isMessageComponent()) {
-    interaction.update({
+    await interaction.update({
       embeds: embeds,
       components: components
     });
   }
+
   if (interaction.isApplicationCommand()) {
-    interaction.reply({
+    await interaction.reply({
       embeds: embeds,
       components: components
     });
+  }
+
+  if (interaction.isModalSubmit()) {
+    let channel = interaction.client.channels.cache.get(interaction.channelId);
+    if (!channel) channel = await interaction.client.channels.fetch(interaction.channelId);
+    if (channel.isText()) {
+      await channel.send({
+        embeds: embeds,
+        components: components
+      });
+    }
   }
 }

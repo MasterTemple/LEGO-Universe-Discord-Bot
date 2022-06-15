@@ -14,8 +14,8 @@ const client = new Client({
   intents: [],
 });
 
-const slashCommands: SlashCommandMap = getSlashCommands();
-const modalCommands: ModalCommandMap = getModalCommands();
+export const slashCommands: SlashCommandMap = getSlashCommands();
+export const modalCommands: ModalCommandMap = getModalCommands();
 
 client.once('ready', async () => {
   console.log('\n------------------------------------\n');
@@ -46,9 +46,8 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     }
 
     if (interaction.isModalSubmit()) {
-      let options = [{ name: "modal", type: "STRING", value: interaction.customId } as CommandInteractionOption];
       await modalCommands.get(interaction.customId).run(interaction, cdclient);
-      await interaction.reply({ content: 'Your report was recieved!', ephemeral: true });
+      if (interaction.replied === false) await interaction.reply({ content: 'Your report was recieved!', ephemeral: true });
     }
   } catch (err) {
     if (interaction.isMessageComponent() || interaction.isApplicationCommand()) {

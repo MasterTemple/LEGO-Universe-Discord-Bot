@@ -49,8 +49,13 @@ export default {
     let right = "";
 
     loot.forEach((item, index) => {
-      if (index % 2 === 0) left += `**${index + 1}.** ${item.name} ${bracketURL(item.id, "objects/loot/table")}\n`;
-      else right += `**${index + 1}.** ${item.name} ${bracketURL(item.id, "objects/loot/table")}\n`;
+      let thisItem = `**${index + 1}.** ${item.name} ${bracketURL(item.id, "objects")}\n`;
+      if (index % 2 === 0) {
+        if (left.length + thisItem.length < 1024) left += thisItem;
+      }
+      else {
+        if (right.length + thisItem.length < 1024) right += thisItem;
+      }
     });
 
     if (left.length > 0) embed.addField(`Tier ${selectedTier}`, left, true);

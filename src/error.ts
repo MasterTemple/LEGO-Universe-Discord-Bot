@@ -1,11 +1,11 @@
-import { AutocompleteInteraction, BaseCommandInteraction, MessageActionRow, MessageButton, MessageComponentInteraction, Modal, TextInputComponent } from "discord.js";
+import { AutocompleteInteraction, BaseCommandInteraction, MessageActionRow, MessageButton, MessageComponentInteraction, Modal, ModalSubmitInteraction, TextInputComponent } from "discord.js";
 import { logChannelId } from "./config";
 import { Button } from "./types/Button";
 import { Embed } from "./types/Embed";
 
 const NOT_FOUND_IMAGE_URL = "https://media.discordapp.net/attachments/820782771403751478/986374533630013500/unknown.png";
 
-export function notFound(interaction: BaseCommandInteraction | MessageComponentInteraction): void {
+export function notFound(interaction: BaseCommandInteraction | MessageComponentInteraction | ModalSubmitInteraction): void {
   let embed = new Embed();
   embed.setImage(NOT_FOUND_IMAGE_URL);
   embed.addField("Your search was not found.", "Please use the autocomplete suggestions to be safe :)");

@@ -12,8 +12,8 @@ import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
 
 export default {
-  name: 'report',
-  description: 'Open a dialog to report anything about this bot!',
+  name: 'execute',
+  description: 'Open a dialog to execute multiple commands on this bot!',
   options: [],
   run: async function (
     interaction,
@@ -21,22 +21,19 @@ export default {
     cdclient) {
 
     const modal = new Modal()
-      .setCustomId('report')
-      .setTitle('Report');
-    const title = new TextInputComponent()
-      .setCustomId('title')
-      .setLabel("Title")
-      .setStyle('SHORT');
+      .setCustomId('execute')
+      .setTitle('Execute Commands');
     const input = new TextInputComponent()
       .setCustomId('input')
-      .setLabel("What's would you like to report?")
+      .setLabel("List one command per line. Ex: /drop 7570")
       .setStyle('PARAGRAPH');
 
-    const subject = new MessageActionRow<ModalActionRowComponent>().addComponents(title);
     const description = new MessageActionRow<ModalActionRowComponent>().addComponents(input);
-    modal.addComponents(subject, description);
+    modal.addComponents(description);
 
     if (interaction.isApplicationCommand() || interaction.isMessageComponent()) await interaction.showModal(modal);
+    if (interaction.isModalSubmit()) await interaction.reply({ content: "Nice try", ephemeral: true });
+
 
   },
 } as SlashCommand;

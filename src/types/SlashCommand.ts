@@ -5,7 +5,7 @@ export interface SlashCommand {
   name: string;
   description: string;
   options: ApplicationCommandOptionData[];
-  run(interaction: BaseCommandInteraction | MessageComponentInteraction,
+  run(interaction: BaseCommandInteraction | MessageComponentInteraction | ModalSubmitInteraction,
     options: readonly CommandInteractionOption[] | [],
     cdclient: CDClient): Promise<void>;
 }
