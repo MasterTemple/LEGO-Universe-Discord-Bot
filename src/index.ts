@@ -8,7 +8,7 @@ import { getModalCommands, getSlashCommands, updateSlashCommands } from './setup
 import { ModalCommandMap } from './types/ModalCommand';
 import { SlashCommandMap } from './types/SlashCommand';
 
-const cdclient = new CDClient();
+export const cdclient = new CDClient();
 
 const client = new Client({
   intents: [],

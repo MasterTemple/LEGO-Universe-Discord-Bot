@@ -39,7 +39,7 @@ export default {
     embed.setURL(item.getURL());
     embed.setThumbnail(item.imageURL);
 
-    fillEmbedWithLootDrops(embed, item.drop, item.name);
+    await fillEmbedWithLootDrops(embed, item.drop, item.name);
 
     if (embed.fields.length === 0) {
       embed.addField("Not Dropped!", `${item.name} is not found by smashing anything!`);
