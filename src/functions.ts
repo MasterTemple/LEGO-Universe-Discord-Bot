@@ -86,8 +86,10 @@ export async function replyOrUpdate(data: MessageUpdateData) {
   // put fields into pages
   if (isPaged) {
     let firstEmbed = embeds[0];
+    let parameters = "";
     if (interaction.isMessageComponent()) {
       page = parseInt(interaction.customId.match(/(?<=[^\/]+\/[^\/]+\/)[^\?]+/gi)?.[0]) || 0;
+      parameters = interaction.customId.match(/\?.*/gi)?.[0];
     }
 
     let initialSize = firstEmbed.fields.length;
@@ -103,16 +105,16 @@ export async function replyOrUpdate(data: MessageUpdateData) {
       let { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\?]+)?/gi)][0].groups;
 
       pageButtons.addComponents(
-        new Button().setCustomId(`${cmd}/${id}/${page - 1}`).setDisabled(!hasPreviousPage).setLabel("Previous Page"),
-        new Button().setCustomId(`${cmd}/${id}/${page + 1}`).setDisabled(!hasNextPage).setLabel("Next Page"),
+        new Button().setCustomId(`${cmd}/${id}/${page - 1}${parameters}`).setDisabled(!hasPreviousPage).setLabel("Previous Page"),
+        new Button().setCustomId(`${cmd}/${id}/${page + 1}${parameters}`).setDisabled(!hasNextPage).setLabel("Next Page"),
       );
     }
     if (interaction.isApplicationCommand()) {
       let cmd = interaction.commandName;
       let id = getOption(interaction.options?.data || []);
       pageButtons.addComponents(
-        new Button().setCustomId(`${cmd}/${id}/${page - 1}`).setDisabled(!hasPreviousPage).setLabel("Previous Page"),
-        new Button().setCustomId(`${cmd}/${id}/${page + 1}`).setDisabled(!hasNextPage).setLabel("Next Page"),
+        new Button().setCustomId(`${cmd}/${id}/${page - 1}${parameters}`).setDisabled(!hasPreviousPage).setLabel("Previous Page"),
+        new Button().setCustomId(`${cmd}/${id}/${page + 1}${parameters}`).setDisabled(!hasNextPage).setLabel("Next Page"),
       );
     }
     if (!pageButtons.components.every((button) => button.disabled)) components.push(pageButtons);

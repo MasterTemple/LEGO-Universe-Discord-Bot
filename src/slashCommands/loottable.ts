@@ -39,7 +39,8 @@ export default {
     embed.setTitle(`${lootTable.name} [${lootTable.id}]`);
 
     let selectedTier = 1;
-    if (interaction.isMessageComponent()) selectedTier = parseInt(interaction.customId.match(/(?<=[^\/]+\/[^\/]+\/[^\?]+\?t=)\d/gi)?.[0]);
+    if (interaction.isMessageComponent()) selectedTier = parseInt(interaction.customId.match(/(?<=\?t=)\d/gi)?.[0]);
+
     let tableSize = lootTable.loot.length;
     if (tableSize === 0) selectedTier = 0;
 
@@ -47,29 +48,41 @@ export default {
     let size = loot.length;
     let left = "";
     let right = "";
+    let thisItem = "";
 
     loot.forEach((item, index) => {
-      let thisItem = `**${index + 1}.** ${item.name} ${bracketURL(item.id, "objects")}\n`;
+      thisItem = `**${index + 1}.** ${item.name} ${bracketURL(item.id, "objects")}\n`;
+
       if (index % 2 === 0) {
         if (left.length + thisItem.length < 1024) left += thisItem;
+        else {
+          embed.addField(`Tier ${selectedTier}`, left, true);
+          left = thisItem;
+        }
       }
       else {
         if (right.length + thisItem.length < 1024) right += thisItem;
+        else {
+          embed.addField(`${size} Items`, right, true);
+          right = thisItem;
+        }
+      }
+      if (index === loot.length - 1) {
+        embed.addField(`Tier ${selectedTier}`, left, true);
+        embed.addField(`${size} Items`, right, true);
       }
     });
 
-    if (left.length > 0) embed.addField(`Tier ${selectedTier}`, left, true);
-    else if (tableSize > 0) embed.addField(`Tier ${selectedTier}`, `${lootTable.name} has no **Tier ${selectedTier}** items!`);
-    else if (tableSize === 0) embed.addField(`Consumable`, `Consumables have no rarity!`);
-    if (right.length > 0) embed.addField(`${size} Items`, right, true);
 
-
+    if (tableSize === 0) embed.addField(`Consumable`, `Consumables have no rarity!`);
 
     let buttons = new MessageActionRow().addComponents();
 
     for (let i = 1; i <= 4; i++) {
+      // i added an extra '&' because all customIds must be different and it will be ignored
+      // otherwise when I am on page 1 (starting at 0) of Tier 1, the 'Previous Page' button and 'Tier 1' button will have the same customId
       buttons.addComponents(
-        new Button(selectedTier === i).setDisabled(!lootTable.loot.find(({ rarity }) => rarity === 1)).setLabel(`Tier ${i}`).setCustomId(`loottable/${lootTable.id}/0?t=${i}`)
+        new Button(selectedTier === i).setDisabled(!lootTable.loot.find(({ rarity }) => rarity === 1)).setLabel(`Tier ${i}`).setCustomId(`loottable/${lootTable.id}/0?t=${i}&`)
       );
     }
 
