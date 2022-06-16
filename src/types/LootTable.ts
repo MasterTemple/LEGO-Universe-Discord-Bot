@@ -1,7 +1,7 @@
 import { Database } from "sqlite3";
 import { CDClient } from "../cdclient";
-import { ItemSold, LootTableItem } from "../luInterfaces";
 import { explorerDomain } from "../config";
+import { LootTableItem } from "../luInterfaces";
 
 export class LootTable extends CDClient {
   db: Database;

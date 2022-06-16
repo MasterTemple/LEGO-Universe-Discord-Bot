@@ -1,5 +1,3 @@
-import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
-import { CDClient } from '../cdclient';
 import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { Embed } from '../types/Embed';

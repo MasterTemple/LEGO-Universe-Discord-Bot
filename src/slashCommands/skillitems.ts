@@ -1,10 +1,6 @@
-import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
-import { CDClient } from '../cdclient';
 import { skillHomeRow } from '../components';
 import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
-import { ObjectElement } from '../luInterfaces';
-import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
 import { Skill } from '../types/Skill';
 import { SlashCommand } from '../types/SlashCommand';

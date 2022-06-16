@@ -1,11 +1,7 @@
-import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
-import { CDClient } from '../cdclient';
 import { NPCHomeRow } from '../components';
 import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
-import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
-import { Item } from '../types/Item';
 import { NPC } from '../types/NPC';
 import { SlashCommand } from '../types/SlashCommand';
 

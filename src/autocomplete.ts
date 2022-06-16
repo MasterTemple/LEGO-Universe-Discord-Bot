@@ -37,7 +37,7 @@ export async function getAutocompleteOptions(cdclient: CDClient, name: string, v
       break;
 
     case "enemy":
-      autocompleteOptions = await cdclient.searchEnemy(value)
+      autocompleteOptions = await cdclient.searchEnemy(value);
       break;
     case "smash":
       autocompleteOptions = await cdclient.searchSmashable(value);

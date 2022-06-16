@@ -1,11 +1,7 @@
-import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
-import { CDClient } from '../cdclient';
-import { enemyHomeRow, NPCHomeRow } from '../components';
+import { enemyHomeRow } from '../components';
 import { fillEmbedWithSmashableDrops } from '../discord';
 import { notFound } from '../error';
-import { bracketURL, getOption, replyOrUpdate } from '../functions';
-import { decimalToFraction, percent, round } from '../math';
-import { Button } from '../types/Button';
+import { getOption, replyOrUpdate } from '../functions';
 import { Embed } from '../types/Embed';
 import { Enemy } from '../types/Enemy';
 import { SlashCommand } from '../types/SlashCommand';

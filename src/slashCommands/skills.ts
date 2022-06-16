@@ -1,5 +1,4 @@
 import { dropHomeRow, itemHomeRow } from '../components';
-import { fillEmbedWithLootDrops } from '../discord';
 import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { Embed } from '../types/Embed';

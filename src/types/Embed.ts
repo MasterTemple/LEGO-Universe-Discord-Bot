@@ -1,5 +1,5 @@
 import { MessageEmbed } from "discord.js";
-import { botColor, footerIcon, footerText, LUServerIcon, LUServerName, } from "../config";
+import { botColor, footerIcon, footerText, LUServerIcon, LUServerName } from "../config";
 
 export class Embed extends MessageEmbed {
   constructor(embed?: MessageEmbed) {

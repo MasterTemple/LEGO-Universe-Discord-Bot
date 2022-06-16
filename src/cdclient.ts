@@ -1,4 +1,3 @@
-import { ApplicationCommandAutocompleteOption } from 'discord.js';
 import { Database } from 'sqlite3';
 import {
   ActivityRewards,
@@ -7,11 +6,7 @@ import {
   Icons,
   ItemComponent,
   LootMatrix,
-  LootTable,
-  MissionNPCComponent,
-  Missions,
-  MissionTasks,
-  Objects,
+  LootTable, Missions, Objects,
   ObjectSkills,
   PackageComponent,
   RarityTable,
@@ -22,7 +17,7 @@ import {
 import { sqlitePath } from './config';
 import { formatIconPath } from './functions';
 import { LocaleXML } from './locale';
-import { ActivityDropFromQuery, EnemyDrop, EnemyHealth, ItemDrop, ItemSold, LootDrop, LootDropFirstQuery, LootTableItem, MissionReward, NameValuePair, NPCMission, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
+import { ActivityDropFromQuery, EnemyHealth, ItemDrop, ItemSold, LootDropFirstQuery, LootTableItem, MissionReward, NameValuePair, NPCMission, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
 
 export const RENDER_COMPONENT = 2;
 export const DESTRUCTIBLE_COMPONENT = 7;

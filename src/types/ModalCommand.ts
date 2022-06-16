@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, BaseCommandInteraction, CommandInteraction, CommandInteractionOption, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
+import { ApplicationCommandOptionData, ModalSubmitInteraction } from 'discord.js';
 import { CDClient } from '../cdclient';
 
 export interface ModalCommand {

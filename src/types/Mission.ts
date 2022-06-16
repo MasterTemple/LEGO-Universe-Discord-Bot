@@ -1,9 +1,8 @@
 import { Database } from "sqlite3";
 import { CDClient } from "../cdclient";
-import { ComponentsRegistry, SkillBehavior, Missions } from "../cdclientInterfaces";
+import { Missions } from "../cdclientInterfaces";
 import { explorerDomain } from "../config";
 import { NPCMission } from "../luInterfaces";
-import { ObjectElement, SkillDescription } from "../luInterfaces";
 
 export class Mission extends CDClient {
   db: Database;

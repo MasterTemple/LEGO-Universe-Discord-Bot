@@ -1,6 +1,5 @@
 import { MessageActionRow } from "discord.js";
 import { PACKAGE_COMPONENT } from "./cdclient";
-import { ComponentsRegistry } from "./cdclientInterfaces";
 import { Button } from "./types/Button";
 import { Enemy } from "./types/Enemy";
 import { Item } from "./types/Item";

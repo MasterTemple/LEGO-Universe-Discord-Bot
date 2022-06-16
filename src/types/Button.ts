@@ -1,4 +1,4 @@
-import { MessageButton, MessageEmbed } from "discord.js";
+import { MessageButton } from "discord.js";
 
 export class Button extends MessageButton {
   constructor(green?: boolean) {

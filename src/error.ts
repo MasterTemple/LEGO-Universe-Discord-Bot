@@ -1,6 +1,5 @@
-import { AutocompleteInteraction, BaseCommandInteraction, MessageActionRow, MessageButton, MessageComponentInteraction, Modal, ModalSubmitInteraction, TextInputComponent } from "discord.js";
+import { BaseCommandInteraction, MessageComponentInteraction, ModalSubmitInteraction } from "discord.js";
 import { logChannelId } from "./config";
-import { Button } from "./types/Button";
 import { Embed } from "./types/Embed";
 
 const NOT_FOUND_IMAGE_URL = "https://media.discordapp.net/attachments/820782771403751478/986374533630013500/unknown.png";

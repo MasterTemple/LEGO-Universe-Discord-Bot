@@ -1,17 +1,14 @@
 import { MessageEmbed } from "discord.js";
+import { cdclient } from ".";
 import { bracketURL } from "./functions";
 import { LocaleXML } from "./locale";
 import { LootDrop, SmashableDrop } from "./luInterfaces";
-import { decimalToFraction, percent } from "./math";
-import { Enemy } from "./types/Enemy";
-import { Item } from "./types/Item";
-import { Activity } from "./types/Activity";
-import { cdclient } from ".";
+import { percent } from "./math";
 
 export async function fillEmbedWithLootDrops(embed: MessageEmbed, drops: LootDrop[], itemName: string) {
   let c = 1;
 
-    for(let eachDrop of drops) {
+  for (let eachDrop of drops) {
     if (eachDrop.smashables.length > 0) {
       let range: string;
       if (eachDrop.minToDrop === eachDrop.maxToDrop) {
@@ -21,10 +18,10 @@ export async function fillEmbedWithLootDrops(embed: MessageEmbed, drops: LootDro
       }
 
       if (eachDrop.smashables.some((e) => !e.name.includes("Objects_"))) {
-      eachDrop.smashables = eachDrop.smashables.filter((e) => !e.name.includes("Objects_"));
+        eachDrop.smashables = eachDrop.smashables.filter((e) => !e.name.includes("Objects_"));
       } else {
-        for(let smashable of eachDrop.smashables) {
-          smashable.name = await cdclient.getObjectName(smashable.id)
+        for (let smashable of eachDrop.smashables) {
+          smashable.name = await cdclient.getObjectName(smashable.id);
         }
       }
 

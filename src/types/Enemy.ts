@@ -1,8 +1,8 @@
 import { Database } from "sqlite3";
 import { CDClient } from "../cdclient";
 import { ComponentsRegistry } from "../cdclientInterfaces";
-import { EnemyHealth, ItemSold, SmashableDrop } from "../luInterfaces";
 import { explorerDomain } from "../config";
+import { EnemyHealth, SmashableDrop } from "../luInterfaces";
 
 export class Enemy extends CDClient {
   db: Database;

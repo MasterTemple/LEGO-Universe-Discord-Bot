@@ -1,5 +1,4 @@
-import { CommandInteraction, CommandInteractionOption, MessageActionRow, MessageEmbed } from 'discord.js';
-import { CDClient } from '../cdclient';
+import { MessageActionRow } from 'discord.js';
 import { notFound } from '../error';
 import { getOption, replyOrUpdate } from '../functions';
 import { Button } from '../types/Button';

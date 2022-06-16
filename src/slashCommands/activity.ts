@@ -1,9 +1,6 @@
-import { CommandInteraction, CommandInteractionOption, MessageEmbed } from 'discord.js';
-import { CDClient } from '../cdclient';
 import { fillEmbedWithSmashableDrops } from '../discord';
 import { notFound } from '../error';
-import { bracketURL, getOption, replyOrUpdate } from '../functions';
-import { percent } from '../math';
+import { getOption, replyOrUpdate } from '../functions';
 import { Activity } from '../types/Activity';
 import { Embed } from '../types/Embed';
 import { SlashCommand } from '../types/SlashCommand';

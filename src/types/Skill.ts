@@ -1,6 +1,6 @@
 import { Database } from "sqlite3";
 import { CDClient } from "../cdclient";
-import { ComponentsRegistry, SkillBehavior } from "../cdclientInterfaces";
+import { SkillBehavior } from "../cdclientInterfaces";
 import { explorerDomain } from "../config";
 import { ObjectElement, SkillDescription } from "../luInterfaces";
 
