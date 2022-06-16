@@ -1,6 +1,6 @@
-import { BaseCommandInteraction, CommandInteractionOption, Interaction, PartialWebhookMixin } from 'discord.js';
+import { CommandInteractionOption } from 'discord.js';
 import { slashCommands } from '..';
-import { reportChannelId } from '../config';
+import { error } from '../error';
 import { Embed } from '../types/Embed';
 import { ModalCommand } from '../types/ModalCommand';
 
@@ -37,14 +37,21 @@ export default {
     embed.setTitle(`Executing ${instructions.length} Commands...`);
     embed.setDescription(`\`\`\`\n${instructions.map((i) => `/${i.command} ${i.parameters.join(", ")}`).join("\n")}\`\`\``);
 
-    interaction.reply({
+    await interaction.reply({
       embeds: [embed]
     });
 
     for (let { command, parameters } of instructions) {
       for (let parameter of parameters) {
         let options = [{ name: "execute", type: "STRING", value: parameter } as CommandInteractionOption];
-        await slashCommands.get(command).run(interaction, options, cdclient);
+        try {
+          interaction.customId = `${command}/${parameter}/0`;
+          await slashCommands.get(command).run(interaction, options, cdclient);
+        } catch (err) {
+          if (interaction.isMessageComponent() || interaction.isApplicationCommand()) {
+            error(interaction, err);
+          }
+        }
       }
     }
 

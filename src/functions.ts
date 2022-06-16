@@ -87,7 +87,7 @@ export async function replyOrUpdate(data: MessageUpdateData) {
   if (isPaged) {
     let firstEmbed = embeds[0];
     let parameters = "";
-    if (interaction.isMessageComponent()) {
+    if (interaction.isMessageComponent() || interaction.isModalSubmit()) {
       page = parseInt(interaction.customId.match(/(?<=[^\/]+\/[^\/]+\/)[^\?]+/gi)?.[0]) || 0;
       parameters = interaction.customId.match(/(?<=\?).*/gi)?.[0]?.replace("&unique", "");
     }
@@ -117,8 +117,18 @@ export async function replyOrUpdate(data: MessageUpdateData) {
         new Button().setCustomId(`${cmd}/${id}/${page + 1}?${parameters}&unique`).setDisabled(!hasNextPage).setLabel("Next Page"),
       );
     }
+    if (interaction.isModalSubmit()) {
+      let { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\?]+)?/gi)][0].groups;
+      pageButtons.addComponents(
+        new Button().setCustomId(`${cmd}/${id}/${page - 1}?${parameters}&unique`).setDisabled(!hasPreviousPage).setLabel("Previous Page"),
+        new Button().setCustomId(`${cmd}/${id}/${page + 1}?${parameters}&unique`).setDisabled(!hasNextPage).setLabel("Next Page"),
+      );
+    }
     if (!pageButtons.components.every((button) => button.disabled)) components.push(pageButtons);
   }
+
+  // let comps = components.map((comp) => comp.components.map((c) => c.customId));
+  // console.log(JSON.stringify(comps, null, 2));
 
   if (interaction.isMessageComponent()) {
     await interaction.update({

@@ -69,8 +69,9 @@ export default {
         }
       }
       if (index === loot.length - 1) {
+        if (left === "") left = "None";
         embed.addField(`Tier ${selectedTier}`, left, true);
-        embed.addField(`${size} Items`, right, true);
+        if (right.length > 0) embed.addField(`${size} Items`, right, true);
       }
     });
 
@@ -85,6 +86,10 @@ export default {
       buttons.addComponents(
         new Button(selectedTier === i).setDisabled(!lootTable.loot.find(({ rarity }) => rarity === 1)).setLabel(`Tier ${i}`).setCustomId(`loottable/${lootTable.id}/0?t=${i}&`)
       );
+    }
+
+    if (interaction.isModalSubmit()) {
+      interaction.customId += `?t=${selectedTier}`;
     }
 
     replyOrUpdate({
