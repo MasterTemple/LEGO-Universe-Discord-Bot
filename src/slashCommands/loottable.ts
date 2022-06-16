@@ -38,7 +38,9 @@ export default {
     embed.setTitle(`${lootTable.name} [${lootTable.id}]`);
 
     let selectedTier = 1;
-    if (interaction.isMessageComponent()) selectedTier = parseInt(interaction.customId.match(/(?<=\?t=)\d/gi)?.[0]);
+    if (interaction.isMessageComponent()) selectedTier = parseInt(interaction.customId.match(/(?<=(\?|&)t=)\d/gi)?.[0]);
+    // if (interaction.isMessageComponent()) console.log("📝 ~ file: loottable.ts ~ line 42 ~ customId", interaction.customId);
+    // console.log("📝 ~ file: loottable.ts ~ line 42 ~ selectedTier", selectedTier);
 
     let tableSize = lootTable.loot.length;
     if (tableSize === 0) selectedTier = 0;
