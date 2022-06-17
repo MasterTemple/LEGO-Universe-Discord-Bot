@@ -21,7 +21,7 @@ export default {
     options,
     cdclient) {
     const query = getOption(options, "item");
-    const itemId = parseInt(query) || await cdclient.getObjectId(query);
+    const itemId = await cdclient.getItemId(query);
 
     if (!itemId) {
       notFound(interaction);

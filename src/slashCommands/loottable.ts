@@ -22,7 +22,7 @@ export default {
     options,
     cdclient) {
     const query = getOption(options, "loottable");
-    const lootTableId = parseInt(query) || await cdclient.getObjectId(query);
+    const lootTableId = parseInt(query) || parseInt(cdclient.locale.searchLootTable(query)[0]?.value);
 
     if (!lootTableId) {
       notFound(interaction);

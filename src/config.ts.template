@@ -9,3 +9,4 @@ export var LUServerName = "Private LEGO Univese Server";
 export var LUServerIcon = "https://pbs.twimg.com/profile_images/1397595907374391298/Rplf5mZy_400x400.jpg";
 export var footerText = "LEGO® is a trademark of the LEGO Group which does not sponsor, authorize, or endorse this bot. The data and assets are presented purely for informational purposes.";
 export var footerIcon = "https://cdn.discordapp.com/avatars/813618765685456916/2fb374c98d47b0d50299f9f452c2e0e1.webp";
+export var HQValidOnly = true;
