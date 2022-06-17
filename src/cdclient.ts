@@ -901,7 +901,7 @@ export class CDClient {
     return new Promise<NameValuePair[]>((resolve) => {
       let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${ITEM_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} type='Loot' AND Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${ITEM_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -917,7 +917,7 @@ export class CDClient {
     return new Promise<NameValuePair[]>((resolve) => {
       let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${ITEM_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} type='Loot' AND Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${ITEM_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
         (_, rows: Objects[]) => {
           // cdclient matches
           let cdclientPairs: NameValuePair[] = rows?.map((row: Objects) => {
