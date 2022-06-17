@@ -1,11 +1,11 @@
+import { MessageActionRow } from 'discord.js';
 import { reportChannelId } from '../config';
+import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
 import { ModalCommand } from '../types/ModalCommand';
 
 export default {
   name: 'report',
-  description: 'Open a dialog to report anything about this bot!',
-  options: [],
   run: async function (
     interaction,
     cdclient) {
@@ -20,10 +20,17 @@ export default {
 
     delete embed.footer;
 
+    let components = new MessageActionRow().addComponents(
+      new Button().setLabel(`Reply to ${interaction.user.username}`).setCustomId(`reply/${interaction.user.id}`)
+    );
+
     let reportChannel = await interaction.client.channels.fetch(reportChannelId);
     if (reportChannel.isText()) await reportChannel.send({
-      embeds: [embed]
+      embeds: [embed],
+      components: [components]
     });
+
+    await interaction.reply({ content: 'Your report was recieved!', ephemeral: true });
 
   },
 } as ModalCommand;
