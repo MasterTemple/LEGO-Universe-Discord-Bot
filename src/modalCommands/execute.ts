@@ -11,8 +11,6 @@ interface Instruction {
 
 export default {
   name: 'execute',
-  description: 'Open a dialog to execute multiple commands on this bot!',
-  options: [],
   run: async function (
     interaction,
     cdclient) {

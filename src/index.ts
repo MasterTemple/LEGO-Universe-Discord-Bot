@@ -4,7 +4,8 @@ import { CDClient } from './cdclient';
 import { token } from './config';
 import { error } from './error';
 import { NameValuePair } from './luInterfaces';
-import { getModalCommands, getSlashCommands, updateSlashCommands } from './setup';
+import { getComponentCommands, getModalCommands, getSlashCommands, updateSlashCommands } from './setup';
+import { ComponentCommandMap } from './types/ComponentCommand';
 import { ModalCommandMap } from './types/ModalCommand';
 import { SlashCommandMap } from './types/SlashCommand';
 
@@ -16,6 +17,7 @@ const client = new Client({
 
 export const slashCommands: SlashCommandMap = getSlashCommands();
 export const modalCommands: ModalCommandMap = getModalCommands();
+export const componentCommands: ComponentCommandMap = getComponentCommands();
 
 client.once('ready', async () => {
   console.log('\n------------------------------------\n');
@@ -42,12 +44,17 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     if (interaction.isMessageComponent()) {
       let { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)/gi)][0].groups;
       let options = [{ name: "button", type: "STRING", value: id } as CommandInteractionOption];
-      await slashCommands.get(cmd).run(interaction, options, cdclient);
+      if (slashCommands.has(cmd)) {
+        await slashCommands.get(cmd).run(interaction, options, cdclient);
+      } else {
+        await componentCommands.get(cmd).run(interaction, cdclient);
+      }
     }
 
     if (interaction.isModalSubmit()) {
-      await modalCommands.get(interaction.customId).run(interaction, cdclient);
-      if (interaction.replied === false) await interaction.reply({ content: 'Your report was recieved!', ephemeral: true });
+      let cmd = interaction.customId.match(/^[^\/]+/g)[0];
+      await modalCommands.get(cmd).run(interaction, cdclient);
+      if (interaction.replied === false) await interaction.reply({ content: 'Your response was recieved!', ephemeral: true });
     }
   } catch (err) {
     if (interaction.isMessageComponent() || interaction.isApplicationCommand()) {
