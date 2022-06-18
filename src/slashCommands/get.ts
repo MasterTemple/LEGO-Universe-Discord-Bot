@@ -31,7 +31,7 @@ export default {
 
     const item = new Item(cdclient, itemId);
     await item.create();
-    await item.findHowToGet();
+    // await item.findHowToGet();
 
 
     const embed = new Embed();

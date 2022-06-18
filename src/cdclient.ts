@@ -753,6 +753,17 @@ export class CDClient {
     });
   }
 
+  async getCommendationVendor(itemId: number): Promise<number[]> {
+    return new Promise<number[]>((resolve) => {
+      let query = `select * from ItemComponent where id = (select component_id from ComponentsRegistry where component_type = ${ITEM_COMPONENT} and id = ${itemId})`;
+      this.db.all(query,
+        (_, rows: any[]) => {
+          let map = rows.map((e) => e.id);
+          resolve([]);
+        });
+    });
+  }
+
   async getItemsWithRarityInLootTable(lootTable: number): Promise<number> {
     return new Promise<number>((resolve) => {
       this.db.get(

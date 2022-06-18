@@ -1,5 +1,5 @@
 import { Database } from 'sqlite3';
-import { CDClient, ITEM_COMPONENT } from '../cdclient';
+import { CDClient, HONOR_ACCOLADE, ITEM_COMPONENT } from '../cdclient';
 import { ComponentsRegistry, Objects } from '../cdclientInterfaces';
 import { explorerDomain } from "../config";
 import {
@@ -78,20 +78,25 @@ export class Item extends CDClient {
   }
 
   async findHowToGet(): Promise<void> {
+    let fromVendor = await this.isFromVendor(this.id);
+    if (fromVendor === false && this.itemComponent.commendationCurrencyCost > 0) fromVendor = true;
     this.get = {
       isFromActivity: await this.isFromActivity(this.id),
       isFromMission: await this.isFromMission(this.id),
       isFromPackage: await this.isFromPackage(this.id),
       isFromSmashable: await this.isFromSmashable(this.id),
-      isFromVendor: await this.isFromVendor(this.id),
+      isFromVendor: fromVendor,
     };
   }
 
   async addVendors(): Promise<void> {
     let vendorIds = await this.getIdsOfVendorsThatSellItem(this.id);
-    // this.buy = await Promise.all(vendorIds.map((id) => this.getObjectElementFromLocale(id)))
+    if (vendorIds.length === 0 && this.itemComponent.commendationCurrencyCost > 0) {
+      vendorIds = [HONOR_ACCOLADE];
+    }
     this.buy = vendorIds.map((id) => this.getObjectElementFromLocale(id));
     this.buy = this.buy.filter((b) => b?.name);
+
   }
 
   async addUnpacks(): Promise<void> {
