@@ -38,6 +38,13 @@ export default {
     embed.setTitle(`${lootTable.name} [${lootTable.id}]`);
 
     let selectedTier = 1;
+    for (let i = 1; i <= 4; i++) {
+      if (lootTable.loot.some((item) => item.rarity === selectedTier)) {
+        break;
+      } else {
+        selectedTier++;
+      }
+    }
     if (interaction.isMessageComponent()) selectedTier = parseInt(interaction.customId.match(/(?<=(\?|&)t=)\d/gi)?.[0]);
 
     let tableSize = lootTable.loot.length;
