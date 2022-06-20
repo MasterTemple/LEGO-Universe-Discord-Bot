@@ -39,8 +39,6 @@ export default {
 
     let selectedTier = 1;
     if (interaction.isMessageComponent()) selectedTier = parseInt(interaction.customId.match(/(?<=(\?|&)t=)\d/gi)?.[0]);
-    // if (interaction.isMessageComponent()) console.log("📝 ~ file: loottable.ts ~ line 42 ~ customId", interaction.customId);
-    // console.log("📝 ~ file: loottable.ts ~ line 42 ~ selectedTier", selectedTier);
 
     let tableSize = lootTable.loot.length;
     if (tableSize === 0) selectedTier = 0;
@@ -84,7 +82,7 @@ export default {
       // i added an extra '&' because all customIds must be different and it will be ignored
       // otherwise when I am on page 1 (starting at 0) of Tier 1, the 'Previous Page' button and 'Tier 1' button will have the same customId
       buttons.addComponents(
-        new Button(selectedTier === i).setDisabled(!lootTable.loot.find(({ rarity }) => rarity === 1)).setLabel(`Tier ${i}`).setCustomId(`loottable/${lootTable.id}/0?t=${i}&`)
+        new Button(selectedTier === i).setDisabled(!lootTable.loot.some(({ rarity }) => rarity === i)).setLabel(`Tier ${i}`).setCustomId(`loottable/${lootTable.id}/0?t=${i}&`)
       );
     }
 
