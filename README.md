@@ -11,7 +11,10 @@
 
 3. Install proper dependencies with `npm install`
 4. Transpile with `tsc --build`
-5. Run `./lib/index.js`
+
+   If `tsc` is not found, install it with `npm i typescript -g` and then run `tsc --build`.
+   
+6. Run `./lib/index.js`
 
    I would recommend using something that restarts if it crashes such as pm2
 
