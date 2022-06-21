@@ -953,6 +953,8 @@ export class CDClient {
         });
     });
   }
+
+  //! problem: locale grabs any match, not just items
   async searchItemWithLocale(phrase: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve) => {
       let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
@@ -996,9 +998,8 @@ export class CDClient {
 
   async searchSmashable(phrase: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${DESTRUCTIBLE_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${DESTRUCTIBLE_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -1013,9 +1014,8 @@ export class CDClient {
 
   async searchEnemy(phrase: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} Objects.type = 'Enemies' AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE Objects.type = 'Enemies' AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
@@ -1030,9 +1030,9 @@ export class CDClient {
 
   async searchVendor(phrase: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
       let statement =
-        `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} Objects.id IN (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${VENDOR_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`;
+        `SELECT id, name, displayName FROM Objects WHERE Objects.id IN (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${VENDOR_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`;
+      console.log("📝 ~ file: cdclient.ts ~ line 1035 ~ CDClient ~ searchVendor ~ statement", statement);
       this.db.all(
         statement,
         (_, rows: Objects[]) => {
@@ -1049,9 +1049,8 @@ export class CDClient {
 
   async searchMissionNPC(phrase: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} Objects.id IN (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${MISSION_OFFER_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE Objects.id IN (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${MISSION_OFFER_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
         (_, rows: Objects[]) => {
           let pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
