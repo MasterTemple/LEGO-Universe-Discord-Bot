@@ -1,6 +1,7 @@
 import { NPCHomeRow } from '../components';
 import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
+import { formatNum } from '../math';
 import { Embed } from '../types/Embed';
 import { NPC } from '../types/NPC';
 import { SlashCommand } from '../types/SlashCommand';
@@ -43,7 +44,7 @@ export default {
 
         let totalCost: string = "";
         let costs = [];
-        if (item.cost) costs.push(`**${item.cost}** ${item.currency.name}`);
+        if (item.cost) costs.push(`**${formatNum(item.cost)}** ${item.currency.name}`);
         if (item.commendationCost) costs.push(`**${item.commendationCost}** ${item.commendationCurrency.name}s`);
         if (item.alternateCost) costs.push(`**${item.alternateCost}** ${item.alternateCurrency.name}s`);
         totalCost = costs.join(" **+** ");

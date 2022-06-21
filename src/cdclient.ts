@@ -447,7 +447,6 @@ export class CDClient {
       this.db.get(
         query,
         (_, row: Objects) => {
-          console.log("📝 ~ file: cdclient.ts ~ line 442 ~ CDClient ~ getObjectId ~ row", row);
           resolve(row?.id);
         });
     });

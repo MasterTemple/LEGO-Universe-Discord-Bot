@@ -24,3 +24,7 @@ export function percent(num: number) {
 export function round(decimal: number, places: number = 2) {
   return Math.round(decimal * Math.pow(10, places)) / Math.pow(10, places);
 }
+
+export function formatNum(decimal: number) {
+  return decimal.toString().replace(/(.)(?=(\d{3})+$)/g, '$1,');
+}

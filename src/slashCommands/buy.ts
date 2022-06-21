@@ -1,6 +1,7 @@
 import { dropHomeRow, itemHomeRow } from '../components';
 import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate, textToChunks } from '../functions';
+import { formatNum } from '../math';
 import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
@@ -82,7 +83,7 @@ export default {
 
     let price: string = "";
     let costs = [];
-    if (item.itemComponent.buyPrice) costs.push(`**${item.itemComponent.buyPrice}** Coins`);
+    if (item.itemComponent.buyPrice) costs.push(`**${formatNum(item.itemComponent.buyPrice)}** Coins`);
     if (item.itemComponent.commendationCurrencyCost) costs.push(`**${item.itemComponent.commendationCurrencyCost}** ${item.itemComponent.commendationCurrencyName}s`);
     if (item.itemComponent.alternateCurrencyCost) costs.push(`**${item.itemComponent.alternateCurrencyCost}** ${item.itemComponent.alternateCurrencyName}s`);
     price = costs.join(" **+** ");

@@ -1,5 +1,6 @@
 import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
+import { formatNum } from '../math';
 import { Embed } from '../types/Embed';
 import { Mission } from '../types/Mission';
 import { SlashCommand } from '../types/SlashCommand';
@@ -50,7 +51,7 @@ export default {
     embed.addField(mission.raw.isChoiceReward ? "Rewards (Choose One)" : "Rewards", mission.data.rewards.map((reward, index) => `${reward.name} ${bracketURL(reward.id)} x **${reward.count}**`).join("\n"));
 
     embed.addField("LEGO Score", (mission.raw.LegoScore || 0).toString(), true);
-    embed.addField("Reward Coins", (mission.raw.reward_currency || 0).toString(), true);
+    embed.addField("Reward Coins", (formatNum(mission.raw.reward_currency) || 0).toString(), true);
 
     if (mission.raw.reward_bankinventory) embed.addField("Vault Increase", (mission.raw.reward_bankinventory).toString(), true);
     else if (mission.raw.reward_maximagination) embed.addField("Imagination Bonus", (mission.raw.reward_maximagination).toString(), true);

@@ -2,6 +2,7 @@ import { MessageActionRow } from 'discord.js';
 import { explorerDomain } from '../config';
 import { getOption, replyOrUpdate } from '../functions';
 import { LevelData } from '../luInterfaces';
+import { formatNum } from '../math';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
 import { SlashCommand } from '../types/SlashCommand';
@@ -37,8 +38,8 @@ export default {
       embed.setTitle(`Level ${level}!`);
 
       embed.addField("Requirements", `**For Level ${level}:**`, true);
-      embed.addField(`From Level ${level - 1}`, `${data.experienceFromPreviousLevel} Experience`, true);
-      embed.addField("Total", `${data.experienceFromLevel0} Experience`, true);
+      embed.addField(`From Level ${level - 1}`, `${formatNum(data.experienceFromPreviousLevel)} Experience`, true);
+      embed.addField("Total", `${formatNum(data.experienceFromLevel0)} Experience`, true);
 
       buttons.addComponents(
         new Button().setDisabled(level === minLevel).setLabel(`Level ${level - 1}`).setCustomId(`level/${level - 1}`),
