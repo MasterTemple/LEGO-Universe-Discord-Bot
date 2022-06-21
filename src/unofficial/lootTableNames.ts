@@ -1,4 +1,4 @@
-[
+export const lootTableNames = [
   {
     "lti": "3",
     "name": "Life Powerup 1 point"
@@ -2599,4 +2599,4 @@
     "lti": "37704",
     "name": "Rascus' Leggings"
   }
-]
+];

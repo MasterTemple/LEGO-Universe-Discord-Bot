@@ -2,6 +2,7 @@ import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { localePath } from './config';
 import { localeXMLType, NameValuePair, SkillDescription, UnofficialType } from './luInterfaces';
+import { lootTableNames } from './unofficial/lootTableNames';
 
 export class LocaleXML {
   localeTypes: localeXMLType[] = [
@@ -60,7 +61,7 @@ export class LocaleXML {
         }
 
         // loot table names
-        let ltiNames = require("./unofficial/lootTableNames.json");
+        let ltiNames = lootTableNames;
         this.unofficial.set("LootTableName", new Map<number, string>());
         for (let lti of ltiNames) {
           this.unofficial.get("LootTableName").set(lti.lti, lti.name);
