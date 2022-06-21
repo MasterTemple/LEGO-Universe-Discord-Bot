@@ -45,7 +45,7 @@ export default {
       embed.addField("Not Dropped!", `${item.name} is not found by smashing anything!`);
     }
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [dropHomeRow(item, "drop"), itemHomeRow(item)],

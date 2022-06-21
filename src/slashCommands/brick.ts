@@ -55,7 +55,7 @@ export default {
       new Button().setDisabled(!item.get.isFromVendor).setLabel("Buy").setCustomId(`buy/${itemId}`),
     );
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       isPaged: false,

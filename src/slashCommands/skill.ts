@@ -47,7 +47,7 @@ export default {
       embed.addField(desc.name, desc.description || "No Description");
     });
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       isPaged: false,

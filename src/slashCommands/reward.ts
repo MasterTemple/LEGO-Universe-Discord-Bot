@@ -45,7 +45,7 @@ export default {
       embed.addField("Not Rewarded!", `${item.name} is not rewarded from an activity!`);
     }
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [dropHomeRow(item, "reward"), itemHomeRow(item)],

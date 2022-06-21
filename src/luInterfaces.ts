@@ -1,3 +1,9 @@
+export interface LevelData {
+  level: number;
+  experienceFromLevel0: number;
+  experienceFromPreviousLevel: number;
+}
+
 export interface ActivityDropFromQuery {
   id: number;
   activityName: string;

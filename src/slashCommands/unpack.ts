@@ -45,7 +45,7 @@ export default {
       embed.addField("Not Unpacked!", `${item.name} is not found by opening a package!`);
     }
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [dropHomeRow(item, "unpack"), itemHomeRow(item)],

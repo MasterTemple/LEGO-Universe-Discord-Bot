@@ -97,7 +97,7 @@ export default {
       embed.addField("Not Sold!", `${item.name} is not sold by a vendor!`);
     }
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       pageSize: 1,

@@ -5,6 +5,7 @@ import {
   DestructibleComponent,
   Icons,
   ItemComponent,
+  LevelProgressionLookup,
   LootMatrix,
   LootTable, Missions, Objects,
   ObjectSkills,
@@ -17,7 +18,7 @@ import {
 import { HQValidOnly, sqlitePath } from './config';
 import { formatIconPath } from './functions';
 import { LocaleXML } from './locale';
-import { ActivityDropFromQuery, EnemyHealth, ItemDrop, ItemSold, LootDropFirstQuery, LootTableItem, MissionReward, NameValuePair, NPCMission, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
+import { ActivityDropFromQuery, EnemyHealth, ItemDrop, ItemSold, LevelData, LootDropFirstQuery, LootTableItem, MissionReward, NameValuePair, NPCMission, ObjectElement, queryType, Skill, SmashableDrop } from './luInterfaces';
 
 export const RENDER_COMPONENT = 2;
 export const DESTRUCTIBLE_COMPONENT = 7;
@@ -903,6 +904,35 @@ export class CDClient {
             else map.set(rti, 1);
           }
           return map;
+        }
+      );
+    });
+  }
+
+  async getLevelData(level: number): Promise<LevelData> {
+    return new Promise<LevelData>(async (resolve) => {
+      let query = `select * from LevelProgressionLookup where id = ${level} or id = ${level - 1}`;
+      this.db.all(
+        query,
+        async (_, rows: LevelProgressionLookup[]) => {
+          let info: LevelData = {
+            level: level,
+            experienceFromLevel0: rows.find((row) => row.id === level)?.requiredUScore,
+            experienceFromPreviousLevel: rows.find((row) => row.id === level)?.requiredUScore - (rows.find((row) => row.id === level - 1)?.requiredUScore || 0)
+          };
+          resolve(info);
+        }
+      );
+    });
+  }
+
+  async getMaxLevel(): Promise<number> {
+    return new Promise<number>(async (resolve) => {
+      let query = `select max(id) as id from LevelProgressionLookup`;
+      this.db.get(
+        query,
+        async (_, row: LevelProgressionLookup) => {
+          resolve(row.id);
         }
       );
     });

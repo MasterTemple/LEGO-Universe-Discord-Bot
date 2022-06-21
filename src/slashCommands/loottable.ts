@@ -97,7 +97,7 @@ export default {
       interaction.customId += `?t=${selectedTier}`;
     }
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [buttons],

@@ -54,7 +54,7 @@ export default {
       embed.addField("Not an Item!", `${item.name} is not an item!`);
     }
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [dropHomeRow(item), itemHomeRow(item, "item")],

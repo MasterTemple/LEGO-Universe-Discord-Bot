@@ -41,7 +41,7 @@ export default {
 
     fillEmbedWithSmashableDrops(embed, activity.rewards, activity.locale);
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed]
     });

@@ -39,7 +39,7 @@ export default {
 
     embed.setDescription(`Life: **${enemy.life}**\nArmor: **${enemy.armor}**`);
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [enemyHomeRow(enemy, "enemy")],

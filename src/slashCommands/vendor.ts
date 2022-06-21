@@ -60,7 +60,7 @@ export default {
       embed.addField("Not A Vendor!", `${npc.name} does not sell anything!`);
     }
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       pageSize: 2,

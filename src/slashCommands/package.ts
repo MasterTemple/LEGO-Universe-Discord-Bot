@@ -41,7 +41,7 @@ export default {
 
     fillEmbedWithSmashableDrops(embed, item.packageDrops, item.locale);
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [dropHomeRow(item), itemHomeRow(item, "package")],

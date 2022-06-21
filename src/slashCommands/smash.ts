@@ -40,7 +40,7 @@ export default {
 
     fillEmbedWithSmashableDrops(embed, enemy.drops, enemy.locale);
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [enemyHomeRow(enemy, "smash")],

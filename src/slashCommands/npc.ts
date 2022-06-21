@@ -44,7 +44,7 @@ export default {
       embed.addField(title, `${mission.description} ${bracketURL(mission.id, "missions")}`);
     });
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [NPCHomeRow(npc, "npc")],

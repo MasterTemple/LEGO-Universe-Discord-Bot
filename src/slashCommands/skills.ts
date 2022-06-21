@@ -53,7 +53,7 @@ export default {
       embed.addField("No Skills!", `${item.name} is has no usable skills!`);
     }
 
-    replyOrUpdate({
+    await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [dropHomeRow(item), itemHomeRow(item, "skills")],
