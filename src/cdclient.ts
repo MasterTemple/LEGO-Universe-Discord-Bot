@@ -434,6 +434,15 @@ export class CDClient {
     });
   }
 
+  async getSkillsInCooldownGroup(cdg: number): Promise<SkillBehavior[]> {
+    return new Promise<SkillBehavior[]>((resolve) => {
+      this.db.all(`SELECT * FROM SkillBehavior WHERE cooldowngroup = ${cdg}`,
+        function (_, rows: SkillBehavior[]) {
+          resolve(rows);
+        });
+    });
+  }
+
   async getObjectId(objectName: string): Promise<number> {
     return new Promise<number>((resolve) => {
       // let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
