@@ -58,7 +58,7 @@ export function fillEmbedWithSmashableDrops(embed: MessageEmbed, drops: Smashabl
     }
 
     let chanceForRarity = 1;
-    if (drops[index - 1]?.rarity === drop.rarity - 1) drop.chanceForRarity - drops[index - 1].chanceForRarity;
+    if (drops[index - 1]?.rarity === drop.rarity - 1) chanceForRarity = drop.chanceForRarity - drops[index - 1].chanceForRarity;
     else chanceForRarity = drop.chanceForRarity;
 
     if (drop.poolSize > 0) {
