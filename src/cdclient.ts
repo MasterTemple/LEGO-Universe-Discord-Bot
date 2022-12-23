@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import { Database } from 'sqlite3';
 import {
   ActivityRewards,
@@ -29,7 +30,7 @@ export const HONOR_ACCOLADE = 13806;
 export const MISSION_OFFER_COMPONENT = 73;
 
 function sqlike(str: string): string {
-  return `%${str.replace(/\s/g, "%")}%`;
+  return `%${str.replace(/\s/g, '%')}%`;
 }
 export class CDClient {
   db: Database;
@@ -84,7 +85,7 @@ export class CDClient {
         )`,
         function (_, row: RenderComponent) {
           let icon = row?.icon_asset;
-          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png");
+          if (!icon) resolve('/lu-res/textures/ui/inventory/unknown.png');
           icon = formatIconPath(icon);
           resolve(icon);
         });
@@ -97,7 +98,7 @@ export class CDClient {
         `SELECT IconPath FROM Icons WHERE IconID=(SELECT skillIcon FROM SkillBehavior WHERE skillID = ${skillId})`,
         function (_, row: Icons) {
           let icon = row?.IconPath;
-          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png");
+          if (!icon) resolve('/lu-res/textures/ui/inventory/unknown.png');
           icon = formatIconPath(icon);
           resolve(icon);
         });
@@ -110,7 +111,7 @@ export class CDClient {
         `SELECT IconPath FROM Icons WHERE IconID=${iconId}`,
         function (_, row: Icons) {
           let icon = row?.IconPath;
-          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png");
+          if (!icon) resolve('/lu-res/textures/ui/inventory/unknown.png');
           icon = formatIconPath(icon);
           resolve(icon);
         });
@@ -124,7 +125,7 @@ export class CDClient {
         `SELECT IconPath FROM Icons WHERE IconID = (SELECT IconID FROM MissionTasks WHERE id = ${missionId}) OR IconID = (SELECT largeTaskIconID FROM MissionTasks WHERE id = ${missionId})`,
         function (_, row: Icons) {
           let icon = row?.IconPath;
-          if (!icon) resolve("/lu-res/textures/ui/inventory/unknown.png");
+          if (!icon) resolve('/lu-res/textures/ui/inventory/unknown.png');
           icon = formatIconPath(icon);
           resolve(icon);
         });
@@ -155,7 +156,7 @@ export class CDClient {
 
   private async getObjectNameFromDB(objectId: number) {
     return new Promise<string>((resolve) => {
-      let query = `SELECT name FROM Objects WHERE id=${objectId}`;
+      const query = `SELECT name FROM Objects WHERE id=${objectId}`;
       // if (HQValidOnly) query += " AND HQ_valid = 1";
       this.db.get(query, (_, row: Objects) => {
         resolve(row?.displayName || row?.name);
@@ -165,7 +166,7 @@ export class CDClient {
 
   async getObjectName(objectId: number): Promise<string> {
     return new Promise<string>((resolve) => {
-      let name = this.locale.getObjectNameOrUndefined(objectId);
+      const name = this.locale.getObjectNameOrUndefined(objectId);
       if (name) {
         resolve(name);
       } else {
@@ -177,19 +178,20 @@ export class CDClient {
   }
 
   getObjectElementFromLocale(objectId: number): ObjectElement {
-    let name = this.locale.getObjectName(objectId);
-    if (name) return {
-      id: objectId,
-      name: name,
-    };
-    else {
+    const name = this.locale.getObjectName(objectId);
+    if (name) {
+      return {
+        id: objectId,
+        name: name,
+      };
+    } else {
       return;
     }
   }
 
   async getObjectElement(objectId: number): Promise<ObjectElement> {
     return new Promise<ObjectElement>((resolve) => {
-      let name = this.locale.getObjectName(objectId);
+      const name = this.locale.getObjectName(objectId);
       const element: ObjectElement = {
         id: objectId,
         name: name,
@@ -320,7 +322,7 @@ export class CDClient {
 
   async getObjectData(objectId: number): Promise<Objects> {
     return new Promise<Objects>((resolve) => {
-      let query = `SELECT * FROM Objects WHERE id=${objectId}`;
+      const query = `SELECT * FROM Objects WHERE id=${objectId}`;
       // if (HQValidOnly) query += " AND HQ_valid = 1";
       this.db.get(query,
         function (_, row: Objects) {
@@ -387,7 +389,7 @@ export class CDClient {
       this.db.all(
         `SELECT * FROM SkillBehavior JOIN ObjectSkills ON SkillBehavior.skillID = ObjectSkills.skillID AND ObjectSkills.objectTemplate = ${itemId} WHERE SkillBehavior.skillID IN (SELECT skillID From ObjectSkills WHERE objectTemplate = ${itemId})`,
         (_, rows: SkillBehaviorWithObjectSkills[]) => {
-          let skills: Skill[] = rows.map((skill) => {
+          const skills: Skill[] = rows.map((skill) => {
             return {
               itemId: skill.objectTemplate,
               id: skill.skillID,
@@ -400,7 +402,7 @@ export class CDClient {
               healthBonus: skill.lifeBonusUI,
               imaginationBonus: skill.imBonusUI,
               name: this.locale.getSkillName(skill.skillID),
-              descriptions: this.locale.getSkillDescription(skill.skillID)
+              descriptions: this.locale.getSkillDescription(skill.skillID),
             };
           });
           resolve(skills);
@@ -411,9 +413,9 @@ export class CDClient {
   async getSkillsFromObjects(itemIds: number[]): Promise<Skill[]> {
     return new Promise<Skill[]>((resolve) => {
       this.db.all(
-        `SELECT * FROM SkillBehavior JOIN ObjectSkills ON SkillBehavior.skillID = ObjectSkills.skillID AND ObjectSkills.objectTemplate IN (${itemIds.join(",")}) WHERE SkillBehavior.skillID IN (SELECT skillID From ObjectSkills WHERE objectTemplate IN (${itemIds.join(",")})) ORDER BY ObjectSkills.objectTemplate`,
+        `SELECT * FROM SkillBehavior JOIN ObjectSkills ON SkillBehavior.skillID = ObjectSkills.skillID AND ObjectSkills.objectTemplate IN (${itemIds.join(',')}) WHERE SkillBehavior.skillID IN (SELECT skillID From ObjectSkills WHERE objectTemplate IN (${itemIds.join(',')})) ORDER BY ObjectSkills.objectTemplate`,
         (_, rows: SkillBehaviorWithObjectSkills[]) => {
-          let skills: Skill[] = rows?.map((skill) => {
+          const skills: Skill[] = rows?.map((skill) => {
             return {
               itemId: skill.objectTemplate,
               id: skill.skillID,
@@ -426,7 +428,7 @@ export class CDClient {
               healthBonus: skill.lifeBonusUI,
               imaginationBonus: skill.imBonusUI,
               name: this.locale.getSkillName(skill.skillID),
-              descriptions: this.locale.getSkillDescription(skill.skillID)
+              descriptions: this.locale.getSkillDescription(skill.skillID),
             };
           });
           resolve(skills);
@@ -447,7 +449,7 @@ export class CDClient {
     return new Promise<number>((resolve) => {
       // let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
       // let query = `SELECT id FROM Objects WHERE ${HQ_valid} displayName LIKE '%${objectName.replace(/\s/g, "%")}%' OR name LIKE '%${objectName.replace(/\s/g, "%")}%' ORDER BY id ASC LIMIT 25`;
-      let query = `SELECT id FROM Objects WHERE displayName LIKE '%${objectName.replace(/\s/g, "%")}%' OR name LIKE '%${objectName.replace(/\s/g, "%")}%' ORDER BY id ASC LIMIT 25`;
+      const query = `SELECT id FROM Objects WHERE displayName LIKE '%${objectName.replace(/\s/g, '%')}%' OR name LIKE '%${objectName.replace(/\s/g, '%')}%' ORDER BY id ASC LIMIT 25`;
       // let itemId = parseInt(objectName)
       // if(itemId) {
       //   // this validates that the id is HQ valid
@@ -463,9 +465,9 @@ export class CDClient {
 
   async getItemId(objectName: string): Promise<number> {
     return new Promise<number>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
-      let query = `SELECT id FROM Objects WHERE ${HQ_valid} (displayName LIKE '%${objectName.replace(/\s/g, "%")}%' OR name LIKE '%${objectName.replace(/\s/g, "%")}%') ORDER BY id ASC LIMIT 25`;
-      let itemId = parseInt(objectName);
+      const HQ_valid = HQValidOnly ? 'HQ_valid = 1 AND' : '';
+      let query = `SELECT id FROM Objects WHERE ${HQ_valid} (displayName LIKE '%${objectName.replace(/\s/g, '%')}%' OR name LIKE '%${objectName.replace(/\s/g, '%')}%') ORDER BY id ASC LIMIT 25`;
+      const itemId = parseInt(objectName);
       if (itemId) {
         // this validates that the id is HQ valid
         query = `SELECT id FROM Objects WHERE ${HQ_valid} id = ${itemId}`;
@@ -480,14 +482,14 @@ export class CDClient {
 
   async searchObject(phrase: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
+      const HQ_valid = HQValidOnly ? 'HQ_valid = 1 AND' : '';
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} (displayName LIKE '%${phrase.replace(/\s/g, "%")}%' OR name LIKE '%${phrase.replace(/\s/g, "%")}%') LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} (displayName LIKE '%${phrase.replace(/\s/g, '%')}%' OR name LIKE '%${phrase.replace(/\s/g, '%')}%') LIMIT 25`,
         (_, rows: Objects[]) => {
-          let pairs: NameValuePair[] = rows?.map((row: Objects) => {
+          const pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
-              value: row.id.toString()
+              value: row.id.toString(),
             };
           });
           resolve(pairs);
@@ -496,14 +498,14 @@ export class CDClient {
   }
   async searchObjectByType(phrase: string, componentType: queryType): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
+      const HQ_valid = HQValidOnly ? 'HQ_valid = 1 AND' : '';
       this.db.all(
-        `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} (displayName LIKE '%${phrase.replace(/\s/g, "%")}%' OR name LIKE '%${phrase.replace(/\s/g, "%")}%') AND id IN (SELECT id FROM ComponentsRegistry WHERE component_type=${componentType}) LIMIT 25`,
+        `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} (displayName LIKE '%${phrase.replace(/\s/g, '%')}%' OR name LIKE '%${phrase.replace(/\s/g, '%')}%') AND id IN (SELECT id FROM ComponentsRegistry WHERE component_type=${componentType}) LIMIT 25`,
         (_, rows: Objects[]) => {
-          let pairs: NameValuePair[] = rows.map((row: Objects) => {
+          const pairs: NameValuePair[] = rows.map((row: Objects) => {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
-              value: row.id.toString()
+              value: row.id.toString(),
             };
           });
           resolve(pairs);
@@ -512,7 +514,7 @@ export class CDClient {
   }
   async getItemsSoldByVendor(vendorId: number): Promise<ObjectElement[]> {
     return new Promise<ObjectElement[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
+      const HQ_valid = HQValidOnly ? 'HQ_valid = 1 AND' : '';
       this.db.all(
         `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} id in ( SELECT itemid FROM LootTable WHERE LootTableIndex in ( SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=( SELECT LootMatrixIndex FROM VendorComponent WHERE id=( SELECT component_id FROM ComponentsRegistry WHERE component_type=16 and id=${vendorId} ) ) ) )`,
         (_, rows: Objects[]) => {
@@ -520,11 +522,11 @@ export class CDClient {
             rows.map(({ name, displayName, id }) => {
               return {
                 name: displayName || name,
-                id: id
+                id: id,
               };
-            })
+            }),
           );
-        }
+        },
       );
     });
   }
@@ -538,11 +540,11 @@ export class CDClient {
             rows.map(({ id }) => {
               return {
                 name: this.locale.getObjectName(id),
-                id: id
+                id: id,
               };
-            })
+            }),
           );
-        }
+        },
       );
     });
   }
@@ -553,7 +555,7 @@ export class CDClient {
         `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM DestructibleComponent WHERE id IN ( SELECT component_id FROM ComponentsRegistry WHERE component_type=${DESTRUCTIBLE_COMPONENT} AND id=${objectId}))`,
         async (_, rows: SmashableDrop[]) => {
           const lootTableRaritySizes = new Map<number, number>();
-          for (let row of rows) {
+          for (const row of rows) {
             let ltiSize = lootTableRaritySizes?.get(row.lootTableIndex);
             if (!ltiSize) {
               ltiSize = await this.getItemsInLootTableOfRarity(row.lootTableIndex, row.rarity);
@@ -562,19 +564,19 @@ export class CDClient {
             row.poolSize = ltiSize;
           }
           resolve(rows);
-        }
+        },
       );
     });
   }
 
   async getPackageDrops(packageId: number): Promise<SmashableDrop[]> {
     return new Promise<SmashableDrop[]>(async (resolve) => {
-      let query = `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM PackageComponent WHERE id IN ( SELECT component_id FROM ComponentsRegistry WHERE component_type=${PACKAGE_COMPONENT} AND id=${packageId}))`;
+      const query = `SELECT LootMatrix.LootTableIndex as lootTableIndex, LootMatrix.percent as chanceForItem, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax as chanceForRarity, RarityTable.rarity FROM LootMatrix JOIN RarityTable on RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM PackageComponent WHERE id IN ( SELECT component_id FROM ComponentsRegistry WHERE component_type=${PACKAGE_COMPONENT} AND id=${packageId}))`;
       this.db.all(
         query,
         async (_, rows: SmashableDrop[]) => {
           const lootTableRaritySizes = new Map<number, number>();
-          for (let row of rows) {
+          for (const row of rows) {
             let ltiSize = lootTableRaritySizes?.get(row.lootTableIndex);
             if (!ltiSize) {
               ltiSize = await this.getItemsInLootTableOfRarity(row.lootTableIndex, row.rarity);
@@ -583,7 +585,7 @@ export class CDClient {
             row.poolSize = ltiSize;
           }
           resolve(rows);
-        }
+        },
       );
     });
   }
@@ -596,7 +598,7 @@ export class CDClient {
           // this is different because im getting across multiple rarities
           const lootTableRaritySizes = new Map<string, number>();
           // string: lti:rarity
-          for (let row of rows) {
+          for (const row of rows) {
             let ltiSize = lootTableRaritySizes?.get(`${row.lootTableIndex}:${row.rarity}`);
             if (!ltiSize) {
               ltiSize = await this.getItemsInLootTableOfRarity(row.lootTableIndex, row.rarity);
@@ -605,24 +607,23 @@ export class CDClient {
             row.poolSize = ltiSize;
           }
           resolve(rows);
-        }
+        },
       );
     });
   }
 
   async dropItemFromEnemy(itemId: number, rarity: number): Promise<LootDropFirstQuery[]> {
     return new Promise<LootDropFirstQuery[]>((resolve) => {
-      let query = `SELECT ComponentsRegistry.id as objectId, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ComponentsRegistry JOIN LootMatrix ON LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1}) WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND component_id IN ( SELECT id from DestructibleComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ) )`;
+      const query = `SELECT ComponentsRegistry.id as objectId, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ComponentsRegistry JOIN LootMatrix ON LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1}) WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND component_id IN ( SELECT id from DestructibleComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ) )`;
       this.db.all(query,
         (_, rows: LootDropFirstQuery[]) => {
           // need rows with proper chance (by subtracting percent of rarity-1)
           // basically this returns a set of rows in pairs of 2 where i just need the percent of the first one and must subtract it from percent of second one
           if (rarity === 1) resolve(rows);
 
-          let newRows: LootDropFirstQuery[] = [];
+          const newRows: LootDropFirstQuery[] = [];
           let previousPercent = 0;
-          for (let row of rows) {
-
+          for (const row of rows) {
             if (row.rarity !== rarity) {
               previousPercent = row.randmax;
             } else {
@@ -637,17 +638,16 @@ export class CDClient {
 
   async dropItemFromPackage(itemId: number, rarity: number): Promise<LootDropFirstQuery[]> {
     return new Promise<LootDropFirstQuery[]>((resolve) => {
-      let query = `SELECT ComponentsRegistry.id as objectId, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ComponentsRegistry JOIN LootMatrix ON LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1}) WHERE component_type = ${PACKAGE_COMPONENT} AND component_id IN ( SELECT id from PackageComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ) )`;
+      const query = `SELECT ComponentsRegistry.id as objectId, LootTableIndex as lootTableIndex, LootMatrix.LootMatrixIndex as lootMatrixIndex, LootMatrix.RarityTableIndex as rarityIndex, LootMatrix.percent, LootMatrix.minToDrop, LootMatrix.maxToDrop, RarityTable.randmax, RarityTable.rarity FROM ComponentsRegistry JOIN LootMatrix ON LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) JOIN RarityTable ON RarityTable.RarityTableIndex = LootMatrix.RarityTableIndex AND (RarityTable.rarity = ${rarity} OR RarityTable.rarity = ${rarity - 1}) WHERE component_type = ${PACKAGE_COMPONENT} AND component_id IN ( SELECT id from PackageComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ) )`;
       this.db.all(query,
         (_, rows: LootDropFirstQuery[]) => {
           // need rows with proper chance (by subtracting percent of rarity-1)
           // basically this returns a set of rows in pairs of 2 where i just need the percent of the first one and must subtract it from percent of second one
           if (rarity === 1) resolve(rows);
 
-          let newRows: LootDropFirstQuery[] = [];
+          const newRows: LootDropFirstQuery[] = [];
           let previousPercent = 0;
-          for (let row of rows) {
-
+          for (const row of rows) {
             if (row.rarity !== rarity) {
               previousPercent = row.randmax;
             } else {
@@ -665,11 +665,11 @@ export class CDClient {
       this.db.all(
         `SELECT itemid as id, ItemComponent.rarity FROM LootTable JOIN ItemComponent ON ItemComponent.id = (SELECT component_id FROM ComponentsRegistry WHERE id = LootTable.itemid AND component_type = ${ITEM_COMPONENT}) WHERE LootTable.LootTableIndex = ${lootTable} ORDER BY rarity ASC;`,
         (_, rows: LootTableItem[]) => {
-          for (let row of rows) {
+          for (const row of rows) {
             row.name = this.locale.getObjectName(row.id);
           }
           resolve(rows);
-        }
+        },
       );
     });
   }
@@ -681,17 +681,17 @@ export class CDClient {
         (_, row: any) => {
           // resolve(row?.RarityCount || 0)
           resolve(row?.RarityCount);
-        }
+        },
       );
     });
   }
 
   async getEnemiesAndLootMatrixForLoot(itemId: number): Promise<Map<number, number>> {
     return new Promise<Map<number, number>>((resolve) => {
-      let query = `SELECT ComponentsRegistry.id as enemyId, LootMatrixIndex as lootMatrixIndex from ComponentsRegistry JOIN DestructibleComponent on DestructibleComponent.id = ComponentsRegistry.component_id WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND component_id IN ( SELECT id from DestructibleComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ) )`;
+      const query = `SELECT ComponentsRegistry.id as enemyId, LootMatrixIndex as lootMatrixIndex from ComponentsRegistry JOIN DestructibleComponent on DestructibleComponent.id = ComponentsRegistry.component_id WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND component_id IN ( SELECT id from DestructibleComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ) )`;
       this.db.all(query,
         (_, rows: any[]) => {
-          let map = new Map<number, number>();
+          const map = new Map<number, number>();
           rows.forEach((e) => map.set(e.enemyId, e.lootMatrixIndex));
           resolve(map);
         });
@@ -700,10 +700,10 @@ export class CDClient {
 
   async getPackagesAndLootMatrixForLoot(itemId: number): Promise<Map<number, number>> {
     return new Promise<Map<number, number>>((resolve) => {
-      let query = `SELECT ComponentsRegistry.id as packageId, LootMatrixIndex as lootMatrixIndex from ComponentsRegistry JOIN PackageComponent on PackageComponent.id = ComponentsRegistry.component_id WHERE component_type = 53 AND component_id IN ( SELECT id from PackageComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ) )`;
+      const query = `SELECT ComponentsRegistry.id as packageId, LootMatrixIndex as lootMatrixIndex from ComponentsRegistry JOIN PackageComponent on PackageComponent.id = ComponentsRegistry.component_id WHERE component_type = 53 AND component_id IN ( SELECT id from PackageComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ) )`;
       this.db.all(query,
         (_, rows: any[]) => {
-          let map = new Map<number, number>();
+          const map = new Map<number, number>();
           rows.forEach((e) => map.set(e.packageId, e.lootMatrixIndex));
           resolve(map);
         });
@@ -712,11 +712,11 @@ export class CDClient {
 
   async getIdsOfItemsSold(vendorId: number): Promise<number[]> {
     return new Promise<number[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
-      let query = `SELECT id FROM Objects WHERE ${HQ_valid} id in ( SELECT itemid FROM LootTable WHERE LootTableIndex in ( SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=( SELECT LootMatrixIndex FROM VendorComponent WHERE id=( SELECT component_id FROM ComponentsRegistry WHERE component_type=${VENDOR_COMPONENT} and id=${vendorId} ) ) ) )`;
+      const HQ_valid = HQValidOnly ? 'HQ_valid = 1 AND' : '';
+      const query = `SELECT id FROM Objects WHERE ${HQ_valid} id in ( SELECT itemid FROM LootTable WHERE LootTableIndex in ( SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=( SELECT LootMatrixIndex FROM VendorComponent WHERE id=( SELECT component_id FROM ComponentsRegistry WHERE component_type=${VENDOR_COMPONENT} and id=${vendorId} ) ) ) )`;
       this.db.all(query,
         (_, rows: any[]) => {
-          let map = rows.map((e) => e.id);
+          const map = rows.map((e) => e.id);
           resolve(map);
         });
     });
@@ -724,7 +724,7 @@ export class CDClient {
 
   async getItemsSold(vendorId: number): Promise<ItemSold[]> {
     return new Promise<ItemSold[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
+      const HQ_valid = HQValidOnly ? 'HQ_valid = 1 AND' : '';
 
       let query = `SELECT ComponentsRegistry.id, ItemComponent.baseValue as cost, ItemComponent.currencyLOT as alternateCurrencyId, ItemComponent.altCurrencyCost as alternateCost, ItemComponent.commendationLOT as commendationCurrencyId, ItemComponent.commendationCost as commendationCost FROM ComponentsRegistry JOIN ItemComponent ON ItemComponent.id = ComponentsRegistry.component_id WHERE component_type = ${ITEM_COMPONENT} AND ComponentsRegistry.id IN( SELECT id FROM Objects WHERE ${HQ_valid} id in ( SELECT itemid FROM LootTable WHERE LootTableIndex in ( SELECT LootTableIndex FROM LootMatrix WHERE LootMatrixIndex=( SELECT LootMatrixIndex FROM VendorComponent WHERE id=( SELECT component_id FROM ComponentsRegistry WHERE component_type=${VENDOR_COMPONENT} and id=${vendorId} ) ) ) ) )`;
 
@@ -734,15 +734,15 @@ export class CDClient {
 
       this.db.all(query,
         (_, rows) => {
-          let map = rows.map((item) => {
+          const map = rows.map((item) => {
             return {
               id: item.id,
-              currency: { id: 163, name: "Coins" }, // default coin
+              currency: { id: 163, name: 'Coins' }, // default coin
               cost: vendorId === HONOR_ACCOLADE ? 0 : item.cost,
               name: this.locale.getObjectName(item.id),
-              alternateCurrency: { id: item.alternateCurrencyId, name: item?.alternateCurrencyId ? this.locale.getObjectName(item.alternateCurrencyId) : "Faction Token" },
+              alternateCurrency: { id: item.alternateCurrencyId, name: item?.alternateCurrencyId ? this.locale.getObjectName(item.alternateCurrencyId) : 'Faction Token' },
               alternateCost: item.alternateCost || 0,
-              commendationCurrency: { id: item.commendationCurrencyId, name: "Faction Token" },
+              commendationCurrency: { id: item.commendationCurrencyId, name: 'Faction Token' },
               commendationCost: item.commendationCost || 0,
             };
           });
@@ -753,10 +753,10 @@ export class CDClient {
 
   async getIdsOfVendorsThatSellItem(itemId: number): Promise<number[]> {
     return new Promise<number[]>((resolve) => {
-      let query = `SELECT id FROM ComponentsRegistry WHERE component_type = ${VENDOR_COMPONENT} AND component_id IN (SELECT id from VendorComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ))`;
+      const query = `SELECT id FROM ComponentsRegistry WHERE component_type = ${VENDOR_COMPONENT} AND component_id IN (SELECT id from VendorComponent WHERE LootMatrixIndex IN ( SELECT LootMatrixIndex FROM LootMatrix WHERE LootTableIndex IN ( SELECT LootTableIndex FROM LootTable WHERE itemid = ${itemId} ) ))`;
       this.db.all(query,
         (_, rows: any[]) => {
-          let map = rows.map((e) => e.id);
+          const map = rows.map((e) => e.id);
           resolve(map);
         });
     });
@@ -764,10 +764,10 @@ export class CDClient {
 
   async getCommendationVendor(itemId: number): Promise<number[]> {
     return new Promise<number[]>((resolve) => {
-      let query = `select * from ItemComponent where id = (select component_id from ComponentsRegistry where component_type = ${ITEM_COMPONENT} and id = ${itemId})`;
+      const query = `select * from ItemComponent where id = (select component_id from ComponentsRegistry where component_type = ${ITEM_COMPONENT} and id = ${itemId})`;
       this.db.all(query,
         (_, rows: any[]) => {
-          let map = rows.map((e) => e.id);
+          const map = rows.map((e) => e.id);
           resolve([]);
         });
     });
@@ -779,7 +779,7 @@ export class CDClient {
         `SELECT itemid as id, ItemComponent.rarity FROM LootTable JOIN ItemComponent ON ItemComponent.id = (SELECT component_id FROM ComponentsRegistry WHERE id = LootTable.itemid AND component_type = ${ITEM_COMPONENT}) WHERE LootTable.LootTableIndex = ${lootTable};`,
         (_, row: any) => {
           resolve(row?.RarityCount || 0);
-        }
+        },
       );
     });
   }
@@ -803,13 +803,13 @@ export class CDClient {
               subtype: row.subtype,
               name: this.locale.getMissionName(row.id),
               description: this.locale.getMissionDescription(row.id),
-              rewardCount: count
+              rewardCount: count,
             };
           });
 
           rows = rows.filter((r) => r.rewardCount > 0);
           resolve(rows);
-        }
+        },
       );
     });
   }
@@ -819,7 +819,7 @@ export class CDClient {
       this.db.all(
         `SELECT * FROM Missions WHERE offer_objectID = ${npcId};`,
         (_, rows: Missions[]) => {
-          let missions: NPCMission[] = rows.map((row) => {
+          const missions: NPCMission[] = rows.map((row) => {
             return {
               id: row.id,
               type: row.defined_type,
@@ -847,7 +847,7 @@ export class CDClient {
             };
           });
           resolve(missions);
-        }
+        },
       );
     });
   }
@@ -858,7 +858,7 @@ export class CDClient {
         `SELECT * FROM DestructibleComponent WHERE id = (SELECT component_id FROM ComponentsRegistry WHERE component_type = ${DESTRUCTIBLE_COMPONENT} AND id = ${enemyId})`,
         (_, row: EnemyHealth) => {
           resolve(row);
-        }
+        },
       );
     });
   }
@@ -869,7 +869,7 @@ export class CDClient {
         `SELECT * FROM Missions WHERE id = ${missionId}`,
         (_, row: Missions) => {
           resolve(row);
-        }
+        },
       );
     });
   }
@@ -883,10 +883,9 @@ export class CDClient {
           // basically this returns a set of rows in pairs of 2 where i just need the percent of the first one and must subtract it from percent of second one
           if (rarity === 1) resolve(rows);
 
-          let newRows: ActivityDropFromQuery[] = [];
+          const newRows: ActivityDropFromQuery[] = [];
           let previousPercent = 0;
-          for (let row of rows) {
-
+          for (const row of rows) {
             if (row.rarity !== rarity) {
               previousPercent = row.randmax;
             } else {
@@ -895,67 +894,67 @@ export class CDClient {
             }
           }
           resolve(newRows);
-        }
+        },
       );
     });
   }
 
   async getRarityVarianceMap(): Promise<Map<number, number>> {
     return new Promise<Map<number, number>>(async (resolve) => {
-      let query = `SELECT RarityTableIndex FROM RarityTable`;
+      const query = `SELECT RarityTableIndex FROM RarityTable`;
       this.db.all(
         query,
         async (_, rows: RarityTable[]) => {
-          let map = new Map<number, number>();
-          for (let { RarityTableIndex: rti } of rows) {
+          const map = new Map<number, number>();
+          for (const { RarityTableIndex: rti } of rows) {
             if (map.has(rti)) map.set(rti, map.get(rti) + 1);
             else map.set(rti, 1);
           }
           return map;
-        }
+        },
       );
     });
   }
 
   async getLevelData(level: number): Promise<LevelData> {
     return new Promise<LevelData>(async (resolve) => {
-      let query = `select * from LevelProgressionLookup where id = ${level} or id = ${level - 1}`;
+      const query = `select * from LevelProgressionLookup where id = ${level} or id = ${level - 1}`;
       this.db.all(
         query,
         async (_, rows: LevelProgressionLookup[]) => {
-          let info: LevelData = {
+          const info: LevelData = {
             level: level,
             experienceFromLevel0: rows.find((row) => row.id === level)?.requiredUScore,
-            experienceFromPreviousLevel: rows.find((row) => row.id === level)?.requiredUScore - (rows.find((row) => row.id === level - 1)?.requiredUScore || 0)
+            experienceFromPreviousLevel: rows.find((row) => row.id === level)?.requiredUScore - (rows.find((row) => row.id === level - 1)?.requiredUScore || 0),
           };
           resolve(info);
-        }
+        },
       );
     });
   }
 
   async getMaxLevel(): Promise<number> {
     return new Promise<number>(async (resolve) => {
-      let query = `select max(id) as id from LevelProgressionLookup`;
+      const query = `select max(id) as id from LevelProgressionLookup`;
       this.db.get(
         query,
         async (_, row: LevelProgressionLookup) => {
           resolve(row.id);
-        }
+        },
       );
     });
   }
 
   async searchItem(phrase: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
+      const HQ_valid = HQValidOnly ? 'HQ_valid = 1 AND' : '';
       this.db.all(
         `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} type='Loot' AND Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${ITEM_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
         (_, rows: Objects[]) => {
-          let pairs: NameValuePair[] = rows?.map((row: Objects) => {
+          const pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
-              value: row.id.toString()
+              value: row.id.toString(),
             };
           });
           resolve(pairs);
@@ -963,10 +962,10 @@ export class CDClient {
     });
   }
 
-  //! problem: locale grabs any match, not just items
+  // ! problem: locale grabs any match, not just items
   async searchItemWithLocale(phrase: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
+      const HQ_valid = HQValidOnly ? 'HQ_valid = 1 AND' : '';
       this.db.all(
         `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} type='Loot' AND Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${ITEM_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
         (_, rows: Objects[]) => {
@@ -974,15 +973,15 @@ export class CDClient {
           let cdclientPairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
-              value: row.id.toString()
+              value: row.id.toString(),
             };
           });
           // locale matches
-          let localePairs = this.locale.searchObjects(phrase);
+          const localePairs = this.locale.searchObjects(phrase);
           // remove from cdclient what is already found in locale
           cdclientPairs = cdclientPairs.filter((pair) => localePairs.every(({ value }) => pair.value !== value));
           // locale matches first, then cdclient matches
-          let pairs = [...localePairs, ...cdclientPairs].slice(0, 25);
+          const pairs = [...localePairs, ...cdclientPairs].slice(0, 25);
           resolve(pairs);
         });
     });
@@ -990,14 +989,14 @@ export class CDClient {
 
   async searchPackage(phrase: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
+      const HQ_valid = HQValidOnly ? 'HQ_valid = 1 AND' : '';
       this.db.all(
         `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${PACKAGE_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
         (_, rows: Objects[]) => {
-          let pairs: NameValuePair[] = rows?.map((row: Objects) => {
+          const pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
-              value: row.id.toString()
+              value: row.id.toString(),
             };
           });
           resolve(pairs);
@@ -1010,10 +1009,10 @@ export class CDClient {
       this.db.all(
         `SELECT id, name, displayName FROM Objects WHERE Objects.id IN(SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${DESTRUCTIBLE_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
         (_, rows: Objects[]) => {
-          let pairs: NameValuePair[] = rows?.map((row: Objects) => {
+          const pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
-              value: row.id.toString()
+              value: row.id.toString(),
             };
           });
           resolve(pairs);
@@ -1026,10 +1025,10 @@ export class CDClient {
       this.db.all(
         `SELECT id, name, displayName FROM Objects WHERE Objects.type = 'Enemies' AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
         (_, rows: Objects[]) => {
-          let pairs: NameValuePair[] = rows?.map((row: Objects) => {
+          const pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
-              value: row.id.toString()
+              value: row.id.toString(),
             };
           });
           resolve(pairs);
@@ -1039,16 +1038,16 @@ export class CDClient {
 
   async searchVendor(phrase: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve) => {
-      let statement =
+      const statement =
         `SELECT id, name, displayName FROM Objects WHERE Objects.id IN (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${VENDOR_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`;
-      console.log("📝 ~ file: cdclient.ts ~ line 1035 ~ CDClient ~ searchVendor ~ statement", statement);
+      console.log('📝 ~ file: cdclient.ts ~ line 1035 ~ CDClient ~ searchVendor ~ statement', statement);
       this.db.all(
         statement,
         (_, rows: Objects[]) => {
-          let pairs: NameValuePair[] = rows?.map((row: Objects) => {
+          const pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
-              value: row.id.toString()
+              value: row.id.toString(),
             };
           });
           resolve(pairs);
@@ -1061,10 +1060,10 @@ export class CDClient {
       this.db.all(
         `SELECT id, name, displayName FROM Objects WHERE Objects.id IN (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${MISSION_OFFER_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`,
         (_, rows: Objects[]) => {
-          let pairs: NameValuePair[] = rows?.map((row: Objects) => {
+          const pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
-              value: row.id.toString()
+              value: row.id.toString(),
             };
           });
           resolve(pairs);
@@ -1074,14 +1073,14 @@ export class CDClient {
 
   async searchBrick(phrase: string): Promise<NameValuePair[]> {
     return new Promise<NameValuePair[]>((resolve) => {
-      let HQ_valid = HQValidOnly ? "HQ_valid = 1 AND" : "";
+      const HQ_valid = HQValidOnly ? 'HQ_valid = 1 AND' : '';
       this.db.all(
         `SELECT id, name, displayName FROM Objects WHERE ${HQ_valid} (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') AND Objects.type = 'LEGO brick' LIMIT 25`,
         (_, rows: Objects[]) => {
-          let pairs: NameValuePair[] = rows?.map((row: Objects) => {
+          const pairs: NameValuePair[] = rows?.map((row: Objects) => {
             return {
               name: `${row.displayName || row.name} [${row.id}]`,
-              value: row.id.toString()
+              value: row.id.toString(),
             };
           });
           resolve(pairs);
@@ -1094,10 +1093,10 @@ export class CDClient {
       this.db.all(
         `SELECT * FROM ActivityRewards WHERE description LIKE '${sqlike(phrase)}' LIMIT 25`,
         (_, rows: ActivityRewards[]) => {
-          let pairs: NameValuePair[] = rows?.map((row) => {
+          const pairs: NameValuePair[] = rows?.map((row) => {
             return {
               name: `${this.locale.getActivityName(row.objectTemplate)} > ${row.description} [${row.objectTemplate}]`,
-              value: `${row.objectTemplate};${row.description}`
+              value: `${row.objectTemplate};${row.description}`,
             };
           });
           resolve(pairs);
@@ -1110,23 +1109,23 @@ export class CDClient {
       this.db.all(
         `SELECT * FROM ActivityRewards`,
         (_, rows: ActivityRewards[]) => {
-          let newRows: ActivityRewards[] = [];
-          let re = new RegExp(`${phrase.replace(/[^A-z0-9]/gim, ".*")}`, "gi");
-          for (let row of rows) {
+          const newRows: ActivityRewards[] = [];
+          const re = new RegExp(`${phrase.replace(/[^A-z0-9]/gim, '.*')}`, 'gi');
+          for (const row of rows) {
             if (row.description.match(re) || this.locale.getActivityName(row.objectTemplate).match(re)) {
               newRows.push(row);
               if (newRows.length === 25) break;
             }
           }
 
-          let isActivityRegex = new RegExp("Activities_\\d+_ActivityName", "gm");
-          let pairs: NameValuePair[] = newRows?.map((row) => {
-            let activityName = this.locale.getActivityName(row.objectTemplate);
-            let title = !activityName.match(isActivityRegex) ? `${activityName} > ` : "";
+          const isActivityRegex = new RegExp('Activities_\\d+_ActivityName', 'gm');
+          const pairs: NameValuePair[] = newRows?.map((row) => {
+            const activityName = this.locale.getActivityName(row.objectTemplate);
+            let title = !activityName.match(isActivityRegex) ? `${activityName} > ` : '';
             title += `${row.description} [${row.objectTemplate}]`;
             return {
               name: title,
-              value: `${row.objectTemplate};${row.description}`
+              value: `${row.objectTemplate};${row.description}`,
             };
           });
           resolve(pairs);

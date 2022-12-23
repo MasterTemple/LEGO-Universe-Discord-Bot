@@ -21,6 +21,7 @@ export const componentCommands: ComponentCommandMap = getComponentCommands();
 
 client.once('ready', async () => {
   console.log('\n------------------------------------\n');
+  // console.log(process.env);
   await cdclient.load();
   updateSlashCommands(client, slashCommands);
   console.log('\n------------------------------------\n');
