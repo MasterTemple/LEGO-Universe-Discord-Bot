@@ -4,3 +4,4 @@ config.ts
 lib
 test.ts
 *.bat
+.env
