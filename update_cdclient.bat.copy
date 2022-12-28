@@ -1,0 +1,7 @@
+@echo off
+:: unpack brick mesa client
+"C:\Users\dgmastertemple\Downloads\lunpack-win\lunpack.exe" "C:\Users\dgmastertemple\AppData\Local\BrickMesa" -g "C:\Users\dgmastertemple\Downloads\lunpack-win\globs.txt"
+:: convert cdclient.fdb to cdclient.sqlite
+"C:\Paths\fdb-to-sqlite.exe" "C:\Users\dgmastertemple\AppData\Local\BrickMesa\client\res\cdclient.fdb" "C:\Users\dgmastertemple\AppData\Local\BrickMesa\client\res\cdclient.sqlite"
+:: copy cdclient.sqlite to the path set in my config.ts
+cp "C:\Users\dgmastertemple\AppData\Local\BrickMesa\client\res\cdclient.sqlite" "C:\Users\dgmastertemple\Documents\cdclient.sqlite"

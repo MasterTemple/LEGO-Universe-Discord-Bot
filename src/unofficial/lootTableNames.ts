@@ -2580,6 +2580,50 @@ export const lootTableNames = [
     "name": "Elite Blade of Knock Down"
   },
   {
+    "lti": "20001",
+    "name": "Small Frostivus Gift"
+  },
+  {
+    "lti": "20002",
+    "name": "Medium Frostivus Gift"
+  },
+  {
+    "lti": "20003",
+    "name": "Large Frostivus Gift"
+  },
+  {
+    "lti": "20004",
+    "name": "Huge Frostivus Gift"
+  },
+  {
+    "lti": "20005",
+    "name": "Frostivus Gifts"
+  },
+  {
+    "lti": "20006",
+    "name": "Vewy Speciaw Pwesent"
+  },
+  {
+    "lti": "20007",
+    "name": "Frostburg Rares - Tier 1"
+  },
+  {
+    "lti": "20008",
+    "name": "Frostburg Rares - Tier 2"
+  },
+  {
+    "lti": "20009",
+    "name": "Frostburg Rares - Tier 3"
+  },
+  {
+    "lti": "20010",
+    "name": "Frostburg Rares - Tier 4"
+  },
+  {
+    "lti": "30003",
+    "name": "Face Decals"
+  },
+  {
     "lti": "37700",
     "name": "Rascus' Helmet"
   },
