@@ -345,6 +345,8 @@ export class Item extends CDClient {
 
   async addItemStats(): Promise<void> {
     this.skills = await this.getSkillsFromObjects([this.id, ...this.itemComponent.subItems]);
+    if (this.skills === undefined) this.skills = [];
+
     if (this.skills.length)
       this.stats = {
         armor: this.skills.find(({ armorBonus }) => armorBonus !== null)?.armorBonus || 0,
