@@ -1040,7 +1040,6 @@ export class CDClient {
     return new Promise<NameValuePair[]>((resolve) => {
       const statement =
         `SELECT id, name, displayName FROM Objects WHERE Objects.id IN (SELECT id FROM ComponentsRegistry WHERE ComponentsRegistry.component_type = ${VENDOR_COMPONENT}) AND (displayName LIKE '${sqlike(phrase)}' OR name LIKE '${sqlike(phrase)}') LIMIT 25`;
-      console.log('📝 ~ file: cdclient.ts ~ line 1035 ~ CDClient ~ searchVendor ~ statement', statement);
       this.db.all(
         statement,
         (_, rows: Objects[]) => {

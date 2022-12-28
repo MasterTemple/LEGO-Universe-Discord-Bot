@@ -2605,19 +2605,19 @@ export const lootTableNames = [
   },
   {
     "lti": "20007",
-    "name": "Frostburg Rares - Tier 1"
+    "name": "Frostburgh Rares - Tier 1"
   },
   {
     "lti": "20008",
-    "name": "Frostburg Rares - Tier 2"
+    "name": "Frostburgh Rares - Tier 2"
   },
   {
     "lti": "20009",
-    "name": "Frostburg Rares - Tier 3"
+    "name": "Frostburgh Rares - Tier 3"
   },
   {
     "lti": "20010",
-    "name": "Frostburg Rares - Tier 4"
+    "name": "Frostburgh Rares - Tier 4"
   },
   {
     "lti": "30003",
