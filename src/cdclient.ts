@@ -467,9 +467,12 @@ export class CDClient {
     return new Promise<number>((resolve) => {
       const HQ_valid = HQValidOnly ? 'HQ_valid = 1 AND' : '';
       let query = `SELECT id FROM Objects WHERE ${HQ_valid} (displayName LIKE '%${objectName.replace(/\s/g, '%')}%' OR name LIKE '%${objectName.replace(/\s/g, '%')}%') ORDER BY id ASC LIMIT 25`;
-      const itemId = parseInt(objectName);
-      if (itemId) {
-        // this validates that the id is HQ valid
+      // if the name provided is an ID
+      if (objectName.match(/^\d+$/g)) {
+        const itemId = parseInt(objectName);
+        // no need to search if hq valid doesn't matter
+        if (!HQValidOnly) resolve(parseInt(objectName));
+        // this query validates that the id is HQ valid
         query = `SELECT id FROM Objects WHERE ${HQ_valid} id = ${itemId}`;
       }
       this.db.get(
