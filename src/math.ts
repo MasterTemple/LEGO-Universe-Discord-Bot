@@ -1,3 +1,5 @@
+import { decimalPlaces } from "./config";
+
 function gcd(a, b) {
   return (b) ? gcd(b, a % b) : a;
 }
@@ -18,7 +20,7 @@ export function decimalToFraction(_decimal): string {
 };
 
 export function percent(num: number) {
-  return `${(round(num, 5) * 100).toFixed(2)}%`;
+  return `${(round(num, 5) * 100).toFixed(decimalPlaces)}%`;
 }
 
 export function round(decimal: number, places: number = 2) {
