@@ -72,6 +72,12 @@ export class LocaleXML {
     });
   }
 
+  async reload(): Promise<void> {
+    this.locale.clear();
+    this.unofficial.clear();
+    await this.load();
+  }
+
   getObjectName(id: number): string {
     return this.locale.get("Objects_ID_name").get(id.toString()) || `Objects_${id}_name`;
   }
