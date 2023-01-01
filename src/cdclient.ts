@@ -65,7 +65,9 @@ export class CDClient {
       });
     });
   }
-
+  async reload(): Promise<void> {
+    await this.connectToDB();
+  }
   async getComponents(objectId: number) {
     return new Promise<ComponentsRegistry[]>((resolve) => {
       this.db.all(

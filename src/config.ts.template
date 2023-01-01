@@ -11,3 +11,4 @@ export var footerText = "LEGO® is a trademark of the LEGO Group which does not 
 export var footerIcon = "https://cdn.discordapp.com/avatars/813618765685456916/2fb374c98d47b0d50299f9f452c2e0e1.webp"; // the icon in the footer of the message, using the bot's icon works
 export var HQValidOnly = true; // true restricts the bot to showing all items that have 'HQ_valid' set to '1' in the 'Objects' table (this is to hide future content and other items). if you are testing and modding, I recommend turning this off
 export const decimalPlaces = 4; // the number of decimals to round to when showing drop rates
+export const adminRoles = []; // the roles required to perform certain commands such as /reload
