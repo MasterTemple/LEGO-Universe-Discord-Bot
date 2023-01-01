@@ -4,4 +4,5 @@ config.ts
 lib
 test.ts
 *.bat
+*.copy
 .env

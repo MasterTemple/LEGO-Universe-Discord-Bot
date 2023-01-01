@@ -29,12 +29,23 @@ export default {
 
     //   // if(roles.find((role) => role))
     // }
+    let cdclientTime = 0;
+    let localeTime = 0;
 
+    let before = (new Date).getTime();
     await cdclient.reload();
+    let after = (new Date).getTime();
+    cdclientTime = after - before;
+
+    before = (new Date).getTime();
     await cdclient.locale.reload();
+    after = (new Date).getTime();
+    localeTime = after - before;
 
     const embed = new Embed();
     embed.setTitle(`Reload Successful!`);
+    embed.addField("locale.xml", `Reloaded in \`${localeTime}ms\`.`, true);
+    embed.addField("cdclient.sqlite", `Reloaded in \`${cdclientTime}ms\`.`, true);
 
     await replyOrUpdate({
       interaction: interaction,
