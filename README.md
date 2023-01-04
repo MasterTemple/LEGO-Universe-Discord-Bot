@@ -36,7 +36,7 @@
 1. Run `git clone https://github.com/MasterTemple/LEGO-Universe-Discord-Bot.git`
 2. **Configuration**
 
-   Copy `src/config.ts.template` to `src/config.ts` and fill in the data.
+   Rename `.env.template` to `.env` and fill in the data from the comments provided.
 
    If you do not have a `cdclient.sqlite` create one from your `cdclient.fdb` at https://fdb.lu-dev.net/.
 
@@ -52,3 +52,7 @@
    Install pm2 with `npm install pm2 -g` and run it with `pm2 start .`
 
    Restart with `pm2 restart all` and stop with `pm2 stop all`
+
+   If you edit the cdclient.sqlite or locale.xml, they can be reloaded without restarting the bot by using the Slash Command `/reload` in Discord.
+
+   If you edit the .env file, you just need to restart the bot.
