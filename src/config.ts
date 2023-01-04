@@ -14,6 +14,6 @@ export const LUServerName = env.LUDB_LU_SERVER_NAME;
 export const LUServerIcon = env.LUDB_LU_SERVER_ICON;
 export const footerText = env.LUDB_FOOTER_TEXT;
 export const footerIcon = env.LUDB_FOOTER_ICON;
-export const HQValidOnly = env.LUDB_HQ_VALID_ONLY;
+export const HQValidOnly = env.LUDB_HQ_VALID_ONLY === "true" ? true : false;
 export const decimalPlaces = parseInt(env.LUDB_DECIMAL_PLACES);
 export const adminRoles = [...env.LUDB_ADMIN_ROLES.match(/\d+/g) || []];
