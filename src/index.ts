@@ -1,4 +1,4 @@
-import { Client, CommandInteractionOption, Interaction } from 'discord.js';
+import { Client, CommandInteractionOption, Intents, Interaction } from 'discord.js';
 import { getAutocompleteOptions } from './autocomplete';
 import { CDClient } from './cdclient';
 import { token } from './config';
@@ -12,7 +12,7 @@ import { SlashCommandMap } from './types/SlashCommand';
 export const cdclient = new CDClient();
 
 const client = new Client({
-  intents: [],
+  intents: [Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILDS],
 });
 
 export const slashCommands: SlashCommandMap = getSlashCommands();

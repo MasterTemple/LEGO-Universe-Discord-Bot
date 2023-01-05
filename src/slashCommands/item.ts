@@ -1,9 +1,27 @@
+import { Client } from 'discord.js';
 import { dropHomeRow, itemHomeRow } from '../components';
 import { notFound } from '../error';
 import { getOption, replyOrUpdate } from '../functions';
 import { Embed } from '../types/Embed';
 import { Item } from '../types/Item';
 import { SlashCommand } from '../types/SlashCommand';
+
+const ARMOR_EMOJI = "1060367206422163566";
+const LIFE_EMOJI = "1060367241205514291";
+const IMAGINATION_EMOJI = "1060367253134131342";
+
+function emojiStats(client: Client, count: number, name: string, id: string) {
+  let str = "";
+  // let emoji = client.emojis.cache.get("305818615712579584");
+  for (let i = 0; i < count; i++) {
+    str += `<a:${name}:${id}> `;
+    // str += ` ${emoji}`;
+    // str += `:${id}:`;
+    // str += ":heart:";
+  }
+  if (str.length === 0) return "None";
+  return str;
+}
 
 export default {
   name: 'item',
@@ -41,9 +59,12 @@ export default {
       embed.addField("Proxies", item.itemComponent.proxyItems.map(({ name, id }) => `${name} [[${id}]](${item.getURL(id)})`).join(", ") || "None", true);
 
       if (item.stats) {
-        embed.addField("Armor", item.stats.armor.toString(), true);
+        // embed.addField("Armor", ":ARMOR_EMOJI:", true);
         embed.addField("Health", item.stats.health.toString(), true);
         embed.addField("Imagination", item.stats.imagination.toString(), true);
+        // embed.addField("Armor", emojiStats(interaction.client, item.stats.armor, "ARMOR_EMOJI", ARMOR_EMOJI), true);
+        // embed.addField("Health", emojiStats(interaction.client, item.stats.health, "LIFE_EMOJI", LIFE_EMOJI), true);
+        // embed.addField("Imagination", emojiStats(interaction.client, item.stats.imagination, "IMAGINATION_EMOJI", IMAGINATION_EMOJI), true);
       }
 
       embed.addField("Cost", item.itemComponent.buyPrice.toString(), true);
@@ -53,7 +74,7 @@ export default {
     else {
       embed.addField("Not an Item!", `${item.name} is not an item!`);
     }
-
+    embed.setDescription(emojiStats(interaction.client, item.stats.armor, "ARMOR_EMOJI", ARMOR_EMOJI));
     await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
