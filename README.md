@@ -95,6 +95,10 @@ The green button indicates the current command. Disabled/faded buttons show that
 
 ![message components](screenshots/components.png)
 
+If the user clicks the `Buy` button, the message is edited to display the following
+
+![message components](screenshots/component_buy.png)
+
 ## Paging
 
 The current page index is indicated between the parenthesis in the title.
