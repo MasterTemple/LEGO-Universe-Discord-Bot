@@ -34,6 +34,7 @@ export async function getAutocompleteOptions(cdclient: CDClient, name: string, v
       break;
 
     case "mission":
+    case "achievement":
       autocompleteOptions = cdclient.locale.searchMissions(value);
       break;
 
