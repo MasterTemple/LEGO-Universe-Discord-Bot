@@ -7,7 +7,7 @@ import { SlashCommand } from '../types/SlashCommand';
 
 export default {
   name: 'achievement',
-  description: 'View the stats of a achievement!',
+  description: 'View the stats of an achievement!',
   options: [
     {
       name: 'achievement',

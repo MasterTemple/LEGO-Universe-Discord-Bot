@@ -119,7 +119,13 @@ The blue hyper-linked text will take the user to the corresponding page of hoste
 
 ### `/activity`
 
-View all activitys given from an activity!
+View the stats of an achievement!
+
+![/achievement](screenshots/achievement.png)
+
+### `/activity`
+
+View all rewards given from an activity!
 
 ![/activity](screenshots/activity.png)
 

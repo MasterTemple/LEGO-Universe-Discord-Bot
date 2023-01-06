@@ -7,7 +7,7 @@ import { SlashCommand } from '../types/SlashCommand';
 
 export default {
   name: 'activity',
-  description: 'View all activitys given from an activity!',
+  description: 'View all rewards given from an activity!',
   options: [
     {
       name: 'activity',
