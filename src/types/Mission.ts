@@ -35,7 +35,6 @@ export class Mission extends CDClient {
 
   async addThumbnail(id: number = this.id): Promise<void> {
     this.imageURL = `${explorerDomain}${await this.getIconAssetForMission(id)}`;
-    console.log(this.imageURL);
   }
 
   organizeData() {
