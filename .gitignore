@@ -4,3 +4,4 @@ test.ts
 *.bat
 *.copy
 .env
+update_cdclient.py

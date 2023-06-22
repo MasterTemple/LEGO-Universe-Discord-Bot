@@ -5,10 +5,9 @@
     "target": "ES6",
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "outDir": "lib",
-    "watch": true
+    "outDir": "lib"
   },
-    "include": [
-      "src",
-    ]
+  "include": [
+    "src",
+  ]
 }

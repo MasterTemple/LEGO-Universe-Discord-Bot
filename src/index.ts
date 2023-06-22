@@ -21,7 +21,6 @@ export const componentCommands: ComponentCommandMap = getComponentCommands();
 
 client.once('ready', async () => {
   console.log('\n------------------------------------\n');
-  // console.log(process.env);
   await cdclient.load();
   updateSlashCommands(client, slashCommands);
   console.log('\n------------------------------------\n');
@@ -32,8 +31,8 @@ client.on('interactionCreate', async (interaction: Interaction) => {
   try {
     if (interaction.isAutocomplete()) {
       const options = interaction.options.data;
-      let { value } = options.find((f) => f.focused);
-      let autocompleteOptions: NameValuePair[] = await getAutocompleteOptions(cdclient, interaction.commandName.toString(), value.toString());
+      const { value } = options.find((f) => f.focused);
+      const autocompleteOptions: NameValuePair[] = await getAutocompleteOptions(cdclient, interaction.commandName.toString(), value.toString());
       await interaction.respond(autocompleteOptions);
     }
 
@@ -43,8 +42,8 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     }
 
     if (interaction.isMessageComponent()) {
-      let { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)/gi)][0].groups;
-      let options = [{ name: "button", type: "STRING", value: id } as CommandInteractionOption];
+      const { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)/gi)][0].groups;
+      const options = [{ name: 'button', type: 'STRING', value: id } as CommandInteractionOption];
       if (slashCommands.has(cmd)) {
         await slashCommands.get(cmd).run(interaction, options, cdclient);
       } else {
@@ -53,9 +52,11 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     }
 
     if (interaction.isModalSubmit()) {
-      let cmd = interaction.customId.match(/^[^\/]+/g)[0];
+      const cmd = interaction.customId.match(/^[^\/]+/g)[0];
       await modalCommands.get(cmd).run(interaction, cdclient);
-      if (interaction.replied === false) await interaction.reply({ content: 'Your response was recieved!', ephemeral: true });
+      if (interaction.replied === false) {
+        await interaction.reply({ content: 'Your response was recieved!', ephemeral: true });
+      }
     }
   } catch (err) {
     if (interaction.isMessageComponent() || interaction.isApplicationCommand()) {
