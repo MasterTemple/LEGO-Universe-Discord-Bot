@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, TextBasedChannel } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder } from 'discord.js';
 import { reportChannelId } from '../config';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -17,15 +17,15 @@ export default {
       name: interaction.user.username,
       iconURL: interaction.user.avatarURL() || undefined,
     });
-    embed.setFooter(null);
+    (embed.data as any).footer = undefined;
 
     const components = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new Button().setLabel(`Reply to ${interaction.user.username}`).setCustomId(`reply/${interaction.user.id}`),
     );
 
     const reportChannel = await interaction.client.channels.fetch(reportChannelId);
-    if (reportChannel?.isTextBased?.()) {
-      await (reportChannel as TextBasedChannel).send({
+    if (reportChannel && 'send' in reportChannel) {
+      await reportChannel.send({
         embeds: [embed],
         components: [components],
       });

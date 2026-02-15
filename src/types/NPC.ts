@@ -5,7 +5,7 @@ import { explorerDomain } from "../config";
 import { ItemSold, NPCMission } from "../luInterfaces";
 
 export class NPC extends CDClient {
-  db: Database;
+  declare db: Database;
   id: number;
   name: string;
   imageURL: string;

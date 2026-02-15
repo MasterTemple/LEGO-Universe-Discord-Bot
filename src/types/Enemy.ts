@@ -5,7 +5,7 @@ import { explorerDomain } from "../config";
 import { EnemyHealth, SmashableDrop } from "../luInterfaces";
 
 export class Enemy extends CDClient {
-  db: Database;
+  declare db: Database;
   id: number;
   name: string;
   imageURL: string;

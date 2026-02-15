@@ -83,7 +83,7 @@ export default {
 
     if (tableSize === 0) embed.addField(`Consumable`, `Consumables have no rarity!`);
 
-    let buttons = new ActionRowBuilder().addComponents();
+    let buttons = new ActionRowBuilder<Button>().addComponents();
 
     for (let i = 1; i <= 4; i++) {
       // i added an extra '&' because all customIds must be different and it will be ignored
@@ -93,14 +93,15 @@ export default {
       );
     }
 
-    if (interaction.isModalSubmit()) {
-      interaction.customId += `?t=${selectedTier}`;
-    }
+    const customIdOverride = interaction.isModalSubmit()
+      ? `${interaction.customId}?t=${selectedTier}`
+      : undefined;
 
     await replyOrUpdate({
       interaction: interaction,
       embeds: [embed],
       components: [buttons],
+      customIdOverride,
       pageSize: 2
     });
 

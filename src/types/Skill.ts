@@ -5,7 +5,7 @@ import { explorerDomain } from "../config";
 import { ObjectElement, SkillDescription } from "../luInterfaces";
 
 export class Skill extends CDClient {
-  db: Database;
+  declare db: Database;
   id: number;
   name: string;
   descriptions: SkillDescription[];

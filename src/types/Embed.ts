@@ -1,9 +1,9 @@
-import { ColorResolvable, EmbedBuilder, EmbedFieldBuilder, APIEmbedField } from 'discord.js';
+import { APIEmbed, APIEmbedField, ColorResolvable, EmbedBuilder } from 'discord.js';
 import { botColor, footerIcon, footerText, LUServerIcon, LUServerName } from '../config';
 
 export class Embed extends EmbedBuilder {
-  constructor(embed?: EmbedBuilder) {
-    super(embed);
+  constructor(embed?: EmbedBuilder | APIEmbed) {
+    super(embed ? ('data' in embed ? embed.data : embed) : undefined);
     this.setColor(botColor as ColorResolvable);
     this.setAuthor({
       name: LUServerName,
@@ -24,6 +24,6 @@ export class Embed extends EmbedBuilder {
   }
 
   set fields(fields: APIEmbedField[]) {
-    this.setFields(fields.map((field) => new EmbedFieldBuilder(field)));
+    this.setFields(fields);
   }
 }

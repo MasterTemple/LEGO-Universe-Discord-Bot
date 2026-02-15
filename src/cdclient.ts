@@ -819,7 +819,7 @@ export class CDClient {
         (_, rows: MissionRewardRow[]) => {
           let count = 0;
 
-          rows = rows.map((row) => {
+          const missionRewards: MissionReward[] = rows.map((row) => {
             if (itemId === row.reward_item1) count = row.reward_item1_count;
             else if (itemId === row.reward_item2) count = row.reward_item2_count;
             else if (itemId === row.reward_item3) count = row.reward_item3_count;
@@ -835,8 +835,7 @@ export class CDClient {
             };
           });
 
-          rows = rows.filter((r) => r.rewardCount > 0);
-          resolve(rows);
+          resolve(missionRewards.filter((r) => r.rewardCount > 0));
         },
       );
     });

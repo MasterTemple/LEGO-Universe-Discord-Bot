@@ -47,7 +47,7 @@ export default {
     embed.addField("Stack Size", item.itemComponent?.stackSize?.toString() || "999", true);
     embed.addField("Level Requirement", item.itemComponent?.levelRequirement?.toString() || "0", true);
 
-    let buttons = new ActionRowBuilder().addComponents(
+    let buttons = new ActionRowBuilder<Button>().addComponents(
       new Button().setDisabled(!item.get.isFromMission).setLabel("Earn").setCustomId(`earn/${itemId}`),
       new Button().setDisabled(!item.get.isFromSmashable).setLabel("Drop").setCustomId(`drop/${itemId}`),
       new Button().setDisabled(!item.get.isFromPackage).setLabel("Unpack").setCustomId(`unpack/${itemId}`),

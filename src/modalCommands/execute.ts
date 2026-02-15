@@ -42,8 +42,12 @@ export default {
       for (let parameter of parameters) {
         let options = [{ name: "execute", type: 3, value: parameter } as any];
         try {
-          interaction.customId = `${command}/${parameter}/0`;
-          await slashCommands.get(command).run(interaction, options, cdclient);
+          const syntheticInteraction = Object.assign(
+            Object.create(Object.getPrototypeOf(interaction)),
+            interaction,
+            { customId: `${command}/${parameter}/0` },
+          );
+          await slashCommands.get(command).run(syntheticInteraction, options, cdclient);
         } catch (err) {
           if (interaction.isMessageComponent() || interaction.isChatInputCommand()) {
             error(interaction, err);

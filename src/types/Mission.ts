@@ -5,7 +5,7 @@ import { explorerDomain } from "../config";
 import { NPCMission } from "../luInterfaces";
 
 export class Mission extends CDClient {
-  db: Database;
+  declare db: Database;
   id: number;
   name: string;
   raw: Missions;

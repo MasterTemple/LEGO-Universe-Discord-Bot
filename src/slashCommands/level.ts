@@ -28,7 +28,7 @@ export default {
     const isValid = level >= minLevel && level <= maxLevel;
 
     const embed = new Embed();
-    const buttons = new ActionRowBuilder();
+    const buttons = new ActionRowBuilder<Button>();
 
     const uIcon = `${explorerDomain}/lu-res/ui/ingame/passport_i90.png`;
     embed.setThumbnail(uIcon);

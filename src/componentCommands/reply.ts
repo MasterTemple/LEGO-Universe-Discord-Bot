@@ -21,8 +21,9 @@ export default {
     const description = new ActionRowBuilder<any>().addComponents(input);
     modal.addComponents(description);
 
-    if (interaction.isChatInputCommand() || interaction.isMessageComponent()) await interaction.showModal(modal);
-    if (interaction.isModalSubmit()) await interaction.reply({ content: "Nice try", ephemeral: true });
+    if (interaction.isChatInputCommand()) await interaction.showModal(modal);
+    else if (interaction.isMessageComponent()) await interaction.showModal(modal);
+    else if (interaction.isModalSubmit()) await interaction.reply({ content: "Nice try", ephemeral: true });
 
   },
 } as ModalCommand;

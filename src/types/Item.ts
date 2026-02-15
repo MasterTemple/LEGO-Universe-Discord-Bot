@@ -9,7 +9,7 @@ import {
 } from '../luInterfaces';
 
 export class Item extends CDClient {
-  db: Database;
+  declare db: Database;
   id: number;
   name: string;
   imageURL: string;

@@ -1,4 +1,4 @@
-import { ActionRowBuilder, BaseInteraction, ButtonBuilder, MessageComponentInteraction, ModalSubmitInteraction, TextBasedChannel } from 'discord.js';
+import { ActionRowBuilder, AnyComponentBuilder, BaseInteraction, ButtonBuilder, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
 import { explorerDomain } from './config';
 import { Button } from './types/Button';
 import { Embed } from './types/Embed';
@@ -62,10 +62,11 @@ export function getOption(options: readonly any[], parameter?: string) {
 export interface MessageUpdateData {
   interaction: BaseInteraction | MessageComponentInteraction | ModalSubmitInteraction,
   embeds: Embed[],
-  components?: ActionRowBuilder<ButtonBuilder>[],
+  components?: ActionRowBuilder<AnyComponentBuilder>[],
   page?: number,
   pageSize?: number,
   isPaged?: boolean,
+  customIdOverride?: string,
 }
 const DEFAULT_PAGE_SIZE = 8;
 
@@ -81,8 +82,9 @@ export async function replyOrUpdate(data: MessageUpdateData) {
     const firstEmbed = embeds[0];
     let parameters = '';
     if (interaction.isMessageComponent() || interaction.isModalSubmit()) {
-      page = parseInt(interaction.customId.match(/(?<=[^\/]+\/[^\/]+\/)[^\?]+/gi)?.[0]) || 0;
-      parameters = interaction.customId.match(/(?<=\?).*/gi)?.[0]?.replace('&unique', '') || '';
+      const customId = data.customIdOverride || interaction.customId;
+      page = parseInt(customId.match(/(?<=[^\/]+\/[^\/]+\/)[^\?]+/gi)?.[0]) || 0;
+      parameters = customId.match(/(?<=\?).*/gi)?.[0]?.replace('&unique', '') || '';
     }
 
     const initialSize = firstEmbed.fields.length;
@@ -95,7 +97,8 @@ export async function replyOrUpdate(data: MessageUpdateData) {
 
     const pageButtons = new ActionRowBuilder<ButtonBuilder>();
     if (interaction.isMessageComponent() || interaction.isModalSubmit()) {
-      const { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\?]+)?/gi)][0].groups as any;
+      const customId = data.customIdOverride || interaction.customId;
+      const { cmd, id } = [...customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)\/?(?<page>[^\?]+)?/gi)][0].groups as any;
       pageButtons.addComponents(
         new Button().setCustomId(`${cmd}/${id}/${page - 1}?${parameters}&unique`).setDisabled(!hasPreviousPage).setLabel('Previous Page'),
         new Button().setCustomId(`${cmd}/${id}/${page + 1}?${parameters}&unique`).setDisabled(!hasNextPage).setLabel('Next Page'),
@@ -123,8 +126,8 @@ export async function replyOrUpdate(data: MessageUpdateData) {
   if (interaction.isModalSubmit()) {
     let channel = interaction.client.channels.cache.get(interaction.channelId);
     if (!channel) channel = await interaction.client.channels.fetch(interaction.channelId);
-    if (channel?.isTextBased?.()) {
-      await (channel as TextBasedChannel).send({ embeds, components });
+    if (channel && 'send' in channel) {
+      await channel.send({ embeds, components });
     }
   }
 }
