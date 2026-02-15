@@ -11,6 +11,8 @@
 
 1. Create a Discord Application (requires Node.js 18+ for discord.js v14)
 
+   Use Node.js 20 LTS when possible (matches `.nvmrc`), e.g. with nvm: `nvm install && nvm use`.
+
    View the [Official Guide](https://discord.com/developers/docs/getting-started) on how to create a Discord Application
 
    \*Please note that this Discord Bot does not require any special intents
@@ -48,6 +50,8 @@
    If you do not have a `cdclient.sqlite` create one from your `cdclient.fdb` at https://fdb.lu-dev.net/.
 
 3. Install dependencies with `npm install`
+
+   If you see `EBADENGINE` warnings, your Node version is too old. Run `node -v` and upgrade to Node 18+ (Node 20 recommended).
 4. Build the bot with `npm run build`
 
 5. Start the bot with `npm start`
