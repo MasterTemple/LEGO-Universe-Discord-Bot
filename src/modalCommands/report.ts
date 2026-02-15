@@ -11,8 +11,11 @@ export default {
     cdclient) {
 
     const embed = new Embed();
-    embed.setTitle(interaction.fields.getTextInputValue('title'));
-    embed.setDescription(interaction.fields.getTextInputValue('input'));
+    const sanitizedTitle = interaction.fields.getTextInputValue('title').trim().slice(0, 256);
+    const sanitizedDescription = interaction.fields.getTextInputValue('input').trim().slice(0, 4096);
+
+    embed.setTitle(sanitizedTitle || 'Untitled report');
+    embed.setDescription(sanitizedDescription || 'No details provided.');
     embed.setAuthor({
       name: interaction.user.username,
       iconURL: interaction.user.avatarURL() || undefined,
@@ -28,6 +31,7 @@ export default {
       await reportChannel.send({
         embeds: [embed],
         components: [components],
+        allowedMentions: { parse: [] },
       });
     }
 
