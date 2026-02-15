@@ -1,5 +1,6 @@
 import { slashCommands } from '..';
 import { executeRoleId } from '../config';
+import { MessageFlags } from 'discord.js';
 import { error } from '../error';
 import { Embed } from '../types/Embed';
 import { ModalCommand } from '../types/ModalCommand';
@@ -27,7 +28,7 @@ export default {
     cdclient) {
 
     if (!hasExecuteAccess(interaction)) {
-      await interaction.reply({ content: `You need the configured execute role (<@&${executeRoleId}>) to use this command.`, ephemeral: true });
+      await interaction.reply({ content: 'You do not have permission to use this command.', flags: MessageFlags.Ephemeral });
       return;
     }
 

@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Interaction } from 'discord.js';
+import { Client, GatewayIntentBits, Interaction, MessageFlags } from 'discord.js';
 import { getAutocompleteOptions } from './autocomplete';
 import { CDClient } from './cdclient';
 import { token } from './config';
@@ -56,7 +56,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
       const cmd = interaction.customId.match(/^[^\/]+/g)[0];
       await modalCommands.get(cmd).run(interaction, cdclient);
       if (interaction.replied === false) {
-        await interaction.reply({ content: 'Your response was recieved!', ephemeral: true });
+        await interaction.reply({ content: 'Your response was recieved!', flags: MessageFlags.Ephemeral });
       }
     }
   } catch (err) {

@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { ActionRowBuilder, MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { executeRoleId } from '../config';
 import { SlashCommand } from '../types/SlashCommand';
 
@@ -23,7 +23,7 @@ export default {
     cdclient) {
 
     if (!hasExecuteAccess(interaction)) {
-      await interaction.reply({ content: `You need the configured execute role (<@&${executeRoleId}>) to use this command.`, ephemeral: true });
+      await interaction.reply({ content: 'You do not have permission to use this command.', flags: MessageFlags.Ephemeral });
       return;
     }
 
@@ -39,7 +39,7 @@ export default {
     modal.addComponents(description);
 
     if (interaction.isChatInputCommand() || interaction.isMessageComponent()) await interaction.showModal(modal);
-    if (interaction.isModalSubmit()) await interaction.reply({ content: "Nice try", ephemeral: true });
+    if (interaction.isModalSubmit()) await interaction.reply({ content: "Nice try", flags: MessageFlags.Ephemeral });
 
 
   },

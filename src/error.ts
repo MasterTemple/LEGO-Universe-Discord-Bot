@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, MessageComponentInteraction, MessageFlags, ModalSubmitInteraction } from 'discord.js';
 import { logChannelId } from './config';
 import { Embed } from './types/Embed';
 
@@ -10,7 +10,7 @@ export async function notFound(interaction: ChatInputCommandInteraction | Messag
   embed.addField('Your search was not found.', 'Please use the autocomplete suggestions to be safe :)');
   await interaction.reply({
     embeds: [embed],
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 }
 
@@ -23,7 +23,7 @@ export async function error(interaction: ChatInputCommandInteraction | MessageCo
 
   await interaction.reply({
     embeds: [embed],
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 
   if (interaction.isChatInputCommand()) {

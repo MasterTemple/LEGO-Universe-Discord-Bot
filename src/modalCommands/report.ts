@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, MessageFlags } from 'discord.js';
 import { reportChannelId } from '../config';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -31,7 +31,7 @@ export default {
       });
     }
 
-    await interaction.reply({ content: 'Your report was recieved!', ephemeral: true });
+    await interaction.reply({ content: 'Your report was recieved!', flags: MessageFlags.Ephemeral });
 
   },
 } as ModalCommand;
