@@ -1,6 +1,6 @@
 /* eslint-disable linebreak-style */
 import { Database } from './database';
-import { resolve } from 'path';
+import { resolve as resolvePath } from 'path';
 import {
   ActivityRewards,
   ComponentsRegistry,
@@ -68,24 +68,24 @@ export class CDClient {
   }
 
   async connectToDB(): Promise<void> {
-    return new Promise<void>((resolve) => {
-      const databasePath = sqlitePath ? resolve(sqlitePath) : sqlitePath;
+    return new Promise<void>((resolvePromise) => {
+      const databasePath = sqlitePath ? resolvePath(sqlitePath) : '';
       this.db = new Database(databasePath, (err) => {
         if (err) {
           console.error('Please provide a valid LUDB_SQLITE_PATH in your .env file (path to cdclient.sqlite).');
           process.exit(1);
         } else {
-          resolve();
+          resolvePromise();
         }
       });
     });
   }
 
   async load(): Promise<void> {
-    return new Promise<void>((resolve) => {
+    return new Promise<void>((resolvePromise) => {
       this.connectToDB().then(() => {
         this.locale.load().then(() => {
-          resolve();
+          resolvePromise();
         });
       });
     });
