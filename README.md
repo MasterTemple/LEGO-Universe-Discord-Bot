@@ -47,13 +47,22 @@
 
    Rename `.env.template` to `.env` and fill in the data from the comments provided.
 
-   You can disable the `/report` feedback command by setting `LUDB_FEEDBACK_ENABLED=false`.
 
    If you do not have a `cdclient.sqlite` create one from your `cdclient.fdb` at https://fdb.lu-dev.net/.
 
 3. Install dependencies with `npm install`
 
    If you see `EBADENGINE` warnings, your Node version is too old. Run `node -v` and upgrade to Node 18+ (Node 20 recommended).
+
+   Quick update path with `nvm`:
+
+   ```sh
+   nvm install 20
+   nvm use 20
+   nvm alias default 20
+   node -v
+   npm -v
+   ```
 4. Build the bot with `npm run build`
 
 5. Start the bot with `npm start`
