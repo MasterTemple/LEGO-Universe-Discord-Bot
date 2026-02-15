@@ -54,7 +54,7 @@
 
    If you see `EBADENGINE` warnings, your Node version is too old. Run `node -v` and upgrade to Node 18+ (Node 20 recommended).
 
-   Quick update path with `nvm`:
+   Quick update path with `nvm` (install/update nvm: https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script):
 
    ```sh
    nvm install 20
