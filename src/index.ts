@@ -19,7 +19,7 @@ export const slashCommands: SlashCommandMap = getSlashCommands();
 export const modalCommands: ModalCommandMap = getModalCommands();
 export const componentCommands: ComponentCommandMap = getComponentCommands();
 
-client.once('ready', async () => {
+client.once('clientReady', async () => {
   console.log('\n------------------------------------\n');
   await cdclient.load();
   updateSlashCommands(client, slashCommands);
