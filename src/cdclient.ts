@@ -1,5 +1,6 @@
 /* eslint-disable linebreak-style */
 import { Database } from './database';
+import { resolve } from 'path';
 import {
   ActivityRewards,
   ComponentsRegistry,
@@ -68,9 +69,10 @@ export class CDClient {
 
   async connectToDB(): Promise<void> {
     return new Promise<void>((resolve) => {
-      this.db = new Database(sqlitePath, (err) => {
+      const databasePath = sqlitePath ? resolve(sqlitePath) : sqlitePath;
+      this.db = new Database(databasePath, (err) => {
         if (err) {
-          console.error('Please provide a path to the cdclient.sqlite in config.json.');
+          console.error('Please provide a valid LUDB_SQLITE_PATH in your .env file (path to cdclient.sqlite).');
           process.exit(1);
         } else {
           resolve();

@@ -1,7 +1,9 @@
 
 import * as dotenv from 'dotenv';
+import { resolve } from 'path';
 import { env } from "process";
 dotenv.config();
+dotenv.config({ path: resolve(__dirname, '../.env'), override: false });
 
 export const token = env.LUDB_TOKEN;
 export const sqlitePath = env.LUDB_SQLITE_PATH;

@@ -5,7 +5,7 @@ export class Database {
 
   constructor(path: string, callback?: (err: Error | null) => void) {
     try {
-      this.db = new BetterSqlite3(path, { fileMustExist: true });
+      this.db = new BetterSqlite3(path);
       callback?.(null);
     } catch (err) {
       callback?.(err as Error);
