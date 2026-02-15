@@ -39,7 +39,8 @@ client.on('interactionCreate', async (interaction: Interaction) => {
 
     if (interaction.isChatInputCommand()) {
       const options = interaction.options?.data || [];
-      await slashCommands.get(interaction.commandName).run(interaction, options, cdclient);
+      const command = slashCommands.get(interaction.commandName);
+      if (command) await command.run(interaction, options, cdclient);
     }
 
     if (interaction.isMessageComponent()) {
@@ -54,7 +55,8 @@ client.on('interactionCreate', async (interaction: Interaction) => {
 
     if (interaction.isModalSubmit()) {
       const cmd = interaction.customId.match(/^[^\/]+/g)[0];
-      await modalCommands.get(cmd).run(interaction, cdclient);
+      const command = modalCommands.get(cmd);
+      if (command) await command.run(interaction, cdclient);
       if (interaction.replied === false) {
         await interaction.reply({ content: 'Your response was recieved!', flags: MessageFlags.Ephemeral });
       }

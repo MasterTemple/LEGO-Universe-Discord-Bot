@@ -47,6 +47,8 @@
 
    Rename `.env.template` to `.env` and fill in the data from the comments provided.
 
+   You can disable the `/report` feedback command by setting `LUDB_FEEDBACK_ENABLED=false`.
+
    If you do not have a `cdclient.sqlite` create one from your `cdclient.fdb` at https://fdb.lu-dev.net/.
 
 3. Install dependencies with `npm install`
