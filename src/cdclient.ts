@@ -29,6 +29,29 @@ export const PACKAGE_COMPONENT = 53;
 export const HONOR_ACCOLADE = 13806;
 export const MISSION_OFFER_COMPONENT = 73;
 
+interface ItemSoldRow {
+  id: number;
+  cost: number;
+  alternateCurrencyId: number;
+  alternateCost: number;
+  commendationCurrencyId: number;
+  commendationCost: number;
+}
+
+interface MissionRewardRow {
+  id: number;
+  type: string;
+  subtype: string;
+  reward_item1: number;
+  reward_item2: number;
+  reward_item3: number;
+  reward_item4: number;
+  reward_item1_count: number;
+  reward_item2_count: number;
+  reward_item3_count: number;
+  reward_item4_count: number;
+}
+
 function sqlike(str: string): string {
   return `%${str.replace(/\s/g, '%')}%`;
 }
@@ -738,7 +761,7 @@ export class CDClient {
       }
 
       this.db.all(query,
-        (_, rows) => {
+        (_, rows: ItemSoldRow[]) => {
           const map = rows.map((item) => {
             return {
               id: item.id,
@@ -793,7 +816,7 @@ export class CDClient {
     return new Promise<MissionReward[]>((resolve) => {
       this.db.all(
         `SELECT id, defined_type as type, defined_subtype as subtype, reward_item1, reward_item2, reward_item3, reward_item4, reward_item1_count, reward_item2_count, reward_item3_count, reward_item4_count FROM Missions WHERE reward_item1 = ${itemId} OR reward_item2 = ${itemId} OR reward_item3 = ${itemId} OR reward_item4 = ${itemId};`,
-        (_, rows) => {
+        (_, rows: MissionRewardRow[]) => {
           let count = 0;
 
           rows = rows.map((row) => {
