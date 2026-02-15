@@ -52,16 +52,13 @@
 
 3. Install dependencies with `npm install`
 
-   If you see `EBADENGINE` warnings, your Node version is too old. Run `node -v` and upgrade to Node 18+ (Node 20 recommended).
+   If you see `EBADENGINE` warnings, check your current Node version with `node -v`. If it's below 18, upgrade to Node 18+ (Node 20 recommended).
 
    Quick update path with `nvm` (install/update nvm: https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script):
 
    ```sh
    nvm install 20
    nvm use 20
-   nvm alias default 20
-   node -v
-   npm -v
    ```
 4. Build the bot with `npm run build`
 
