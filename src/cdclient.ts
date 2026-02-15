@@ -1,5 +1,7 @@
 /* eslint-disable linebreak-style */
 import { Database } from './database';
+import { existsSync } from 'fs';
+import { homedir } from 'os';
 import { resolve as resolvePath } from 'path';
 import {
   ActivityRewards,
@@ -69,10 +71,25 @@ export class CDClient {
 
   async connectToDB(): Promise<void> {
     return new Promise<void>((resolvePromise) => {
-      const databasePath = sqlitePath ? resolvePath(sqlitePath) : '';
+      const cleanedPath = sqlitePath?.trim().replace(/^['"]|['"]$/g, '');
+      const expandedPath = cleanedPath?.startsWith('~/')
+        ? `${homedir()}/${cleanedPath.slice(2)}`
+        : cleanedPath;
+      const databasePath = expandedPath ? resolvePath(expandedPath) : '';
+
+      if (!databasePath) {
+        console.error('LUDB_SQLITE_PATH is not set. Please provide a path to cdclient.sqlite in your .env file.');
+        process.exit(1);
+      }
+
+      if (!existsSync(databasePath)) {
+        console.error(`LUDB_SQLITE_PATH does not exist: ${databasePath}`);
+        process.exit(1);
+      }
+
       this.db = new Database(databasePath, (err) => {
         if (err) {
-          console.error('Please provide a valid LUDB_SQLITE_PATH in your .env file (path to cdclient.sqlite).');
+          console.error(`Failed to open sqlite database at "${databasePath}": ${err.message}`);
           process.exit(1);
         } else {
           resolvePromise();
