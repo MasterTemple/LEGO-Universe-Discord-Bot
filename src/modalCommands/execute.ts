@@ -1,7 +1,19 @@
 import { slashCommands } from '..';
+import { executeRoleId } from '../config';
 import { error } from '../error';
 import { Embed } from '../types/Embed';
 import { ModalCommand } from '../types/ModalCommand';
+
+function hasExecuteAccess(interaction: any): boolean {
+  if (!executeRoleId) return true;
+  if (!interaction?.inGuild?.()) return false;
+
+  const roles = interaction.member?.roles;
+  if (roles?.cache?.has) return roles.cache.has(executeRoleId);
+
+  const roleIds = roles?._roles || roles;
+  return Array.isArray(roleIds) ? roleIds.includes(executeRoleId) : false;
+}
 
 interface Instruction {
   command: string;
@@ -13,6 +25,11 @@ export default {
   run: async function (
     interaction,
     cdclient) {
+
+    if (!hasExecuteAccess(interaction)) {
+      await interaction.reply({ content: `You need the configured execute role (<@&${executeRoleId}>) to use this command.`, ephemeral: true });
+      return;
+    }
 
     let input = interaction.fields.getTextInputValue("input");
 

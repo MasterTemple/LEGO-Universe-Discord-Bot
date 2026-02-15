@@ -1,5 +1,17 @@
 import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { executeRoleId } from '../config';
 import { SlashCommand } from '../types/SlashCommand';
+
+function hasExecuteAccess(interaction: any): boolean {
+  if (!executeRoleId) return true;
+  if (!interaction?.inGuild?.()) return false;
+
+  const roles = interaction.member?.roles;
+  if (roles?.cache?.has) return roles.cache.has(executeRoleId);
+
+  const roleIds = roles?._roles || roles;
+  return Array.isArray(roleIds) ? roleIds.includes(executeRoleId) : false;
+}
 
 export default {
   name: 'execute',
@@ -9,6 +21,11 @@ export default {
     interaction,
     options,
     cdclient) {
+
+    if (!hasExecuteAccess(interaction)) {
+      await interaction.reply({ content: `You need the configured execute role (<@&${executeRoleId}>) to use this command.`, ephemeral: true });
+      return;
+    }
 
     const modal = new ModalBuilder()
       .setCustomId('execute')

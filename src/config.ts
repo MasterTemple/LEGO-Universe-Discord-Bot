@@ -18,4 +18,5 @@ export const footerIcon = env.LUDB_FOOTER_ICON;
 export const HQValidOnly = env.LUDB_HQ_VALID_ONLY === "true" ? true : false;
 export const decimalPlaces = parseInt(env.LUDB_DECIMAL_PLACES);
 export const adminRoles = [...env.LUDB_ADMIN_ROLES.match(/\d+/g) || []];
+export const executeRoleId = env.LUDB_EXECUTE_ROLE_ID || "";
 export const customEmojis = [...env.LUDB_CUSTOM_EMOJIS.matchAll(/(?<name>\w+),(?<id>\d+)/gim)].map((m) => m.groups);
