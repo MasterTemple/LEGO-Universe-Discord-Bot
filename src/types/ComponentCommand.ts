@@ -1,9 +1,9 @@
-import { BaseInteraction, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
+import { MessageComponentInteraction } from 'discord.js';
 import { CDClient } from '../cdclient';
 
 export interface ComponentCommand {
   name: string;
-  run(interaction: BaseInteraction | MessageComponentInteraction | ModalSubmitInteraction,
+  run(interaction: MessageComponentInteraction,
     cdclient: CDClient): Promise<void>;
 }
 

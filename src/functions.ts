@@ -1,4 +1,4 @@
-import { ActionRowBuilder, AnyComponentBuilder, BaseInteraction, ButtonBuilder, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ChatInputCommandInteraction, MessageActionRowComponentBuilder, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
 import { explorerDomain } from './config';
 import { Button } from './types/Button';
 import { Embed } from './types/Embed';
@@ -60,9 +60,9 @@ export function getOption(options: readonly any[], parameter?: string) {
 }
 
 export interface MessageUpdateData {
-  interaction: BaseInteraction | MessageComponentInteraction | ModalSubmitInteraction,
+  interaction: ChatInputCommandInteraction | MessageComponentInteraction | ModalSubmitInteraction,
   embeds: Embed[],
-  components?: ActionRowBuilder<AnyComponentBuilder>[],
+  components?: ActionRowBuilder<MessageActionRowComponentBuilder>[],
   page?: number,
   pageSize?: number,
   isPaged?: boolean,

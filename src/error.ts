@@ -1,10 +1,10 @@
-import { MessageComponentInteraction, ModalSubmitInteraction, RepliableInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
 import { logChannelId } from './config';
 import { Embed } from './types/Embed';
 
 const NOT_FOUND_IMAGE_URL = 'https://media.discordapp.net/attachments/820782771403751478/986374533630013500/unknown.png';
 
-export async function notFound(interaction: RepliableInteraction): Promise<void> {
+export async function notFound(interaction: ChatInputCommandInteraction | MessageComponentInteraction | ModalSubmitInteraction): Promise<void> {
   const embed = new Embed();
   embed.setImage(NOT_FOUND_IMAGE_URL);
   embed.addField('Your search was not found.', 'Please use the autocomplete suggestions to be safe :)');
@@ -14,7 +14,7 @@ export async function notFound(interaction: RepliableInteraction): Promise<void>
   });
 }
 
-export async function error(interaction: RepliableInteraction | MessageComponentInteraction | ModalSubmitInteraction, err: any): Promise<void> {
+export async function error(interaction: ChatInputCommandInteraction | MessageComponentInteraction | ModalSubmitInteraction, err: any): Promise<void> {
   console.log(err);
 
   const embed = new Embed();

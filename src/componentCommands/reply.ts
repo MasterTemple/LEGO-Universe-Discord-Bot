@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
-import { ModalCommand } from '../types/ModalCommand';
+import { ComponentCommand } from '../types/ComponentCommand';
 
 export default {
   name: 'reply',
@@ -7,8 +7,8 @@ export default {
     interaction,
     cdclient) {
 
-    let userId = interaction.customId.match(/(?<=^[^\/]+\/)\d+/g)?.[0];
-    let user = await interaction.client.users.fetch(userId);
+    const userId = interaction.customId.match(/(?<=^[^\/]+\/)\d+/g)?.[0];
+    const user = await interaction.client.users.fetch(userId);
 
     const modal = new ModalBuilder()
       .setCustomId(`reply/${userId}`)
@@ -18,12 +18,9 @@ export default {
       .setLabel(`What would you like to say to ${user.username}?`)
       .setStyle(TextInputStyle.Paragraph);
 
-    const description = new ActionRowBuilder<any>().addComponents(input);
+    const description = new ActionRowBuilder<TextInputBuilder>().addComponents(input);
     modal.addComponents(description);
 
-    if (interaction.isChatInputCommand()) await interaction.showModal(modal);
-    else if (interaction.isMessageComponent()) await interaction.showModal(modal);
-    else if (interaction.isModalSubmit()) await interaction.reply({ content: "Nice try", ephemeral: true });
-
+    await interaction.showModal(modal);
   },
-} as ModalCommand;
+} as ComponentCommand;
