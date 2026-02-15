@@ -1,4 +1,4 @@
-import { Database } from 'sqlite3';
+import { Database } from '../database';
 import { CDClient, HONOR_ACCOLADE, ITEM_COMPONENT } from '../cdclient';
 import { ComponentsRegistry, Objects } from '../cdclientInterfaces';
 import { explorerDomain } from "../config";

@@ -1,5 +1,5 @@
 /* eslint-disable linebreak-style */
-import { Database } from 'sqlite3';
+import { Database } from './database';
 import {
   ActivityRewards,
   ComponentsRegistry,

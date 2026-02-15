@@ -1,4 +1,4 @@
-import { Database } from "sqlite3";
+import { Database } from '../database';
 import { CDClient } from "../cdclient";
 import { SkillBehavior } from "../cdclientInterfaces";
 import { explorerDomain } from "../config";
