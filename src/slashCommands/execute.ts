@@ -1,4 +1,4 @@
-import { MessageActionRow, Modal, ModalActionRowComponent, TextInputComponent } from 'discord.js';
+import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { SlashCommand } from '../types/SlashCommand';
 
 export default {
@@ -10,18 +10,18 @@ export default {
     options,
     cdclient) {
 
-    const modal = new Modal()
+    const modal = new ModalBuilder()
       .setCustomId('execute')
       .setTitle('Execute Commands');
-    const input = new TextInputComponent()
+    const input = new TextInputBuilder()
       .setCustomId('input')
       .setLabel("List one command per line. Ex: /drop 7570")
-      .setStyle('PARAGRAPH');
+      .setStyle(TextInputStyle.Paragraph);
 
-    const description = new MessageActionRow<ModalActionRowComponent>().addComponents(input);
+    const description = new ActionRowBuilder<any>().addComponents(input);
     modal.addComponents(description);
 
-    if (interaction.isApplicationCommand() || interaction.isMessageComponent()) await interaction.showModal(modal);
+    if (interaction.isChatInputCommand() || interaction.isMessageComponent()) await interaction.showModal(modal);
     if (interaction.isModalSubmit()) await interaction.reply({ content: "Nice try", ephemeral: true });
 
 

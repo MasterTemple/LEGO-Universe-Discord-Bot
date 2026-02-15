@@ -12,7 +12,7 @@ export default {
     {
       name: 'npc',
       description: 'An NPC in LEGO Universe.',
-      type: 'STRING',
+      type: 3,
       required: true,
       autocomplete: true,
     }],

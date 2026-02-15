@@ -1,26 +1,22 @@
 {
-  "name": "proper",
+  "name": "lego-universe-discord-bot",
   "version": "1.0.0",
-  "description": "",
-  "main": "lib/index",
-  "types": "libe/index",
+  "description": "Discord bot for LEGO Universe data lookups",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc --build",
+    "start": "node ./lib/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.9.0",
-    "@typescript-eslint/parser": "^5.9.0",
-    "eslint": "^8.6.0",
-    "eslint-config-google": "^0.14.0",
-    "typescript": "^4.5.4"
+    "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@types/sqlite3": "^3.1.8",
-    "discord.js": "^13.14.0",
-    "dotenv": "^16.0.3",
-    "sqlite3": "^4.2.0"
+    "discord.js": "^14.17.3",
+    "dotenv": "^16.4.7",
+    "sqlite3": "^5.1.7"
   }
 }

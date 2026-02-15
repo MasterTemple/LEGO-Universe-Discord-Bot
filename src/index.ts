@@ -1,4 +1,4 @@
-import { Client, CommandInteractionOption, Intents, Interaction } from 'discord.js';
+import { Client, GatewayIntentBits, Interaction } from 'discord.js';
 import { getAutocompleteOptions } from './autocomplete';
 import { CDClient } from './cdclient';
 import { token } from './config';
@@ -12,7 +12,7 @@ import { SlashCommandMap } from './types/SlashCommand';
 export const cdclient = new CDClient();
 
 const client = new Client({
-  intents: [Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILDS],
+  intents: [GatewayIntentBits.GuildEmojisAndStickers, GatewayIntentBits.Guilds],
 });
 
 export const slashCommands: SlashCommandMap = getSlashCommands();
@@ -31,19 +31,20 @@ client.on('interactionCreate', async (interaction: Interaction) => {
   try {
     if (interaction.isAutocomplete()) {
       const options = interaction.options.data;
-      const { value } = options.find((f) => f.focused);
+      const focused = options.find((f) => f.focused);
+      const value = focused?.value || '';
       const autocompleteOptions: NameValuePair[] = await getAutocompleteOptions(cdclient, interaction.commandName.toString(), value.toString());
       await interaction.respond(autocompleteOptions);
     }
 
-    if (interaction.isApplicationCommand()) {
+    if (interaction.isChatInputCommand()) {
       const options = interaction.options?.data || [];
       await slashCommands.get(interaction.commandName).run(interaction, options, cdclient);
     }
 
     if (interaction.isMessageComponent()) {
-      const { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)/gi)][0].groups;
-      const options = [{ name: 'button', type: 'STRING', value: id } as CommandInteractionOption];
+      const { cmd, id } = [...interaction.customId.matchAll(/^(?<cmd>[^\/]+)\/(?<id>[^\/]+)/gi)][0].groups as any;
+      const options = [{ name: 'button', type: 3, value: id } as any];
       if (slashCommands.has(cmd)) {
         await slashCommands.get(cmd).run(interaction, options, cdclient);
       } else {
@@ -59,7 +60,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
       }
     }
   } catch (err) {
-    if (interaction.isMessageComponent() || interaction.isApplicationCommand()) {
+    if (interaction.isMessageComponent() || interaction.isChatInputCommand()) {
       error(interaction, err);
     }
   }

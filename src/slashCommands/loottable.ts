@@ -1,4 +1,4 @@
-import { MessageActionRow } from 'discord.js';
+import { ActionRowBuilder } from 'discord.js';
 import { notFound } from '../error';
 import { bracketURL, getOption, replyOrUpdate } from '../functions';
 import { Button } from '../types/Button';
@@ -13,7 +13,7 @@ export default {
     {
       name: 'loottable',
       description: 'An Loot Table in LEGO Universe.',
-      type: 'STRING',
+      type: 3,
       required: true,
       autocomplete: true,
     }],
@@ -83,7 +83,7 @@ export default {
 
     if (tableSize === 0) embed.addField(`Consumable`, `Consumables have no rarity!`);
 
-    let buttons = new MessageActionRow().addComponents();
+    let buttons = new ActionRowBuilder().addComponents();
 
     for (let i = 1; i <= 4; i++) {
       // i added an extra '&' because all customIds must be different and it will be ignored

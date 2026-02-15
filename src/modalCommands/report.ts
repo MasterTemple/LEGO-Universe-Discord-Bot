@@ -1,4 +1,4 @@
-import { MessageActionRow } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, TextBasedChannel } from 'discord.js';
 import { reportChannelId } from '../config';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -10,25 +10,26 @@ export default {
     interaction,
     cdclient) {
 
-    let embed = new Embed();
-    embed.setTitle(interaction.fields.getTextInputValue("title"));
-    embed.setDescription(interaction.fields.getTextInputValue("input"));
+    const embed = new Embed();
+    embed.setTitle(interaction.fields.getTextInputValue('title'));
+    embed.setDescription(interaction.fields.getTextInputValue('input'));
     embed.setAuthor({
       name: interaction.user.username,
-      iconURL: interaction.user.avatarURL()
+      iconURL: interaction.user.avatarURL() || undefined,
     });
+    embed.setFooter(null);
 
-    delete embed.footer;
-
-    let components = new MessageActionRow().addComponents(
-      new Button().setLabel(`Reply to ${interaction.user.username}`).setCustomId(`reply/${interaction.user.id}`)
+    const components = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new Button().setLabel(`Reply to ${interaction.user.username}`).setCustomId(`reply/${interaction.user.id}`),
     );
 
-    let reportChannel = await interaction.client.channels.fetch(reportChannelId);
-    if (reportChannel.isText()) await reportChannel.send({
-      embeds: [embed],
-      components: [components]
-    });
+    const reportChannel = await interaction.client.channels.fetch(reportChannelId);
+    if (reportChannel?.isTextBased?.()) {
+      await (reportChannel as TextBasedChannel).send({
+        embeds: [embed],
+        components: [components],
+      });
+    }
 
     await interaction.reply({ content: 'Your report was recieved!', ephemeral: true });
 

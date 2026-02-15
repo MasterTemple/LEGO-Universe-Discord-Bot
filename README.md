@@ -9,7 +9,7 @@
 
 # Prerequisites
 
-1. Create a Discord Application
+1. Create a Discord Application (requires Node.js 18+ for discord.js v14)
 
    View the [Official Guide](https://discord.com/developers/docs/getting-started) on how to create a Discord Application
 
@@ -47,12 +47,10 @@
 
    If you do not have a `cdclient.sqlite` create one from your `cdclient.fdb` at https://fdb.lu-dev.net/.
 
-3. Install proper dependencies with `npm install`
-4. Transpile with `tsc --build`
+3. Install dependencies with `npm install`
+4. Build the bot with `npm run build`
 
-   If `tsc` is not found, install it with `npm i typescript -g` and then run `tsc --build`.
-
-5. Run `./lib/index.js`
+5. Start the bot with `npm start`
 
    I would recommend using something that restarts if it crashes such as pm2
 

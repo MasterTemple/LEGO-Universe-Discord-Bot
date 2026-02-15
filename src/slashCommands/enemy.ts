@@ -12,7 +12,7 @@ export default {
     {
       name: 'enemy',
       description: 'An enemy in LEGO Universe.',
-      type: 'STRING',
+      type: 3,
       required: true,
       autocomplete: true,
     }],

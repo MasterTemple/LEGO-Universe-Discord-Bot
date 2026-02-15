@@ -1,4 +1,3 @@
-import { CommandInteractionOption } from 'discord.js';
 import { slashCommands } from '..';
 import { error } from '../error';
 import { Embed } from '../types/Embed';
@@ -41,12 +40,12 @@ export default {
 
     for (let { command, parameters } of instructions) {
       for (let parameter of parameters) {
-        let options = [{ name: "execute", type: "STRING", value: parameter } as CommandInteractionOption];
+        let options = [{ name: "execute", type: 3, value: parameter } as any];
         try {
           interaction.customId = `${command}/${parameter}/0`;
           await slashCommands.get(command).run(interaction, options, cdclient);
         } catch (err) {
-          if (interaction.isMessageComponent() || interaction.isApplicationCommand()) {
+          if (interaction.isMessageComponent() || interaction.isChatInputCommand()) {
             error(interaction, err);
           }
         }

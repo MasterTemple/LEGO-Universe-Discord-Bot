@@ -1,14 +1,14 @@
-import { MessageEmbed } from "discord.js";
-import { cdclient } from ".";
-import { bracketURL } from "./functions";
-import { LocaleXML } from "./locale";
-import { LootDrop, SmashableDrop } from "./luInterfaces";
-import { percent } from "./math";
+import { cdclient } from '.';
+import { bracketURL } from './functions';
+import { LocaleXML } from './locale';
+import { LootDrop, SmashableDrop } from './luInterfaces';
+import { percent } from './math';
+import { Embed } from './types/Embed';
 
-export async function fillEmbedWithLootDrops(embed: MessageEmbed, drops: LootDrop[], itemName: string) {
+export async function fillEmbedWithLootDrops(embed: Embed, drops: LootDrop[], itemName: string) {
   let c = 1;
 
-  for (let eachDrop of drops) {
+  for (const eachDrop of drops) {
     if (eachDrop.smashables.length > 0) {
       let range: string;
       if (eachDrop.minToDrop === eachDrop.maxToDrop) {
@@ -17,44 +17,42 @@ export async function fillEmbedWithLootDrops(embed: MessageEmbed, drops: LootDro
         range = `${eachDrop.minToDrop}-${eachDrop.maxToDrop}`;
       }
 
-      if (eachDrop.smashables.some((e) => !e.name.includes("Objects_"))) {
-        eachDrop.smashables = eachDrop.smashables.filter((e) => !e.name.includes("Objects_"));
+      if (eachDrop.smashables.some((e) => !e.name.includes('Objects_'))) {
+        eachDrop.smashables = eachDrop.smashables.filter((e) => !e.name.includes('Objects_'));
       } else {
-        for (let smashable of eachDrop.smashables) {
+        for (const smashable of eachDrop.smashables) {
           smashable.name = await cdclient.getObjectName(smashable.id);
         }
       }
 
       embed.addField(
-        // `${c++}. ${decimalToFraction(eachDrop.chance)} for ${range} ${itemName} `,
         `${c++}. ${percent(eachDrop.chance)} for ${range} ${itemName} `,
         `From ${eachDrop.smashables.map(({ name, id }) => `${name} ${bracketURL(id)}`).join(', ')} `.slice(0, 1023),
       );
     }
   }
 }
-// this works for enemeies, packages, and activities
-export function fillEmbedWithSmashableDrops(embed: MessageEmbed, drops: SmashableDrop[], locale: LocaleXML) {
-  // to force add last embed
-  drops.push({ lootTableIndex: -1, chanceForItem: 0, chanceForRarity: 0, maxToDrop: 0, minToDrop: 0, poolSize: 1, rarity: 0, });
+
+export function fillEmbedWithSmashableDrops(embed: Embed, drops: SmashableDrop[], locale: LocaleXML) {
+  drops.push({ lootTableIndex: -1, chanceForItem: 0, chanceForRarity: 0, maxToDrop: 0, minToDrop: 0, poolSize: 1, rarity: 0 });
 
   let previousLTI = drops[0].lootTableIndex;
-  let specificDrop = "Specific ";
-  let anyDrop = "Any ";
+  let specificDrop = 'Specific ';
+  let anyDrop = 'Any ';
   drops.forEach((drop, index) => {
     if (previousLTI !== drop.lootTableIndex) {
-      let previousDrop = drops[index - 1];
+      const previousDrop = drops[index - 1];
       let itemCountStr = `For ${previousDrop.minToDrop}`;
       if (previousDrop.minToDrop !== previousDrop.maxToDrop) itemCountStr += `-${previousDrop.maxToDrop} Item`;
-      if (previousDrop.maxToDrop > 1) itemCountStr += "s";
-      if (specificDrop === "Specific ") {
-        embed.addField(`${locale.getLootTableName(previousLTI)} - ${percent(previousDrop.chanceForItem)} ${itemCountStr}`, `Conumable Do Not Have Rarity ${bracketURL(previousLTI, "objects/loot/table")}`);
+      if (previousDrop.maxToDrop > 1) itemCountStr += 's';
+      if (specificDrop === 'Specific ') {
+        embed.addField(`${locale.getLootTableName(previousLTI)} - ${percent(previousDrop.chanceForItem)} ${itemCountStr}`, `Conumable Do Not Have Rarity ${bracketURL(previousLTI, 'objects/loot/table')}`);
       } else {
-        embed.addField(`${locale.getLootTableName(previousLTI)} - ${percent(previousDrop.chanceForItem)} ${itemCountStr}`, `${specificDrop}\n${anyDrop}${bracketURL(previousLTI, "objects/loot/table")}`);
+        embed.addField(`${locale.getLootTableName(previousLTI)} - ${percent(previousDrop.chanceForItem)} ${itemCountStr}`, `${specificDrop}\n${anyDrop}${bracketURL(previousLTI, 'objects/loot/table')}`);
       }
       previousLTI = drop.lootTableIndex;
-      specificDrop = "Specific ";
-      anyDrop = "Any ";
+      specificDrop = 'Specific ';
+      anyDrop = 'Any ';
     }
 
     let chanceForRarity = 1;
