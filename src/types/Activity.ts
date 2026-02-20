@@ -1,10 +1,10 @@
-import { Database } from "sqlite3";
+import { Database } from '../database';
 import { CDClient } from "../cdclient";
 import { explorerDomain } from "../config";
 import { SmashableDrop } from "../luInterfaces";
 
 export class Activity extends CDClient {
-  db: Database;
+  declare db: Database;
   id: number;
   name: string;
   rewards: SmashableDrop[];

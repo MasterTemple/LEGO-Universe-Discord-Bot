@@ -1,42 +1,40 @@
-import { BaseCommandInteraction, MessageComponentInteraction, ModalSubmitInteraction } from "discord.js";
-import { logChannelId } from "./config";
-import { Embed } from "./types/Embed";
+import { ChatInputCommandInteraction, MessageComponentInteraction, MessageFlags, ModalSubmitInteraction } from 'discord.js';
+import { logChannelId } from './config';
+import { Embed } from './types/Embed';
 
-const NOT_FOUND_IMAGE_URL = "https://media.discordapp.net/attachments/820782771403751478/986374533630013500/unknown.png";
+const NOT_FOUND_IMAGE_URL = 'https://media.discordapp.net/attachments/820782771403751478/986374533630013500/unknown.png';
 
-export async function notFound(interaction: BaseCommandInteraction | MessageComponentInteraction | ModalSubmitInteraction): Promise<void> {
-  let embed = new Embed();
+export async function notFound(interaction: ChatInputCommandInteraction | MessageComponentInteraction | ModalSubmitInteraction): Promise<void> {
+  const embed = new Embed();
   embed.setImage(NOT_FOUND_IMAGE_URL);
-  embed.addField("Your search was not found.", "Please use the autocomplete suggestions to be safe :)");
+  embed.addField('Your search was not found.', 'Please use the autocomplete suggestions to be safe :)');
   await interaction.reply({
     embeds: [embed],
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 }
 
-export async function error(interaction: BaseCommandInteraction | MessageComponentInteraction, err: any): Promise<void> {
-
+export async function error(interaction: ChatInputCommandInteraction | MessageComponentInteraction | ModalSubmitInteraction, err: any): Promise<void> {
   console.log(err);
 
-  let embed = new Embed();
-  embed.setTitle("Error");
+  const embed = new Embed();
+  embed.setTitle('Error');
   embed.setDescription(`\`\`\`\n${err.toString()}\`\`\``);
 
-  interaction.reply({
+  await interaction.reply({
     embeds: [embed],
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 
-  if (interaction.isApplicationCommand()) {
-    embed.addField("Command", `\`\`\`\n/${interaction.commandName} ${interaction.options.data.map((o) => `${o.name}:"${o.value}"`).join(" ")}\`\`\``);
+  if (interaction.isChatInputCommand()) {
+    embed.addField('Command', `\`\`\`\n/${interaction.commandName} ${interaction.options.data.map((o: any) => `${o.name}:"${o.value}"`).join(' ')}\`\`\``);
   }
   if (interaction.isMessageComponent()) {
-    embed.addField("Instruction", `\`\`\`\n${interaction.customId}\`\`\``);
+    embed.addField('Instruction', `\`\`\`\n${interaction.customId}\`\`\``);
   }
 
-  let logChannel = await interaction.client.channels.fetch(logChannelId);
-  if (logChannel.isText()) logChannel.send({
-    embeds: [embed]
-  });
-
+  const logChannel = await interaction.client.channels.fetch(logChannelId);
+  if (logChannel && 'send' in logChannel) {
+    await logChannel.send({ embeds: [embed] });
+  }
 }

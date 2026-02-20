@@ -1,4 +1,4 @@
-import { MessageActionRow } from 'discord.js';
+import { ActionRowBuilder } from 'discord.js';
 import { explorerDomain } from '../config';
 import { getOption, replyOrUpdate } from '../functions';
 import { LevelData } from '../luInterfaces';
@@ -14,7 +14,7 @@ export default {
     {
       name: 'level',
       description: 'A level in LEGO Universe.',
-      type: 'NUMBER',
+      type: 10,
       required: true
     }],
   run: async function (
@@ -28,7 +28,7 @@ export default {
     const isValid = level >= minLevel && level <= maxLevel;
 
     const embed = new Embed();
-    const buttons = new MessageActionRow();
+    const buttons = new ActionRowBuilder<Button>();
 
     const uIcon = `${explorerDomain}/lu-res/ui/ingame/passport_i90.png`;
     embed.setThumbnail(uIcon);

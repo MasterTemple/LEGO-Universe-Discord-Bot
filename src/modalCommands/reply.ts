@@ -15,7 +15,7 @@ export default {
       iconURL: interaction.user.avatarURL()
     });
 
-    delete embed.footer;
+    (embed.data as any).footer = undefined;
 
     let userId = interaction.customId.match(/(?<=^[^\/]+\/)\d+/g)?.[0];
     let user = await interaction.client.users.fetch(userId);

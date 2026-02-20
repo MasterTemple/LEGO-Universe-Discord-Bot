@@ -1,11 +1,11 @@
-import { Database } from "sqlite3";
+import { Database } from '../database';
 import { CDClient } from "../cdclient";
 import { ComponentsRegistry } from "../cdclientInterfaces";
 import { explorerDomain } from "../config";
 import { ItemSold, NPCMission } from "../luInterfaces";
 
 export class NPC extends CDClient {
-  db: Database;
+  declare db: Database;
   id: number;
   name: string;
   imageURL: string;

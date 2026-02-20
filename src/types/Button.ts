@@ -1,9 +1,9 @@
-import { MessageButton } from "discord.js";
+import { ButtonBuilder, ButtonStyle } from 'discord.js';
 
-export class Button extends MessageButton {
+export class Button extends ButtonBuilder {
   constructor(green?: boolean) {
     super();
-    if (green) this.setStyle("SUCCESS");
-    else this.setStyle("PRIMARY");
+    if (green) this.setStyle(ButtonStyle.Success);
+    else this.setStyle(ButtonStyle.Primary);
   }
 }

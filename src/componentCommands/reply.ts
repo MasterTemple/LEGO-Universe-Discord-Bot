@@ -1,5 +1,5 @@
-import { MessageActionRow, Modal, ModalActionRowComponent, TextInputComponent } from 'discord.js';
-import { ModalCommand } from '../types/ModalCommand';
+import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { ComponentCommand } from '../types/ComponentCommand';
 
 export default {
   name: 'reply',
@@ -7,22 +7,20 @@ export default {
     interaction,
     cdclient) {
 
-    let userId = interaction.customId.match(/(?<=^[^\/]+\/)\d+/g)?.[0];
-    let user = await interaction.client.users.fetch(userId);
+    const userId = interaction.customId.match(/(?<=^[^\/]+\/)\d+/g)?.[0];
+    const user = await interaction.client.users.fetch(userId);
 
-    const modal = new Modal()
+    const modal = new ModalBuilder()
       .setCustomId(`reply/${userId}`)
       .setTitle(`Reply To ${user.username}`);
-    const input = new TextInputComponent()
+    const input = new TextInputBuilder()
       .setCustomId('input')
       .setLabel(`What would you like to say to ${user.username}?`)
-      .setStyle('PARAGRAPH');
+      .setStyle(TextInputStyle.Paragraph);
 
-    const description = new MessageActionRow<ModalActionRowComponent>().addComponents(input);
+    const description = new ActionRowBuilder<TextInputBuilder>().addComponents(input);
     modal.addComponents(description);
 
-    if (interaction.isApplicationCommand() || interaction.isMessageComponent()) await interaction.showModal(modal);
-    if (interaction.isModalSubmit()) await interaction.reply({ content: "Nice try", ephemeral: true });
-
+    await interaction.showModal(modal);
   },
-} as ModalCommand;
+} as ComponentCommand;

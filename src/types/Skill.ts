@@ -1,11 +1,11 @@
-import { Database } from "sqlite3";
+import { Database } from '../database';
 import { CDClient } from "../cdclient";
 import { SkillBehavior } from "../cdclientInterfaces";
 import { explorerDomain } from "../config";
 import { ObjectElement, SkillDescription } from "../luInterfaces";
 
 export class Skill extends CDClient {
-  db: Database;
+  declare db: Database;
   id: number;
   name: string;
   descriptions: SkillDescription[];

@@ -2,12 +2,14 @@
   "compileOnSave": true,
   "compilerOptions": {
     "skipLibCheck": true,
-    "target": "ES6",
+    "target": "ES2022",
+    "lib": ["ES2022"],
     "module": "CommonJS",
     "moduleResolution": "Node",
+    "types": ["node"],
     "outDir": "lib"
   },
   "include": [
-    "src",
+    "src"
   ]
 }

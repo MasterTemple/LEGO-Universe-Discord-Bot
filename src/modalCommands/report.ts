@@ -1,4 +1,4 @@
-import { MessageActionRow } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, MessageFlags } from 'discord.js';
 import { reportChannelId } from '../config';
 import { Button } from '../types/Button';
 import { Embed } from '../types/Embed';
@@ -10,27 +10,32 @@ export default {
     interaction,
     cdclient) {
 
-    let embed = new Embed();
-    embed.setTitle(interaction.fields.getTextInputValue("title"));
-    embed.setDescription(interaction.fields.getTextInputValue("input"));
+    const embed = new Embed();
+    const sanitizedTitle = interaction.fields.getTextInputValue('title').trim().slice(0, 256);
+    const sanitizedDescription = interaction.fields.getTextInputValue('input').trim().slice(0, 4096);
+
+    embed.setTitle(sanitizedTitle || 'Untitled report');
+    embed.setDescription(sanitizedDescription || 'No details provided.');
     embed.setAuthor({
       name: interaction.user.username,
-      iconURL: interaction.user.avatarURL()
+      iconURL: interaction.user.avatarURL() || undefined,
     });
+    (embed.data as any).footer = undefined;
 
-    delete embed.footer;
-
-    let components = new MessageActionRow().addComponents(
-      new Button().setLabel(`Reply to ${interaction.user.username}`).setCustomId(`reply/${interaction.user.id}`)
+    const components = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new Button().setLabel(`Reply to ${interaction.user.username}`).setCustomId(`reply/${interaction.user.id}`),
     );
 
-    let reportChannel = await interaction.client.channels.fetch(reportChannelId);
-    if (reportChannel.isText()) await reportChannel.send({
-      embeds: [embed],
-      components: [components]
-    });
+    const reportChannel = await interaction.client.channels.fetch(reportChannelId);
+    if (reportChannel && 'send' in reportChannel) {
+      await reportChannel.send({
+        embeds: [embed],
+        components: [components],
+        allowedMentions: { parse: [] },
+      });
+    }
 
-    await interaction.reply({ content: 'Your report was recieved!', ephemeral: true });
+    await interaction.reply({ content: 'Your report was recieved!', flags: MessageFlags.Ephemeral });
 
   },
 } as ModalCommand;

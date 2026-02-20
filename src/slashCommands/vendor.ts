@@ -13,7 +13,7 @@ export default {
     {
       name: 'vendor',
       description: 'An vendor in LEGO Universe.',
-      type: 'STRING',
+      type: 3,
       required: true,
       autocomplete: true,
     }],

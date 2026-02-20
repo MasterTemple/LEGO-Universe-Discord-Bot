@@ -12,7 +12,7 @@ export default {
     {
       name: 'item',
       description: 'An item in LEGO Universe.',
-      type: 'STRING',
+      type: 3,
       required: true,
       autocomplete: true,
     }],

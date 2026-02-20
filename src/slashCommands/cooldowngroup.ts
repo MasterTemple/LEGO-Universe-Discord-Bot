@@ -10,7 +10,7 @@ export default {
     {
       name: 'cooldowngroup',
       description: 'A cooldowngroup in LEGO Universe.',
-      type: 'NUMBER',
+      type: 10,
       required: true
     }],
   run: async function (

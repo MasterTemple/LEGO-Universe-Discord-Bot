@@ -1,5 +1,8 @@
 /* eslint-disable linebreak-style */
-import { Database } from 'sqlite3';
+import { Database } from './database';
+import { existsSync } from 'fs';
+import { homedir } from 'os';
+import { resolve as resolvePath } from 'path';
 import {
   ActivityRewards,
   ComponentsRegistry,
@@ -29,6 +32,29 @@ export const PACKAGE_COMPONENT = 53;
 export const HONOR_ACCOLADE = 13806;
 export const MISSION_OFFER_COMPONENT = 73;
 
+interface ItemSoldRow {
+  id: number;
+  cost: number;
+  alternateCurrencyId: number;
+  alternateCost: number;
+  commendationCurrencyId: number;
+  commendationCost: number;
+}
+
+interface MissionRewardRow {
+  id: number;
+  type: string;
+  subtype: string;
+  reward_item1: number;
+  reward_item2: number;
+  reward_item3: number;
+  reward_item4: number;
+  reward_item1_count: number;
+  reward_item2_count: number;
+  reward_item3_count: number;
+  reward_item4_count: number;
+}
+
 function sqlike(str: string): string {
   return `%${str.replace(/\s/g, '%')}%`;
 }
@@ -44,23 +70,39 @@ export class CDClient {
   }
 
   async connectToDB(): Promise<void> {
-    return new Promise<void>((resolve) => {
-      this.db = new Database(sqlitePath, (err) => {
+    return new Promise<void>((resolvePromise) => {
+      const cleanedPath = sqlitePath?.trim().replace(/^['"]|['"]$/g, '');
+      const expandedPath = cleanedPath?.startsWith('~/')
+        ? `${homedir()}/${cleanedPath.slice(2)}`
+        : cleanedPath;
+      const databasePath = expandedPath ? resolvePath(expandedPath) : '';
+
+      if (!databasePath) {
+        console.error('LUDB_SQLITE_PATH is not set. Please provide a path to cdclient.sqlite in your .env file.');
+        process.exit(1);
+      }
+
+      if (!existsSync(databasePath)) {
+        console.error(`LUDB_SQLITE_PATH does not exist: ${databasePath}`);
+        process.exit(1);
+      }
+
+      this.db = new Database(databasePath, (err) => {
         if (err) {
-          console.error('Please provide a path to the cdclient.sqlite in config.json.');
+          console.error(`Failed to open sqlite database at "${databasePath}": ${err.message}`);
           process.exit(1);
         } else {
-          resolve();
+          resolvePromise();
         }
       });
     });
   }
 
   async load(): Promise<void> {
-    return new Promise<void>((resolve) => {
+    return new Promise<void>((resolvePromise) => {
       this.connectToDB().then(() => {
         this.locale.load().then(() => {
-          resolve();
+          resolvePromise();
         });
       });
     });
@@ -738,7 +780,7 @@ export class CDClient {
       }
 
       this.db.all(query,
-        (_, rows) => {
+        (_, rows: ItemSoldRow[]) => {
           const map = rows.map((item) => {
             return {
               id: item.id,
@@ -793,10 +835,10 @@ export class CDClient {
     return new Promise<MissionReward[]>((resolve) => {
       this.db.all(
         `SELECT id, defined_type as type, defined_subtype as subtype, reward_item1, reward_item2, reward_item3, reward_item4, reward_item1_count, reward_item2_count, reward_item3_count, reward_item4_count FROM Missions WHERE reward_item1 = ${itemId} OR reward_item2 = ${itemId} OR reward_item3 = ${itemId} OR reward_item4 = ${itemId};`,
-        (_, rows) => {
+        (_, rows: MissionRewardRow[]) => {
           let count = 0;
 
-          rows = rows.map((row) => {
+          const missionRewards: MissionReward[] = rows.map((row) => {
             if (itemId === row.reward_item1) count = row.reward_item1_count;
             else if (itemId === row.reward_item2) count = row.reward_item2_count;
             else if (itemId === row.reward_item3) count = row.reward_item3_count;
@@ -812,8 +854,7 @@ export class CDClient {
             };
           });
 
-          rows = rows.filter((r) => r.rewardCount > 0);
-          resolve(rows);
+          resolve(missionRewards.filter((r) => r.rewardCount > 0));
         },
       );
     });

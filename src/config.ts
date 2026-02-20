@@ -1,13 +1,16 @@
 
 import * as dotenv from 'dotenv';
+import { resolve } from 'path';
 import { env } from "process";
 dotenv.config();
+dotenv.config({ path: resolve(__dirname, '../.env'), override: false });
 
 export const token = env.LUDB_TOKEN;
 export const sqlitePath = env.LUDB_SQLITE_PATH;
 export const localePath = env.LUDB_LOCALE_PATH;
 export const explorerDomain = env.LUDB_EXPLORER_DOMAIN;
-export const botColor = env.LUDB_BOT_COLOR;
+const botColorFromEnv = env.LUDB_BOT_COLOR || "";
+export const botColor = /^#(?:[\da-fA-F]{6})$/.test(botColorFromEnv) ? botColorFromEnv : "#00AE86";
 export const logChannelId = env.LUDB_LOG_CHANNEL_ID;
 export const reportChannelId = env.LUDB_REPORT_CHANNEL_ID;
 export const LUServerName = env.LUDB_LU_SERVER_NAME;
@@ -17,4 +20,6 @@ export const footerIcon = env.LUDB_FOOTER_ICON;
 export const HQValidOnly = env.LUDB_HQ_VALID_ONLY === "true" ? true : false;
 export const decimalPlaces = parseInt(env.LUDB_DECIMAL_PLACES);
 export const adminRoles = [...env.LUDB_ADMIN_ROLES.match(/\d+/g) || []];
-export const customEmojis = ([...env.LUDB_CUSTOM_EMOJIS.matchAll(/(?<name>\w+),(?<id>\d+)/gim)] || []).map((m) => m.groups);
+export const executeRoleId = env.LUDB_EXECUTE_ROLE_ID || "";
+export const feedbackEnabled = env.LUDB_FEEDBACK_ENABLED !== "false";
+export const customEmojis = [...env.LUDB_CUSTOM_EMOJIS.matchAll(/(?<name>\w+),(?<id>\d+)/gim)].map((m) => m.groups);

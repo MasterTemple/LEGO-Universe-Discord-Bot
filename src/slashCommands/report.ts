@@ -1,4 +1,4 @@
-import { MessageActionRow, Modal, ModalActionRowComponent, TextInputComponent } from 'discord.js';
+import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { SlashCommand } from '../types/SlashCommand';
 
 export default {
@@ -10,23 +10,23 @@ export default {
     options,
     cdclient) {
 
-    const modal = new Modal()
+    const modal = new ModalBuilder()
       .setCustomId('report')
       .setTitle('Report');
-    const title = new TextInputComponent()
+    const title = new TextInputBuilder()
       .setCustomId('title')
       .setLabel("Title")
-      .setStyle('SHORT');
-    const input = new TextInputComponent()
+      .setStyle(TextInputStyle.Short);
+    const input = new TextInputBuilder()
       .setCustomId('input')
       .setLabel("What's would you like to report?")
-      .setStyle('PARAGRAPH');
+      .setStyle(TextInputStyle.Paragraph);
 
-    const subject = new MessageActionRow<ModalActionRowComponent>().addComponents(title);
-    const description = new MessageActionRow<ModalActionRowComponent>().addComponents(input);
+    const subject = new ActionRowBuilder<any>().addComponents(title);
+    const description = new ActionRowBuilder<any>().addComponents(input);
     modal.addComponents(subject, description);
 
-    if (interaction.isApplicationCommand() || interaction.isMessageComponent()) await interaction.showModal(modal);
+    if (interaction.isChatInputCommand() || interaction.isMessageComponent()) await interaction.showModal(modal);
 
   },
 } as SlashCommand;
