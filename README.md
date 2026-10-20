@@ -1,5 +1,11 @@
 # LEGO Universe Discord Bot
 
+This Discord Bot has been rewritten in Rust as [`Crab-Force`](https://github.com/MasterTemple/Crab-Force).
+It is recommended that you set up and run the newer bot, which offers the same commands with various improvements.
+
+<details>
+  <summary>I still want to set up this version...</summary>
+
 # Overview
 
 1. [Prerequisites:](#prerequisites) what you need prior to setting the bot up
@@ -284,3 +290,5 @@ View the stats of a skill!
 View all packages that drop an item!
 
 ![/unpack](screenshots/unpack.png)
+
+</details>
